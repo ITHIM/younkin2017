@@ -1,0 +1,42 @@
+% !Rnw root = ../ITHIM-manuscript.Rnw
+% !TeX root = ../ITHIM-manuscript.Rnw
+Regular exercise has been shown to provide health benefits in terms of
+chronic disease prevention \cite{warburton2006}, cognitive function
+\cite{hillman2008}, and overall well being and satisfaction with life
+\cite{maher2013}. Still only half of Americans obtain the recommended
+levels of aerobic activity of 2.5 hours per week. There is
+considerable variability in the attainment of this goal by location
+within the country. Supportive local built and policy environments are
+important determinants of population-level activity
+patterns. Particularly, as they facilitate and foster routine and
+moderate physical activity, such as walking, local decisions on design
+and policy can play a huge role in improving the nation's health.
+
+Given the constraints and complexity of local governance and
+infrastructure investments, land use, and human behavior there is a
+need for high quality and reliable data and tools for decision-making
+related to urban transportaiton systems. The lack of accurate and
+availbale estimates of the health impacts of such decisions has
+limited the effectiveness of efforts to encourage non-motorized
+transport in the US and in other countries. In the last decade new
+tools, applying comparative risk assessment methodologies, have made
+progress toward quantifying the multple health impacts of changes to
+the transportation system and behaviors.
+
+ITHIM is one such statistical model that integrates data on active
+transport, physical activity, fine particulate matter and greenhouse
+gas emissions to provide estimates for the proportional change in
+mortality and morbidity for given baseline and alternate travel
+scenarios. The model has been used to calculate the health impacts of
+walking and bicycling short distances usually traveled by car or
+driving low-emission automobiles \cite{woodcock2013,maizlish2013}.
+
+ITHIM uses a comparative risk assessment framework for the active
+transport component of the model.  We improve on the existing
+implementation of the active transport component by including the
+distribution of non-travel-related activity, improving numerical
+precision when computing the population attributable fraction and
+creating a simple user-interface for the custom-built \R{} package
+\package{}.  We present this implementation here by using it to
+estimate the relationship between overall, nationwide disease burden
+and active transportation time in the United States.

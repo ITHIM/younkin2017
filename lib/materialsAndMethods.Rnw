@@ -1,0 +1,138 @@
+% !Rnw root = ../ITHIM-manuscript.Rnw
+% !TeX root = ../ITHIM-manuscript.Rnw
+As with the original ITHIM implementation we, employed a comparative
+risk assessment (CRA) across scenarios defined by mean active
+transportation time, i.e., combined walking and cycling.  To do so we
+investigate the proportional change in national disease burden between
+the baseline model and a given alternative scenario, i.e., the
+population attributable fraction, $\af$.  The population attributable
+fraction is defined below and computed for each disease (ICD-10)
+included in the model, namely Breast Cancer (C50), Colon Cancer
+(C18-C21), Dementia (G30), Diabetes (E10-E14) and Cardiovascular
+disease (I10, I12, I15, I20-I25, I30-I31, I33, I40).  We also include
+the disability impacts of depression, though it is not listed as a
+cause of death in CDC's data. For readability we omit an index
+indicating disease.
+
+\begin{equation}
+\af_j = \frac{\int \! R_j(x)P(x) \, \mathrm{d}x  - \int \! R_j(x)Q(x) \,
+  \mathrm{d}x}{\int \! R_j(x)P(x) \, \mathrm{d}x} \approx 1 - \frac{{\displaystyle \sum_{i=1}^n} R_j(x_i^\prime)}{{\displaystyle \sum_{i=1}^n} R_j(x_i)}  = 1 - \delta_j % = 1 - \frac{{\displaystyle \sum_{i=1}^n} e^{-\alpha \sqrt{x_i^\prime}}}{{\displaystyle \sum_{i=1}^n} e^{-\alpha \sqrt{x_i}}}
+  \label{paf}
+\end{equation}
+
+Here $R(x)$ represents the risk when the individual has exposure $x$,
+physical activity (\mets).  $P(x)$ and $Q(x)$ denote the population
+density of individuals with exposure $x$, in the baseline and
+alternate scenarios, respectively.  The exposure variable, $x$, is
+modeled as the sum of two independent random variables, travel-related
+and non-travel-related physical activity.  $\mathbf{x}$ and
+$\mathbf{x}^\prime$ represent the quantiles for the exposure
+distribution in baseline and alternative scenarios, respectively.
+$\delta_j$ is the proportional burden for disease $j$ in the alternate
+scenario.
+
+\paragraph{Travel-Related Physical Activity}
+
+The distribution for travel-related exposure is estimated from the
+time spent walking or cycling, i.e., active transport time, which as
+in the original ITHIM model is assigned a \logNormal{} distribution
+with constant coefficient of variation across age-sex classes.
+Travel-related exposure is estimated from active transport time using
+assumptions about how much physical activity is required for cycling
+and walking.
+
+\begin{figure}\label{travelTime}
+<<results1, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
+p <- ITHIM:::compareDistributions(ITHIM.baseline, ITHIM.scenario, type = "WalkingTime")
+p + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlim(1,1e3) + scale_x_continuous(trans='log10') + xlab("Walking Time (min/week)")
+@
+<<results2, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
+p <- ITHIM:::compareDistributions(ITHIM.baseline, ITHIM.scenario, type = "CyclingTime")
+p + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlim(1,1e2) + scale_x_continuous(trans='log10') + xlab("Cycling Time (min/week)")
+@
+\caption{Distributions of walking and cycling transport time for
+  baseline and scenario models, stratified by age and sex.  In this
+  example the scenario was created by doubling the overall walking and
+  cycling means.}
+\end{figure}
+
+\paragraph{Non-Travel-Related Physical Activity}
+
+With a simulated distribution for total physical activity in hand we
+compute the empirical percentiles in the baseline and alternate
+scenarios, $\mathbf{x}$ and $\mathbf{x}^\prime$. The proportional
+change in disease burden, $\delta$, may be approximated as follows,
+where $R$ is the risk function for total activity.
+
+\begin{equation}
+X_{ij}^{\mathrm{non-travel}} \sim \logNormalMath\left(\mu_{ij}, \gamma \mu_{ij}\right)
+\end{equation}
+
+Within each age-sex class the non-travel-related exposure is modeled
+with a \logNormal{} distribution.  The age-sex specific mean ratios,
+$r_{ij} = \frac{\mu_{ij}}{\mu_0}$ and $\gamma$ are estimated from the
+American Time Use Survey data \cite{ATUS}.
+
+\paragraph{Estimation of Disease Burden}
+
+The disease burden, in this case DALYs, is found for each of the
+quantiles using equation \ref{burden} using $B_0$, the overall
+nation-wide burden for the baseline.  The overall burden is then
+computed as the sum across quintiles, $B=\sum_{j=1}^n B_j$.
+
+\begin{equation}
+B_j = \delta B_0\frac{\RR_j}{\sum_{k=1}^n \RR_j}\label{burden}
+\end{equation}
+
+\paragraph{Risk Functions}
+
+We assign risk based on dose-response curves for each of the diseases
+included in the model.
+
+\begin{equation}
+\RR_j(x) = \mathrm{e}^{-\alpha_j \tilde{x}}
+\end{equation}
+
+where $\tilde{x} = x^k$, $k=\frac{1}{2}$ and $r$ varies by age-sex
+class and disease.  For a table of $r$ values see supplementary
+material.
+
+\paragraph{Nationwide Health Benefits to Active Transport}
+
+For the purposes of this implementation we limited our analyses to
+metropolitan regions of the United States. To idenfity urban
+populations we used the National Center for Health Statistics 2013
+Urban-Rural Classification Scheme for Counties \cite{ingram2014}. We
+eliminated counties in the US with the classifcation of
+`nonmetropolitan' (noncore or micropolitan). We used this and similar
+classification schemes as well as county and state identifiers in
+other datsets (NHTS, ATUS, CDC WONDER) to ensure consistency in our
+estimates for input parameters.
+
+To test the new implementation of ITHIM's active transportation
+component, we used the US national metro population estimates for
+active travel time (walking and cycling) as the baseline. We obtained
+active travel time input parameters for alternate scenarios using
+states with large sample sizes. From these examples we were able to
+approximate low and high active travel scenarios. Finally, we applied
+these active travel times to the US metro population to perform the
+comparative risk assessment against the baseline US numbers. We then
+examined the sensitivity of disease burden estimates to input
+parameters including the active travel time and non-travel activity.
+
+% \begin{figure}[t]
+%   \centerline{\includegraphics[width=\textwidth]{./figures/fig1}}
+%     \caption{}\label{fig1}
+% \end{figure}
+
+% \begin{figure}[t]
+%   \centerline{\includegraphics[width=\textwidth]{./figures/fig2.pdf}}
+%     \caption{}\label{fig2}
+% \end{figure}
+
+% \begin{sidewaysfigure}[t]
+%   \centerline{\includegraphics[width=\textwidth]{./figures/fig3.pdf}}
+%   \caption{Estimates for disease burden nationwide in terms of thousands of
+%     DALYs for each of the six diseases included in the model.
+%   }\label{fig3}
+% \end{sidewaysfigure}

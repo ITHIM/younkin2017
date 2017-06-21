@@ -1,0 +1,70 @@
+\documentclass[10pt,letterpaper]{article}
+%\usepackage{natbib}
+\usepackage[right]{lineno}
+%\usepackage{cite}
+\usepackage{url}
+\usepackage{mathtools}
+\usepackage{rotating}
+\usepackage{setspace}
+\bibliographystyle{ieeetr}
+\input{./lib/sgy}
+%\SweaveOpts{concordance=TRUE}
+\begin{document}
+<<lib, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE>>=
+opts_knit$set(self.contained=FALSE)
+library("devtools")
+install_github("ITHIM/ITHIM", ref="sam")
+library("ITHIM")
+example("ITHIM")
+@
+
+\vspace*{0.2in}
+\begin{flushleft}
+{\Large \textbf\newline{A Comparative Risk Assessment of Active Transportation in the United
+States}}
+\newline
+\\
+Samuel Younkin\textsuperscript{1},\
+Jason Vargo\textsuperscript{1, 2},\
+\ldots,\
+James Woodcock\textsuperscript{3},\
+Jonathan Patz\textsuperscript{1, 2}
+\\
+\bigskip
+\textbf{1} Global Health Institute, University of Wisconsin{\textendash}Madison, Madison, WI, USA
+\\
+\textbf{2} Nelson Institute for Environmental Studies Center for Sustainability and the Global Environment, University of Wisconsin{\textendash}Madison, Madison, WI, USA
+\\
+\textbf{3} CEDAR
+\\
+\bigskip
+\end{flushleft}
+
+\section*{Abstract}
+\Sexpr{knit_child('lib/abstract.Rnw')}
+
+\doublespacing
+\linenumbers
+
+\section*{Introduction}
+\Sexpr{knit_child('lib/introduction.Rnw')}
+
+\section*{Materials and Methods}
+\Sexpr{knit_child('lib/materialsAndMethods.Rnw')}
+
+\subsection*{Value of Information}
+\Sexpr{knit_child('lib/valueOfInformation.Rnw')}
+
+\section*{Results}
+\Sexpr{knit_child('lib/results.Rnw')}
+
+% \section*{Discussion}
+% \Sexpr{knit_child('lib/discussion.Rnw')}
+
+% \section*{Conclusion}
+% \Sexpr{knit_child('lib/conclusion.Rnw')}
+
+\nolinenumbers
+\singlespacing
+\bibliography{./lib/ITHIM}
+\end{document}
