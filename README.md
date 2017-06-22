@@ -1,5 +1,9 @@
-To create the manuscript _younkin2017.pdf_ run the following `make`
-command in the top-level directory of this repository.
+Welcome to *younkin2017*.
+
+This repository contains R and LaTex code to produce a manuscript.
+
+To create the manuscript *younkin2017.pdf* run the following command
+in the top-level directory of this repository.
 
 ```
 make younkin2017.pdf
@@ -11,5 +15,5 @@ System Requirements
 - R
 - R packages
   - ITHIM
-  - ggplot2
-  - and more
+  - knitr
+  - tidyverse
