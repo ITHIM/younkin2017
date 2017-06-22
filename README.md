@@ -10,6 +10,6 @@ System Requirements
 - LaTeX and pdflatex
 - R
 - R packages
- - ITHIM
- - ggplot2
- - and more
+  - ITHIM
+  - ggplot2
+  - and more
