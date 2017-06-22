@@ -1,14 +1,11 @@
-\documentclass[10pt,letterpaper]{article}
-%\usepackage{natbib}
+\documentclass[12pt,letterpaper]{article}
 \usepackage[right]{lineno}
-%\usepackage{cite}
 \usepackage{url}
 \usepackage{mathtools}
 \usepackage{rotating}
 \usepackage{setspace}
 \bibliographystyle{ieeetr}
 \input{./lib/sgy}
-%\SweaveOpts{concordance=TRUE}
 \begin{document}
 <<lib, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE>>=
 opts_knit$set(self.contained=FALSE)
@@ -17,9 +14,7 @@ install_github("ITHIM/ITHIM", ref="sam")
 library("ITHIM")
 example("ITHIM")
 @
-
-\vspace*{0.2in}
-\begin{flushleft}
+\begin{center}
 {\Large \textbf\newline{A Comparative Risk Assessment of Active Transportation in the United
 States}}
 \newline
@@ -38,7 +33,7 @@ Jonathan Patz\textsuperscript{1, 2}
 \textbf{3} CEDAR
 \\
 \bigskip
-\end{flushleft}
+\end{center}
 
 \section*{Abstract}
 \Sexpr{knit_child('lib/abstract.Rnw')}
@@ -58,13 +53,13 @@ Jonathan Patz\textsuperscript{1, 2}
 \section*{Results}
 \Sexpr{knit_child('lib/results.Rnw')}
 
-% \section*{Discussion}
-% \Sexpr{knit_child('lib/discussion.Rnw')}
+\section*{Discussion}
+\Sexpr{knit_child('lib/discussion.Rnw')}
 
-% \section*{Conclusion}
-% \Sexpr{knit_child('lib/conclusion.Rnw')}
+\section*{Conclusion}
+\Sexpr{knit_child('lib/conclusion.Rnw')}
 
-\nolinenumbers
 \singlespacing
+\nolinenumbers
 \bibliography{./lib/ITHIM}
 \end{document}
