@@ -36,8 +36,8 @@ the sum of two independent random variables, namely travel-related and
 non-travel-related physical activity.  $\mathbf{x}$ and
 $\mathbf{x}^\prime$ represent the quantiles for the exposure
 distribution in baseline and alternative scenarios, respectively.
-$\delta_{ijk}$ is an estimate of the relative disease burden for age
-$i$, sex $j$ and disease $k$ in the alternative scenario.
+$\delta_{ijk}$ represents the disease burden in the alternative
+scenario, relative to baseline, for age $i$, sex $j$ and disease $k$.
 
 \paragraph{Travel-Related Physical Activity}
 
@@ -94,18 +94,23 @@ p + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlim
   cycling means.}
 \end{figure}
 
-\paragraph{Estimation of Disease Burden}
+\paragraph{Estimation of Disease Burden (Current Implementation)}
 
-????
-
-The disease burden, in this case DALYs, is found for each of the
-quantiles using equation \ref{burden} using $B_0$, the overall
-nation-wide burden for the baseline.  The overall burden is then
-computed as the sum across quintiles, $B=\sum_{j=1}^n B_j$.
+The disease burden is found for each of the quantiles, $l=1,\ldots n$, using equation
+\ref{burden} where ${B_0}_{ijk}$ is the overall burden for the
+baseline.  The overall burden is then computed as the sum across
+quantiles, $B_{ijk}=\sum_{l=1}^n B_{ijkl}$.
 
 \begin{equation}
-B_j = \delta B_0\frac{\RR_j}{\sum_{k=1}^n \RR_j}\label{burden}
+B_{ijk}(x_l) = \delta_{ijk} {B_0}_{ijk}\frac{\RR(x_l)_{ijk}}{\sum_{l=1}^n \RR(x_l)_{ijk}}\label{burden}
 \end{equation}
+
+\paragraph{Estimation of Disease Burden (Alternative Implementation)}
+
+\begin{equation}
+B_{ijk} = \delta_{ijk}{B_0}_{ijk}\label{burden2}
+\end{equation}
+
 
 \paragraph{Risk Functions}
 
