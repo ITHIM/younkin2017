@@ -12,5 +12,6 @@ clean:
 	rm -rf ./*.log
 	rm -rf ./*.out
 	rm -rf ./*.tex
+	rm -rf ./*.pdf
 	rm -rf ./figure/
 	rm -rf ./figures/
