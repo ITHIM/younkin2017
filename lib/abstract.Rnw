@@ -1,6 +1,7 @@
 % !Rnw root = ../ITHIM-manuscript.Rnw
 % !TeX root = ../ITHIM-manuscript.Rnw
-Comparative risk assessments to quantify the health potential
+\emph{
+  Comparative risk assessments to quantify the health potential
 of active transportation, e.g., walking and cycling, have been
 performed in the United States on a limited basis. Current
 methodologies, which rely on extensive data collection and user
@@ -20,3 +21,4 @@ transportation and positive health outcomes.  A web-based
 user-interface is available for users who want a first estimate for
 the impact active transportation has on their
 state/region.
+}

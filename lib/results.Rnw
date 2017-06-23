@@ -1,55 +1,54 @@
 % !Rnw root = ../ITHIM-manuscript.Rnw
 % !TeX root = ../ITHIM-manuscript.Rnw
 
-We report total change (averted or increased) in diability adjusted
-life years (DALYs) as an estimate of disease burden change with
-alternative scenarios.
+%% We report total change (averted or increased) in diability adjusted
+%% life years (DALYs) as an estimate of disease burden change with
+%% alternative scenarios.
 
-To estimate DALYs we use a methodology adopted from previous US
-implementations of ITHIM which scale Global Budern of Disease
-Estimates for the US to smaller populations using mortality rate
-ratios \cite{maizlish2013}. Age, sex, and casuse specific mortalities
-were obtained form the CDC WONDER database for US metro counties for
-the years 2010-2014. Cells with mortality counts less than 10 deaths
-were suppressed for privacy and imputed (0 to 9) using R's random
-integer generator.
+%% To estimate DALYs we use a methodology adopted from previous US
+%% implementations of ITHIM which scale Global Budern of Disease
+%% Estimates for the US to smaller populations using mortality rate
+%% ratios \cite{maizlish2013}. Age, sex, and casuse specific mortalities
+%% were obtained form the CDC WONDER database for US metro counties for
+%% the years 2010-2014. Cells with mortality counts less than 10 deaths
+%% were suppressed for privacy and imputed (0 to 9) using R's random
+%% integer generator.
 
-Our subset of the US population to only metropolitan counties
-consisted of 1,090 of 3,141 (34.7\%) counties, or approximately 272M
-of 312M (87\%) of the total US population. The age and gender
-distribution of our subset population was slightly younger (???making
-this up???) than the national population. Baseline active transport
-times (walking and cycling) for the US across age and sex groupings
-was found to be approximately 43 min/week (???). Baseline non-travel
-activity time was found to be ???X??? (min/week) from the ATUS for US
-metropolitan populations.
+%% Our subset of the US population to only metropolitan counties
+%% consisted of 1,090 of 3,141 (34.7\%) counties, or approximately 272M
+%% of 312M (87\%) of the total US population. The age and gender
+%% distribution of our subset population was slightly younger (???making
+%% this up???) than the national population. Baseline active transport
+%% times (walking and cycling) for the US across age and sex groupings
+%% was found to be approximately 43 min/week (???). Baseline non-travel
+%% activity time was found to be ???X??? (min/week) from the ATUS for US
+%% metropolitan populations.
 
-Adapting ITHIM's methods to the R platform enables the rapid and
-thorough assessment of parameter influence within the model. Another
-important improvement enabled by the shift to a more computationaly
-robust platform was to examine methodological assumptions of former
-implementations. One critical assumption invovles the approximation of
-??? used to calculate the attirbutable fraction (see Figure
-\ref{fig:overview}). Previous implementations used quitiles to
-approximate this value, essentailly the area under the ???? curve. We
-improved upon those methods to use percentiles or 100 points to
-estimate the same values. We find our estimates to be much more stable
-and reliable at all values of active travel and non-travel activity
-parameters.
+%% Adapting ITHIM's methods to the R platform enables the rapid and
+%% thorough assessment of parameter influence within the model. Another
+%% important improvement enabled by the shift to a more computationaly
+%% robust platform was to examine methodological assumptions of former
+%% implementations. One critical assumption invovles the approximation of
+%% ??? used to calculate the attirbutable fraction (see Figure
+%% \ref{fig:overview}). Previous implementations used quitiles to
+%% approximate this value, essentailly the area under the ???? curve. We
+%% improved upon those methods to use percentiles or 100 points to
+%% estimate the same values. We find our estimates to be much more stable
+%% and reliable at all values of active travel and non-travel activity
+%% parameters.
 
-As exhibited in Figure \ref{fig1}, the variability in disease burden
-benefits varies to a much greater degree when using fewer points in
-the attirbutable fraction approximation. Importantly, we see greater
-stability when using the package and percentiles to approximate
-attirbutable fraction.
+%% As exhibited in Figure \ref{fig1}, the variability in disease burden
+%% benefits varies to a much greater degree when using fewer points in
+%% the attirbutable fraction approximation. Importantly, we see greater
+%% stability when using the package and percentiles to approximate
+%% attirbutable fraction.
 
-Comparing baseline to scenarios with increased active travel produced
-estimates of up to 360,000??? fewer DALYs (with 300\% increase in mean
-active travel time) for our US population subset. We then varied the
-mean non-travel activity time and active travel time to observe how
-this chaged results (\ref{fig1}). We observe the most dramatic
-responses in disease burden estimates to changes in active travel time
-when non-travel activity times are lowest. This result is consistent
-with the non-linear dose-response curve for physical activity and
-several health outcomes.
-
+%% Comparing baseline to scenarios with increased active travel produced
+%% estimates of up to 360,000??? fewer DALYs (with 300\% increase in mean
+%% active travel time) for our US population subset. We then varied the
+%% mean non-travel activity time and active travel time to observe how
+%% this chaged results (\ref{fig1}). We observe the most dramatic
+%% responses in disease burden estimates to changes in active travel time
+%% when non-travel activity times are lowest. This result is consistent
+%% with the non-linear dose-response curve for physical activity and
+%% several health outcomes.
