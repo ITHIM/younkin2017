@@ -50,20 +50,6 @@ assumptions about how much physical activity is required for cycling
 and walking.  In Figure \ref{travelTime} we show the cumulative
 distributions for walking and cycling time (min/week).
 
-\begin{figure}\label{travelTime}
-<<mandm1, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
-p <- ITHIM:::compareDistributions(ITHIM.baseline, ITHIM.scenario, type = "WalkingTime")
-p + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlim(1,1e3) + scale_x_continuous(trans='log10') + xlab("Walking Time (min/week)")
-@
-<<mandm2, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
-p <- ITHIM:::compareDistributions(ITHIM.baseline, ITHIM.scenario, type = "CyclingTime")
-p + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlim(1,1e2) + scale_x_continuous(trans='log10') + xlab("Cycling Time (min/week)")
-@
-\caption{Distributions of walking and cycling transport time for
-  baseline and scenario models, stratified by age and sex.  In this
-  example the scenario was created by doubling the overall walking and
-  cycling means.}
-\end{figure}
 
 \paragraph{Non-Travel-Related Physical Activity}
 
@@ -81,74 +67,22 @@ With a simulated distribution for total physical activity in hand we
 compute the empirical percentiles in the baseline and alternate
 scenarios, $\mathbf{x}$ and $\mathbf{x}^\prime$ and use Equation \ref{paf}.
 
-In Figure \ref{nonTravelMETs} we show the cumulative distributions for total physical activity.
-
-\begin{figure}\label{nonTravelMETs}
-<<mandm3, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
-p <- ITHIM:::compareDistributions(ITHIM.baseline, ITHIM.scenario, type = "TotalMET")
-p + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlim(1,1e3) + scale_x_continuous(trans='log10') + xlab("Total MET-hrs/week")
-@
-\caption{Distributions of non-travel activity in MET-hrs/week for
-  baseline and scenario models, stratified by age and sex.  In this
-  example the scenario was created by doubling the overall walking and
-  cycling means.}
-\end{figure}
-
-%% \paragraph{Estimation of Disease Burden (Current Implementation)}
-
-%% The disease burden is found for each of the quantiles, $l=1,\ldots n$, using equation
-%% \ref{burden} where ${B_0}_{ijk}$ is the overall burden for the
-%% baseline.  The overall burden is then computed as the sum across
-%% quantiles, $B_{ijk}=\sum_{l=1}^n B_{ijkl}$.
-
-%% \begin{equation}
-%% B_{ijk}(x_l) = \delta_{ijk} {B_0}_{ijk}\frac{\RR(x_l)_{ijk}}{\sum_{l=1}^n \RR(x_l)_{ijk}}\label{burden}
-%% \end{equation}
 
 \paragraph{Estimation of Disease Burden (Alternative Implementation)}
 
-${B_0}_{ijk}$ is the overall burden at baseline for age class $i$, sex $j$ and disease $k$.  We use $\delta_{ijk}$ to scale this burden and compute the total percent burden reduction by summing across age sex and disease.
+${B_0}_{ijk}$ is the overall burden at baseline for age class $i$, sex
+$j$ and disease $k$.  We use $\delta_{ijk}$ to scale this burden and
+compute the total percent burden reduction by summing across age sex
+and disease.
 
 \begin{equation}
 B_{ijk} = \delta_{ijk}{B_0}_{ijk}\label{burden2}
 \end{equation}
 
-%% \begin{equation}
-%%   B_k = \frac{\displaystyle \sum_{i=1}^8 \displaystyle \sum_{j=1}^2  B_{ijk}}{\displaystyle \sum_{i=1}^8 \displaystyle \sum_{j=1}^2  {B_0}_{ijk}}
-%% \end{equation}
-
-%% \begin{equation}
-%%   \rho = 1-\frac{\displaystyle \sum_{k} \displaystyle \sum_{j} \displaystyle \sum_{i}  B_{ijk}}{\displaystyle \sum_{k} \displaystyle \sum_{j} \displaystyle \sum_{i}  {B_0}_{ijk}}
-%% \end{equation}
 \begin{equation}
-  \rho = 1-\frac{\displaystyle \sum_{i,j,k} {B}_{ijk}} {\displaystyle \sum_{i,j,k}  {B_0}_{ijk}}
+  \rho_k = 1-\frac{\displaystyle \sum_{i,j} {B}_{ijk}} {\displaystyle \sum_{i,j}  {B_0}_{ijk}}
 \end{equation}
 
-<<mandm4, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
-foo <- getGBD(ITHIM.baseline) %>%
-    split(., .$burdenType) %>%
-    lapply(., function(x) split(x, x$disease))
-
-fooFunction <- function(x){
-    x %>%
-        spread(., key = sex, value = value) %>%
-        arrange(., ageClass) %>% select(M,F) %>%
-        return(.)
-}
-
-burdenList <- lapply(lapply(foo$deaths,fooFunction),function(x) return(x))
-AFList <- ITHIM:::compareModels(ITHIM.baseline, ITHIM.scenario)$AF
-
-diseaseVec <- intersect(names(burdenList),names(AFList))
-burdenList <- burdenList[diseaseVec]
-AFList <- AFList[diseaseVec]
-
-burdenList.scenario <- mapply(function(x,y) (1-x)*y, AFList, burdenList, SIMPLIFY = FALSE)
-
-rho <- 1 - sum(unlist(burdenList.scenario))/sum(unlist(burdenList))
-
-rho
-@ 
 
 \paragraph{Risk Functions}
 
@@ -200,3 +134,20 @@ where $\tilde{x} = \sqrt{x}$.
 %     DALYs for each of the six diseases included in the model.
 %   }\label{fig3}
 % \end{sidewaysfigure}
+%% \paragraph{Estimation of Disease Burden (Current Implementation)}
+
+%% The disease burden is found for each of the quantiles, $l=1,\ldots n$, using equation
+%% \ref{burden} where ${B_0}_{ijk}$ is the overall burden for the
+%% baseline.  The overall burden is then computed as the sum across
+%% quantiles, $B_{ijk}=\sum_{l=1}^n B_{ijkl}$.
+
+%% \begin{equation}
+%% B_{ijk}(x_l) = \delta_{ijk} {B_0}_{ijk}\frac{\RR(x_l)_{ijk}}{\sum_{l=1}^n \RR(x_l)_{ijk}}\label{burden}
+%% \end{equation}
+%% \begin{equation}
+%%   B_k = \frac{\displaystyle \sum_{i=1}^8 \displaystyle \sum_{j=1}^2  B_{ijk}}{\displaystyle \sum_{i=1}^8 \displaystyle \sum_{j=1}^2  {B_0}_{ijk}}
+%% \end{equation}
+
+%% \begin{equation}
+%%   \rho = 1-\frac{\displaystyle \sum_{k} \displaystyle \sum_{j} \displaystyle \sum_{i}  B_{ijk}}{\displaystyle \sum_{k} \displaystyle \sum_{j} \displaystyle \sum_{i}  {B_0}_{ijk}}
+%% \end{equation}
