@@ -1,12 +1,9 @@
-<<portland1, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE>>=
-rnorm(1e3)
-@
 \begin{figure}\label{travelTime}
-<<mandm1, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
+<<portland2, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
 p <- ITHIM:::compareDistributions(ITHIM.baseline, ITHIM.scenario, type = "WalkingTime")
 p + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlim(1,1e3) + scale_x_continuous(trans='log10') + xlab("Walking Time (min/week)")
 @
-<<mandm2, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
+<<portland3, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
 p <- ITHIM:::compareDistributions(ITHIM.baseline, ITHIM.scenario, type = "CyclingTime")
 p + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlim(1,1e2) + scale_x_continuous(trans='log10') + xlab("Cycling Time (min/week)")
 @
@@ -16,11 +13,45 @@ p + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlim
   cycling means.}
 \end{figure}
 
-<<mandm4, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
-
-ITHIM:::summarizeBurden(ITHIM.baseline, ITHIM.scenario, burdenType = "daly")
+<<portland4, echo = TRUE, eval = TRUE, results = "show", warning = FALSE, message = FALSE, fig.height = 3>>=
+ITHIM:::summarizeBurden(ITHIM.baseline, ITHIM.scenario, burdenType = "deaths")
+ITHIM.baseline@parameters@muNonTravel
 
 @
+
+\begin{figure}\label{portland1}
+<<portland5, echo = FALSE, eval = TRUE, warning = FALSE, message = FALSE, fig.height = 3>>=
+results <- data.frame()
+ITHIM.portland <- ITHIM.baseline
+for( muNonTravel in seq(1,25, length.out = 5)){
+    ITHIM.baseline <- update(ITHIM.baseline, list(muNonTravel = muNonTravel))
+    ITHIM.scenario <- update(ITHIM.scenario, list(muNonTravel = muNonTravel))
+    foo <- ITHIM:::summarizeBurden(ITHIM.baseline, ITHIM.scenario)
+    results <- rbind(results, c(muNonTravel, foo))
+}
+names(results) <- c("muNonTravel",names(foo))
+p <- results %>% gather(.,disease,"rho",2:7) %>% ggplot(., aes(x = muNonTravel, y = rho))
+p + geom_line(aes(x=muNonTravel, y = rho*100, colour = disease)) + geom_vline(xintercept = c(ITHIM.portland@parameters@muNonTravel,c(500,1000)/60), linetype = c(1,2,2)) + xlab("Non-travel Physical Activity (MET-hrs./week)") + ylab("Percent Reduction of Deaths")
+@
+\caption{The two vertical lines mark the interval for ``medium
+  activity`` defined by the U.S. Office of Disease Prevention and Health
+  Promotion.  Medium activity is 150 minutes to 300 (5 hours) minutes
+  of moderate-intensity activity a week (or 75 to 150 minutes of
+  vigorous-intensity physical activity a week). In scientific terms,
+  this range is approximately equivalent to 500 to 1,000 metabolic
+  equivalent (MET) minutes a week.}
+\end{figure}
+
+
+\begin{figure}\label{portland2}
+<<portland6, echo = FALSE, eval = TRUE, warning = FALSE, message = FALSE, fig.height = 3>>=
+NHTS.df <- readRDS(file = "~/GHI/R/data/NHTS.df.rds")
+msaID.portland <- "6442"
+p <- NHTS.df %>% filter(location == msaID.portland) %>% group_by(age,sex) %>% summarize(n.individuals = n_distinct(id)) %>% as.data.frame() %>% ggplot(.,aes(x=age,y=n.individuals, fill = sex))
+p + geom_bar(stat = "identity", position = "dodge")
+@ 
+\caption{Foo}
+\end{figure}
 
 % In Figure \ref{nonTravelMETs} we show the cumulative distributions for total physical activity.
 
@@ -35,26 +66,4 @@ ITHIM:::summarizeBurden(ITHIM.baseline, ITHIM.scenario, burdenType = "daly")
 %   cycling means.}
 % \end{figure}
 
-
-\begin{figure}\label{portland1}
-<<portland5, echo = FALSE, eval = TRUE, warning = FALSE, message = FALSE, fig.height = 3>>=
-results <- data.frame()
-for( muNonTravel in seq(1,25, length.out = 50)){
-    ITHIM.baseline <- update(ITHIM.baseline, list(muNonTravel = muNonTravel))
-    ITHIM.scenario <- update(ITHIM.scenario, list(muNonTravel = muNonTravel))
-    foo <- ITHIM:::summarizeBurden(ITHIM.baseline, ITHIM.scenario)
-    results <- rbind(results, c(muNonTravel, foo))
-}
-names(results) <- c("muNonTravel",names(foo))
-p <- results %>% gather(.,disease,"rho",2:7) %>% ggplot(., aes(x = muNonTravel, y = rho))
-p + geom_line(aes(x=muNonTravel, y = rho*100, colour = disease)) + geom_vline(xintercept = c(500,1000)/60) + xlab("Non-travel Physical Activity (MET-hrs./week)") + ylab("Percent Reduction of Deaths")
-@
-\caption{The two vertical lines mark the interval for ``medium
-  activity`` defined by the U.S. Office of Disease Prevention and Health
-  Promotion.  Medium activity is 150 minutes to 300 (5 hours) minutes
-  of moderate-intensity activity a week (or 75 to 150 minutes of
-  vigorous-intensity physical activity a week). In scientific terms,
-  this range is approximately equivalent to 500 to 1,000 metabolic
-  equivalent (MET) minutes a week.}
-\end{figure}
 
