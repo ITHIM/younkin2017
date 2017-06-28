@@ -13,12 +13,6 @@ p + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlim
   cycling means.}
 \end{figure}
 
-<<portland4, echo = TRUE, eval = TRUE, results = "show", warning = FALSE, message = FALSE, fig.height = 3>>=
-ITHIM:::summarizeBurden(ITHIM.baseline, ITHIM.scenario, burdenType = "deaths")
-ITHIM.baseline@parameters@muNonTravel
-
-@
-
 \begin{figure}\label{portland1}
 <<portland5, echo = FALSE, eval = TRUE, warning = FALSE, message = FALSE, fig.height = 3>>=
 results <- data.frame()
@@ -31,7 +25,7 @@ for( muNonTravel in seq(1,25, length.out = 5)){
 }
 names(results) <- c("muNonTravel",names(foo))
 p <- results %>% gather(.,disease,"rho",2:7) %>% ggplot(., aes(x = muNonTravel, y = rho))
-p + geom_line(aes(x=muNonTravel, y = rho*100, colour = disease)) + geom_vline(xintercept = c(ITHIM.portland@parameters@muNonTravel,c(500,1000)/60), linetype = c(1,2,2)) + xlab("Non-travel Physical Activity (MET-hrs./week)") + ylab("Percent Reduction of Deaths")
+p + geom_line(aes(x=muNonTravel, y = rho*100, colour = disease)) + geom_vline(xintercept = c(ITHIM.portland@parameters@muNonTravel,c(500,1000)/60), linetype = c(1,2,2)) + xlab("Non-travel Physical Activity (MET-hrs./week)") + ylab("Percent Reduction of Deaths") + theme_bw()
 @
 \caption{The two vertical lines mark the interval for ``medium
   activity`` defined by the U.S. Office of Disease Prevention and Health
@@ -43,27 +37,34 @@ p + geom_line(aes(x=muNonTravel, y = rho*100, colour = disease)) + geom_vline(xi
 \end{figure}
 
 
-\begin{figure}\label{portland2}
+\begin{figure}\label{portland6}
 <<portland6, echo = FALSE, eval = TRUE, warning = FALSE, message = FALSE, fig.height = 3>>=
 NHTS.df <- readRDS(file = "~/GHI/R/data/NHTS.df.rds")
 msaID.portland <- "6442"
 p <- NHTS.df %>% filter(location == msaID.portland) %>% group_by(age,sex) %>% summarize(n.individuals = n_distinct(id)) %>% as.data.frame() %>% ggplot(.,aes(x=age,y=n.individuals, fill = sex))
-p + geom_bar(stat = "identity", position = "dodge")
-@ 
+p + geom_bar(stat = "identity", position = "dodge") + theme_bw()
+@
 \caption{Foo}
 \end{figure}
 
-% In Figure \ref{nonTravelMETs} we show the cumulative distributions for total physical activity.
+\begin{figure}\label{portland7}
+<<portland7, echo = FALSE, eval = TRUE, warning = FALSE, message = FALSE, fig.height = 3>>=
+D <- NHTS.df %>% filter(location == msaID.portland) %>% group_by(mode,age,sex) %>% summarise(n.trips = n()) %>% ungroup() %>% complete(age,sex,mode)  %>% arrange(sex,age) %>% filter(!is.na(mode)) %>% as.data.frame()
+p <- ggplot(D, aes(x = age, y = n.trips, fill = mode))
+p + geom_bar(stat = "identity", postion = "dodge") + facet_grid( . ~ sex ) + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+@
+\caption{Foo}
+\end{figure}
 
-% \begin{figure}\label{nonTravelMETs}
-% <<mandm3, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
-% p <- ITHIM:::compareDistributions(ITHIM.baseline, ITHIM.scenario, type = "TotalMET")
-% p + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlim(1,1e3) + scale_x_continuous(trans='log10') + xlab("Total MET-hrs/week")
-% @
-% \caption{Distributions of non-travel activity in MET-hrs/week for
-%   baseline and scenario models, stratified by age and sex.  In this
-%   example the scenario was created by doubling the overall walking and
-%   cycling means.}
-% \end{figure}
+\begin{figure}\label{portland8}
+<<portland8, echo = FALSE, eval = TRUE, warning = FALSE, message = FALSE, fig.height = 3>>=
+sampleSize <- NHTS.df %>% filter(!(location %in% c("-1","XXXX"))) %>% group_by(sex,age) %>% summarise(n=n_distinct(id))
+tripDuration <- NHTS.df %>% filter(!(location %in% c("-1","XXXX"))) %>% group_by(mode,sex,age) %>% summarise(total=sum(duration))
+foo <- right_join(sampleSize,tripDuration, by = c("sex","age")) %>% ungroup() %>% mutate(mean = total/n*7) %>% select(mode,sex,age,mean) %>% complete(mode,sex,age)
+meanByMode <- split(foo,foo$mode)
 
-
+D <- melt(meanByMode) %>% select(mode,sex,age,value)
+p <- ggplot(D, aes(x = age, y = value, fill = mode))
+p + geom_bar(stat = "identity", postion = "dodge") + facet_grid( . ~ sex ) + ylab("Mean Weekly Travel Time (minutes)") + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+@
+\end{figure}

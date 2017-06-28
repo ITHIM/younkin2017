@@ -6,3 +6,4 @@
 *.tex
 *.sty
 *.Rhistory
+.DS_Store
