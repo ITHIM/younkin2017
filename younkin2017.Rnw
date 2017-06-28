@@ -11,6 +11,7 @@
 opts_knit$set(self.contained=FALSE)
 library("devtools")
 install_github("ITHIM/ITHIM", ref="sam")
+#install("~/ITHIM/")
 library("ITHIM")
 example("ITHIM")
 @
@@ -34,6 +35,21 @@ Jonathan Patz\textsuperscript{1, 2}
 \\
 \bigskip
 \end{center}
+\section*{Outline}
+\bi
+\item Abstract and Introduction
+\item Description of Method
+\item Demonstration of R package via an analysis of the Portland MSA
+  \bi
+  \item data from Eric Main
+    \bi
+    \item burden estimated using technique from WHO
+    \item Travel times estimated from NHTS
+    \ei
+  \ei
+\item Sensitivity Analysis/Value of Information
+\item
+\ei
 
 \section*{Abstract}
 \Sexpr{knit_child('lib/abstract.Rnw')}
@@ -46,6 +62,9 @@ Jonathan Patz\textsuperscript{1, 2}
 
 \section*{Materials and Methods}
 \Sexpr{knit_child('lib/materialsAndMethods.Rnw')}
+
+\subsection*{Portland, Oregon Metropolitan Statistical Area}
+\Sexpr{knit_child('lib/portland.Rnw')}
 
 \subsection*{Value of Information}
 \Sexpr{knit_child('lib/valueOfInformation.Rnw')}
