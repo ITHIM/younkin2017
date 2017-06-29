@@ -1,55 +1,84 @@
 % !Rnw root = ../ITHIM-manuscript.Rnw
 % !TeX root = ../ITHIM-manuscript.Rnw
-As with the original ITHIM implementation we employ a comparative risk
-assessment (CRA) to compare scenarios defined by mean active
-transportation time, i.e., transportation by walking or cycling.  A
-CRA produces and estimate for the population attributable fraction,
-$\af$, a measure of the proportional change in disease burden between
-baseline and alternative scenarios.  In our case we perform the CRA
-for each of sixteen subpopulations created by stratifyiing the
-population by age class ($i=1,\ldots8$,) and sex ($j=1,2$).  The
-equation for estimating the population attributable fraction is given
-in Equation \ref{paf} and computed for each of six diseases (ICD-10),
-$k=1,\ldots5$; Breast Cancer (C50), Colon Cancer (C18-C21), Dementia
+
+The health impacts that result from an increase in active
+transportation in the population can be quantified by the population
+attributable fraction, $\af$.  The population attributable fraction
+represents the proportional change in disease burden that results from
+the new transportation behavior.  To address the dependency in
+transportation behavior on age and sex we stratify the population by
+sex and age using eight age classes (0-4 yrs.\ old, 5-14, 15-29,
+30-44, 45-59, 60-69, 70-79, 80+).  For a given disease the population
+attributable fraction is then computed for each of these classes.
+ITHIM includes Breast Cancer (C50), Colon Cancer (C18-C21), Dementia
 (G30), Diabetes (E10-E14) and Cardiovascular disease (I10, I12, I15,
 I20-I25, I30-I31, I33, I40).  We also include the disability impacts
 of depression, though it is not listed as a cause of death in the CDC
 data.
 
-\begin{equation}
-\af_{ijk} = \frac{\int \! R_{ijk}(x)P_{ij}(x) \, \mathrm{d}x - \int \! R_{ijk}(x)Q_{ij}(x)
-  \, \mathrm{d}x}{\int \! R_{ijk}(x)P_{ij}(x) \, \mathrm{d}x} \approx 1 -
+\begin{eqnarray}
+\af_{ijk} &=& \frac{\int \! R_{ijk}(x)P_{ij}(x) \, \mathrm{d}x - \int \! R_{ijk}(x)Q_{ij}(x)
+  \, \mathrm{d}x}{\int \! R_{ijk}(x)P_{ij}(x) \, \mathrm{d}x}\\
+  &\approx& 1 -
 \frac{{\displaystyle \sum_{l=1}^n} R_{ijk}(x_l^\prime)}{{\displaystyle
     \sum_{l=1}^n} R_{ijk}(x_l)} = 1 - \delta_{ijk}
   \label{paf}
+\end{eqnarray}
+
+We see in Equation \ref{paf} $\af{}$ in terms of the distributions of
+physical activity in the baseline and alternative scenarios,
+$P_{ij}(x)$ and $Q_{ij}(x)$, respectively and the relative risks
+$R_{ijk}(x)$. $R_{ijk}(x)$ represents the risk when the individual has
+exposure $x$, physical activity (\mets) relative to the risk with zero
+activity for age class $i$, sex $j$ and disease $k$.
+
+A discretization of the intergals in Equation \ref{paf} results in an
+approximation based on quantiles of physical activity.  The vectors
+$\mathbf{x}$ and $\mathbf{x}^\prime$ represent quantiles for the
+exposure distribution in baseline and alternative scenarios,
+respectively.  In the original ITHIM implementation quintiles were
+used for this approximation which resulted in instability in the
+estimates of $\af{}$.
+
+\paragraph{Risk Functions}
+
+We assign risk based on dose-response curves for each of the diseases
+included in the model.
+
+\begin{equation}
+\RR_{ijk}(x) = \mathrm{e}^{-\alpha_{ijk} \tilde{x}}
 \end{equation}
 
-Here $R_{ijk}(x)$ represents the risk when the individual has exposure
-$x$, physical activity (\mets) relative to the risk with zero activity
-for age class $i$, sex $j$ and disease $k$.
+where $\tilde{x} = \sqrt{x}$.
 
-
-$P_{ij}(x)$ and $Q_{ij}(x)$ denote the population density of
-individuals with exposure $x$, in the baseline and alternative
-scenarios, respectively.  The exposure variable, $x$, is modeled as
-the sum of two independent random variables, namely travel-related and
-non-travel-related physical activity.  $\mathbf{x}$ and
-$\mathbf{x}^\prime$ represent the quantiles for the exposure
-distribution in baseline and alternative scenarios, respectively.
-$\delta_{ijk}$ represents the disease burden in the alternative
-scenario, relative to baseline, for age $i$, sex $j$ and disease $k$.
+The exposure variable, $x$, physical activity is decomposed into two
+parts, travel and non-travel-related physical activity.  These
+components are treated as two independent random variables.
 
 \paragraph{Travel-Related Physical Activity}
 
-The distribution for travel-related exposure is estimated from the
-time spent walking or cycling, i.e., active transport time, which as
-in the original ITHIM model is assigned a \logNormal{} distribution
+STOPPED WRITING HERE. Thu Jun 29 11:52:10 2017
+
+The mean travel-related physical activity is estimated from the
+time spent walking or cycling, i.e., active transport time, which, as
+in the original ITHIM model, is assigned a \logNormal{} distribution
 with constant coefficient of variation across age-sex classes.
+
+
 Travel-related exposure is estimated from active transport time using
 assumptions about how much physical activity is required for cycling
-and walking.  In Figure \ref{travelTime} we show the cumulative
-distributions for walking and cycling time (min/week).
+and walking.  We used $4.5 \mathrm{METs}$ and $6 \mathrm{METs}$ to
+quantify the amount of physical activity exerted while walking or
+cycling as transportation (non-recreational).  Thus, walking 2 hours a
+week is the equivalent of $4.5\times2=9\METhrs$.  In Figure
+\ref{travelTime} we show the cumulative distributions for walking and
+cycling time (min/week).
 
+We encounter difficulties when estimating the cycling times across all
+classes because there is often to small a sample to detect any cycling
+behavior at all. In Figure \ref{travelTime} we display the
+distributions for walking and cycling and see that in many classes the
+mean is almost zero.
 
 \paragraph{Non-Travel-Related Physical Activity}
 
@@ -68,7 +97,7 @@ compute the empirical percentiles in the baseline and alternate
 scenarios, $\mathbf{x}$ and $\mathbf{x}^\prime$ and use Equation \ref{paf}.
 
 
-\paragraph{Estimation of Disease Burden (Alternative Implementation)}
+\paragraph{Estimation of Disease Burden}
 
 ${B_0}_{ijk}$ is the overall burden at baseline for age class $i$, sex
 $j$ and disease $k$.  We use $\delta_{ijk}$ to scale this burden and
@@ -83,17 +112,13 @@ B_{ijk} = \delta_{ijk}{B_0}_{ijk}\label{burden2}
   \rho_k = 1-\frac{\displaystyle \sum_{i,j} {B}_{ijk}} {\displaystyle \sum_{i,j}  {B_0}_{ijk}}
 \end{equation}
 
+\paragraph{Nuisance Parameters}
 
-\paragraph{Risk Functions}
+We need to addres $\gamma_{\textrm{AT}}$ and $\gamma_{\textrm{NT}}$,
+the coefficients of variation for the active transport time
+distributions and the non-travel physical activity distributions.
+Note that $\gamma$ is independent of sex and age ($i$ and $j$).
 
-We assign risk based on dose-response curves for each of the diseases
-included in the model.
-
-\begin{equation}
-\RR_{ijk}(x) = \mathrm{e}^{-\alpha_{ijk} \tilde{x}}
-\end{equation}
-
-where $\tilde{x} = \sqrt{x}$.
 
 %% \paragraph{Nationwide Health Benefits to Active Transport}
 
@@ -151,3 +176,12 @@ where $\tilde{x} = \sqrt{x}$.
 %% \begin{equation}
 %%   \rho = 1-\frac{\displaystyle \sum_{k} \displaystyle \sum_{j} \displaystyle \sum_{i}  B_{ijk}}{\displaystyle \sum_{k} \displaystyle \sum_{j} \displaystyle \sum_{i}  {B_0}_{ijk}}
 %% \end{equation}
+% $\delta_{ijk}$ represents the disease burden in the
+% alternative scenario, relative to baseline, for age $i$, sex $j$ and
+% disease $k$.
+
+% \begin{equation}\label{delta}
+%   \delta_{ijk} = \frac{{\displaystyle \sum_{l=1}^n} R_{ijk}(x_l^\prime)}{{\displaystyle
+%     \sum_{l=1}^n} R_{ijk}(x_l)}
+% \end{equation}
+
