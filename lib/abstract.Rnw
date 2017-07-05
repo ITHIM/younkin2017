@@ -1,24 +1,20 @@
 % !Rnw root = ../ITHIM-manuscript.Rnw
 % !TeX root = ../ITHIM-manuscript.Rnw
-\emph{
-  Comparative risk assessments to quantify the health potential
-of active transportation, e.g., walking and cycling, have been
-performed in the United States on a limited basis. Current
-methodologies, which rely on extensive data collection and user
-expertise, have estimated health benefits for select metropolitan
-areas under a few alternative scenarios. These analyses have largely
-been conducted using the Integrated Transport Health Impacts Model
-(ITHIM) which was developed in the UK and has been adapted for use in
-the US, primarily California. Here we present an implementation of the
-active transportation component of ITHIM to model the health impacts
-of modified active transportation levels. Using the newly developed
-software package \package{} written in R, along with publicly
-available national datasets, we quantify the change in disability
-adjusted life years over a wide range of scenarios.  The R package
-implemention of ITHIM's physical activity component provides a robust
-environment for exploring the relationship between active
-transportation and positive health outcomes.  A web-based
+
+Comparative risk assessments to quantify the health potential of
+active transportation, e.g., walking and cycling, have been performed
+in the United States on a limited basis. Current methodologies, which
+rely on extensive data collection and user expertise, have estimated
+health benefits for select metropolitan areas under a few alternative
+scenarios. These analyses have largely been conducted using the
+Integrated Transport Health Impacts Model (ITHIM) which was developed
+in the UK and has been adapted for use in the US, primarily
+California. Here we present an implementation of the active
+transportation component of ITHIM to model the health impacts of
+modified active transportation levels.
+  
+The R package implemention of ITHIM's physical activity component
+provides a robust environment for exploring the relationship between
+active transportation and positive health outcomes.  A web-based
 user-interface is available for users who want a first estimate for
-the impact active transportation has on their
-state/region.
-}
+the impact active transportation has on their state/region.

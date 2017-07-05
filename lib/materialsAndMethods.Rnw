@@ -25,20 +25,23 @@ data.
   \label{paf}
 \end{eqnarray}
 
-We see in Equation \ref{paf} $\af{}$ in terms of the distributions of
-physical activity in the baseline and alternative scenarios,
-$P_{ij}(x)$ and $Q_{ij}(x)$, respectively and the relative risks
-$R_{ijk}(x)$. $R_{ijk}(x)$ represents the risk when the individual has
-exposure $x$, physical activity (\mets) relative to the risk with zero
-activity for age class $i$, sex $j$ and disease $k$.
+We see in Equation \ref{paf} the population attributable fraction
+given in terms of the distribution of physical activity in the
+baseline and alternative scenarios, $P_{ij}(x)$ and $Q_{ij}(x)$,
+respectively, and the risks, $R_{ijk}(x)$, given physical activity $x$
+(\mets) relative to having zero physical activity.  We use subscripts
+$i$, $j$ and $k$ to denote age class, sex and disease.
 
-A discretization of the intergals in Equation \ref{paf} results in an
-approximation based on quantiles of physical activity.  The vectors
-$\mathbf{x}$ and $\mathbf{x}^\prime$ represent quantiles for the
-exposure distribution in baseline and alternative scenarios,
-respectively.  In the original ITHIM implementation quintiles were
-used for this approximation which resulted in instability in the
-estimates of $\af{}$.
+A numerical approximation to the integrals in Equation \ref{paf} can
+be expressed in terms of the quantiles of the distributions of
+physical activity levels.
+
+The vectors $\mathbf{x}$ and $\mathbf{x}^\prime$ represent quantiles
+for the exposure distribution in baseline and alternative scenarios,
+respectively.  With this implemntation in R we can now use any number
+of quantiles.  Originally five quantiles were used for this
+approximation, resulting in instability in the estimates of $\af{}$.
+For this paper, and by defaut, 99 percentiles are used.
 
 \paragraph{Risk Functions}
 

@@ -50,7 +50,7 @@ Jonathan Patz\textsuperscript{1, 2}
 \item Sensitivity Analysis/Value of Information
 \item
 \ei
-
+\clearpage
 \section*{Abstract}
 \Sexpr{knit_child('lib/abstract.Rnw')}
 
