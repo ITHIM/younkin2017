@@ -46,7 +46,7 @@ For this paper, and by defaut, 99 percentiles are used.
 \paragraph{Risk Functions}
 
 We assign risk based on dose-response curves for each of the diseases
-included in the model.
+included in the model. \cite{woodcock2009, monninkhof2007, harriss2009, hamer2009}
 
 \begin{equation}
 \RR_{ijk}(x) = \mathrm{e}^{-\alpha_{ijk} \tilde{x}}
