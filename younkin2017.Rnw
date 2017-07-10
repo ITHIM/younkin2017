@@ -38,12 +38,12 @@ Jonathan Patz\textsuperscript{1, 2}
 \section*{Outline}
 \bi
 \item Abstract and Introduction
-  \bi 
+  \bi
   \item History of ITHIM
-    \bi 
+    \bi
     \item Origin in UK
     \item Application in US
-      \bi 
+      \bi
       \item Bay Area
       \item Nashville
       \ei
@@ -52,7 +52,7 @@ Jonathan Patz\textsuperscript{1, 2}
     \bi
     \item Expanding the application of ITHIM for US beyond the most dedicated metros - using national datasets
     \item Improving the performance and documentation of the model by moving to R
-    \item Mirroring improvements made in the UK with Analytica 
+    \item Mirroring improvements made in the UK with Analytica
     \item Easing the connections of ITHIM to existing scenario planning tools
     \ei
   \item Purpose
@@ -91,6 +91,10 @@ Jonathan Patz\textsuperscript{1, 2}
 
 \subsection*{Value of Information}
 \Sexpr{knit_child('lib/valueOfInformation.Rnw')}
+
+\section*{Materials and Methods (New Model)}
+\Sexpr{knit_child('lib/materialsAndMethods2.Rnw')}
+
 
 \section*{Results}
 \Sexpr{knit_child('lib/results.Rnw')}
