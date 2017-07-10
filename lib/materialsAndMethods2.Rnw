@@ -2,12 +2,12 @@
 % !TeX root = ../ITHIM-manuscript.Rnw
 
 
-Let $x$ be the travel activity in \METhrs{}.  We compute it by
+Let $X$ be the travel activity in \METhrs{}.  We compute it by
 weighting the total active travel time (walking and cycling) by
 $\alpha_{\textrm{AT}}$, the average workload of active travel in METs.
 
 \begin{equation}
-x = \alpha_{\textrm{AT}}(T_w + T_c)
+X = \alpha_{\textrm{AT}}(T_w + T_c)
 \end{equation}
 
 To esimate $\alpha_{\textrm{AT}}$ we use an estimate for the
@@ -15,49 +15,96 @@ proportion of active travel time achieved by walking, $\hat{p_w}$ with
 $\alpha_w$ and $\alpha_c$ fixed estimates of the amount of activity
 required for walking and cycling, respectively.
 
-\begin{eqnarray}
-\alpha_{\textrm{AT}} &=& \frac{T_w}{T_w+T_c}\alpha_w+\frac{T_c}{T_w+T_c}\alpha_{c}\\
-\hat{\alpha_{\textrm{AT}}} &=& \hat{p_w}\alpha_w  + (1-\hat{p_w})\alpha_c
-\end{eqnarray}
+\begin{equation}
+%\alpha_{\textrm{AT}} &=& \frac{T_w}{T_w+T_c}\alpha_w+\frac{T_c}{T_w+T_c}\alpha_{c}\\
+\hat{\alpha}_{\textrm{AT}} = \hat{p}_w\alpha_w  + (1-\hat{p}_w)\alpha_c
+\end{equation}
 
-<<mandm21, echo = TRUE, eval = TRUE, results = "show", warning = FALSE, message = FALSE, fig.height = 3>>=
+
+\begin{equation}
+%\alpha_{\textrm{AT}} &=& \frac{T_w}{T_w+T_c}\alpha_w+\frac{T_c}{T_w+T_c}\alpha_{c}\\
+\hat{p}_{w} = \frac{t_w}{t_w+t_c}
+\end{equation}
+
+<<mandm21, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
 n.ind <- NHTS.df  %>% filter(!(location %in% c("-1","XXXX"))) %>% summarise(n_distinct(id)) %>% as.numeric()
 n.AT <- NHTS.df %>% filter(!(location %in% c("-1","XXXX"))) %>% group_by(id, mode) %>% summarise(durationTotal = sum(duration)) %>% ungroup() %>% filter(mode %in% c("walk","cycle")) %>% filter(durationTotal > 0) %>% summarise(n_distinct(id)) %>% as.numeric()
 1 - n.AT/n.ind
 @
 
-Assume $x$, travel activity, is distributed as a mixture of a
-point-mass at zero and log-normal when x is not zero.  We refer to the
-class of people with nonzero travel activity as active travelers.  The
-proportion of active travelers in all US MSAs is \Sexpr{n.AT/n.ind}.
+<<mandm222, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
+n.ind <- NHTS.df  %>% filter(location == 6442 ) %>% summarise(n_distinct(id)) %>% as.numeric()
+n.AT <- NHTS.df %>% filter(location == 6442 ) %>% group_by(id, mode) %>% summarise(durationTotal = sum(duration)) %>% ungroup() %>% filter(mode %in% c("walk","cycle")) %>% filter(durationTotal > 0) %>% summarise(n_distinct(id)) %>% as.numeric()
+p.AT.portland <- n.AT/n.ind
+@
 
-\paragraph{Active Travelers}
+Assume there exist two distinct subpopulations, active and inactive
+travelers.  Inactive travelers are defined as individuals who never
+use active transportation, $X=0$.  We assume that the distibution of
+travel activity among active travelers is log-normal.  The proportion
+of active travelers in all US MSAs is \Sexpr{n.AT/n.ind}.
+
+\subsection*{Active Travelers}
+
 
 Among active travelers we see a log-normal distribution.
 
+\begin{figure}
 <<mandm22, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
+alpha.AT <- 4.5
 AT.id.vec <- NHTS.df %>% filter(!(location %in% c("-1","XXXX"))) %>% group_by(id, mode) %>% summarise(durationTotal = sum(duration)) %>% ungroup() %>% filter(mode %in% c("walk","cycle")) %>% filter(durationTotal > 0) %>% select(id) %>% unlist()
-D <- NHTS.df %>% filter(id %in% AT.id.vec) %>% group_by(id) %>% summarise(totalDuration = log10(sum(duration)))
+D <- NHTS.df %>% filter(id %in% AT.id.vec) %>% group_by(id) %>% summarise(totalDuration = alpha.AT*sum(duration)*7/60)
 summaryStats <- D %>% summarise(mean = mean(totalDuration), sd=sd(totalDuration))
-ggplot(D,aes(totalDuration)) + geom_histogram(aes(y=..density..), bins = 25, alpha = 0.4 ) + geom_line(aes(y = ..density.., colour = 'Empirical'), stat = 'density') + stat_function(fun = dnorm, args = list(mean = summaryStats$mean, sd = summaryStats$sd), aes(colour = 'Fitted Log-Normal')) + theme_bw()
-
+ggplot(D,aes(totalDuration)) + geom_histogram(aes(y=..density..), bins = 25, alpha = 0.4 ) + geom_line(aes(y = ..density.., colour = 'Empirical'), stat = 'density') + 
+    stat_function(fun = dlnorm,
+                  args = list(meanlog = with(summaryStats,log(mean/sqrt(1+sd^2/mean^2))),
+                              sdlog = with(summaryStats,sqrt(log(1+sd^2/mean^2)))),
+                  aes(colour = 'Fitted Log-Normal')) + theme_bw() + xlab("Travel Activity Met-hrs./week")
 @
+\caption{All MSA}
+\end{figure}
 
+\begin{figure}
+<<mandm223, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
+AT.id.vec <- NHTS.df %>% filter(location == 6442 ) %>% group_by(id, mode) %>% summarise(durationTotal = sum(duration)) %>% ungroup() %>% filter(mode %in% c("walk","cycle")) %>% filter(durationTotal > 0) %>% select(id) %>% unlist()
+D <- NHTS.df %>% filter(id %in% AT.id.vec) %>% group_by(id) %>% summarise(totalDuration = alpha.AT*sum(duration)*7/60)
+summaryStats <- D %>% summarise(mean = mean(totalDuration), sd=sd(totalDuration))
+ggplot(D,aes(totalDuration)) + geom_histogram(aes(y=..density..), bins = 25, alpha = 0.4 ) + geom_line(aes(y = ..density.., colour = 'Empirical'), stat = 'density') + 
+    stat_function(fun = dlnorm,
+                  args = list(meanlog = with(summaryStats,log(mean/sqrt(1+sd^2/mean^2))),
+                              sdlog = with(summaryStats,sqrt(log(1+sd^2/mean^2)))),
+                  aes(colour = 'Fitted Log-Normal')) + theme_bw() + xlab("Travel Activity Met-hrs./week")
+@
+\caption{Portland MSA}
+\end{figure}
+
+
+
+
+<<mandm2223, echo = FALSE, eval = TRUE, results = "show", warning = FALSE, message = FALSE, fig.height = 3>>=
+D <- NHTS.df %>% filter(id %in% AT.id.vec) %>% group_by(id, sex, age) %>% summarise(totalDuration = alpha.AT*sum(duration)*7/60) %>% ungroup() %>% group_by(age,sex) %>% summarise(mean = mean(totalDuration), sd=sd(totalDuration))
+D
+@ 
+
+\begin{figure}
 <<mandm23, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
+
 t.vec <- c()
-for( i in 1:1e4){
-    if( runif(1) < 0.84 ){
+for( i in 1:1e3){
+    if( runif(1) > p.AT.portland ){
         t <- 0
         }else{
-            t <- 10^rnorm(1,mean = 1.8,sd = 0.37)
+            t <- exp(rnorm(1,mean = summaryStats$mean,sd = summaryStats$sd))
             }
     t.vec <- c(t.vec,t)
     }
 
 quantiles <- quantile(t.vec, prob = seq(1,99)/100)
 D <- data.frame(quantiles = quantiles, prob = 1:99/100)
-ggplot(D, aes(x=quantiles, y = prob)) + geom_line(aes(x=quantiles,y=prob)) + ylim(c(0.80,1)) + theme_bw() + xlab("Travel Activity (MET-hrs./week)")
+ggplot(D, aes(x=quantiles, y = prob)) + geom_line(aes(x=quantiles,y=prob)) + ylim(c(1-p.AT.portland,1)) + theme_bw() + xlab("Travel Activity (MET-hrs./week)") + ylab("Cumulative Distribution")
 @
+\caption{Portland MSA}
+\end{figure}
 
 % The health impacts that result from an increase) in active
 % transportation in the population can be quantified by the population
