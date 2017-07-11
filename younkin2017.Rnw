@@ -13,6 +13,7 @@ library("devtools")
 install_github("ITHIM/ITHIM", ref="sam")
 #install("~/ITHIM/")
 library("ITHIM")
+NHTS.df <- readRDS(file = "~/GHI/R/data/NHTS.df.rds")
 example("ITHIM")
 @
 \begin{center}
@@ -91,10 +92,6 @@ Jonathan Patz\textsuperscript{1, 2}
 
 \subsection*{Value of Information}
 \Sexpr{knit_child('lib/valueOfInformation.Rnw')}
-
-\section*{Materials and Methods (New Model)}
-\Sexpr{knit_child('lib/materialsAndMethods2.Rnw')}
-
 
 \section*{Results}
 \Sexpr{knit_child('lib/results.Rnw')}

@@ -39,7 +39,6 @@ p + geom_line(aes(x=muNonTravel, y = rho*100, colour = disease)) + geom_vline(xi
 
 \begin{figure}\label{portland6}
 <<portland6, echo = FALSE, eval = TRUE, warning = FALSE, message = FALSE, fig.height = 3>>=
-NHTS.df <- readRDS(file = "~/GHI/R/data/NHTS.df.rds")
 msaID.portland <- "6442"
 p <- NHTS.df %>% filter(location == msaID.portland) %>% group_by(age,sex) %>% summarize(n.individuals = n_distinct(id)) %>% as.data.frame() %>% ggplot(.,aes(x=age,y=n.individuals, fill = sex))
 p + geom_bar(stat = "identity", position = "dodge") + theme_bw()
