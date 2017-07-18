@@ -59,32 +59,31 @@ The exposure variable, $x$, physical activity is decomposed into two
 parts, travel and non-travel-related physical activity.  These
 components are treated as two independent random variables.
 
-\paragraph{Travel-Related Physical Activity (Original Method)}
+% \paragraph{Travel-Related Physical Activity (Original Method)}
 
 
-The mean travel-related physical activity is estimated from the
-time spent walking or cycling, i.e., active transport time, which, as
-in the original ITHIM model, is assigned a \logNormal{} distribution
-with constant coefficient of variation across age-sex classes.
+% The mean travel-related physical activity is estimated from the
+% time spent walking or cycling, i.e., active transport time, which, as
+% in the original ITHIM model, is assigned a \logNormal{} distribution
+% with constant coefficient of variation across age-sex classes.
 
 
-Travel-related exposure is estimated from active transport time using
-assumptions about how much physical activity is required for cycling
-and walking.  We used $4.5 \mathrm{METs}$ and $6 \mathrm{METs}$ to
-quantify the amount of physical activity exerted while walking or
-cycling as transportation (non-recreational).  Thus, walking 2 hours a
-week is the equivalent of $4.5\times2=9\METhrs$.  In Figure
-\ref{travelTime} we show the cumulative distributions for walking and
-cycling time (min/week).
+% Travel-related exposure is estimated from active transport time using
+% assumptions about how much physical activity is required for cycling
+% and walking.  We used $4.5 \mathrm{METs}$ and $6 \mathrm{METs}$ to
+% quantify the amount of physical activity exerted while walking or
+% cycling as transportation (non-recreational).  Thus, walking 2 hours a
+% week is the equivalent of $4.5\times2=9\METhrs$.  In Figure
+% \ref{travelTime} we show the cumulative distributions for walking and
+% cycling time (min/week).
 
-We encounter difficulties when estimating the cycling times across all
-classes because there is often to small a sample to detect any cycling
-behavior at all. In Figure \ref{travelTime} we display the
-distributions for walking and cycling and see that in many classes the
-mean is almost zero.
+% We encounter difficulties when estimating the cycling times across all
+% classes because there is often to small a sample to detect any cycling
+% behavior at all. In Figure \ref{travelTime} we display the
+% distributions for walking and cycling and see that in many classes the
+% mean is almost zero.
 
-
-\paragraph{Travel-Related Physical Activity (Alternative Method)}
+\paragraph{Travel-Related Physical Activity}
 
 Let $X$ be the travel activity in \METhrs{}.  We compute it by
 weighting the total active travel time (walking and cycling) by
@@ -93,6 +92,31 @@ $\alpha_{\textrm{AT}}$, the average workload of active travel in METs.
 \begin{equation}
 X = \alpha_{\textrm{AT}}(T_w + T_c)
 \end{equation}
+
+
+\begin{figure}
+<<mandm21, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
+n.ind <- NHTS.df  %>% filter(!(location %in% c("-1","XXXX"))) %>% group_by(sex,age) %>% summarise(n.ind = n_distinct(id))
+
+n.AT <- NHTS.df %>% filter(!(location %in% c("-1","XXXX"))) %>% group_by(sex,age,id, mode) %>% summarise(durationTotal = sum(duration)) %>% ungroup() %>% group_by(sex,age) %>% filter(mode %in% c("walk","cycle")) %>% filter(durationTotal > 0) %>% summarise(n.AT = n_distinct(id))
+
+D <- inner_join(n.ind, n.AT, by = c("sex","age")) %>% mutate(p0 = 1-n.AT/n.ind)
+ggplot(D, aes(x=age,y=p0, fill = sex)) + geom_bar(stat = "identity", position = "dodge") + theme_bw() + ylab("Proportion of Inactive Travelers") + xlab("") + coord_cartesian(ylim = c(0.5, 1))
+@
+\caption{The proportion of inactive travelers in the combined U.S. metropolitan area.}
+\end{figure}
+
+\begin{figure}
+<<mandm222, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
+n.ind <- NHTS.df  %>% filter(location == 6442) %>% group_by(sex,age) %>% summarise(n.ind = n_distinct(id))
+
+n.AT <- NHTS.df %>% filter(location == 6442) %>% group_by(sex,age,id, mode) %>% summarise(durationTotal = sum(duration)) %>% ungroup() %>% group_by(sex,age) %>% filter(mode %in% c("walk","cycle")) %>% filter(durationTotal > 0) %>% summarise(n.AT = n_distinct(id))
+
+D <- inner_join(n.ind, n.AT, by = c("sex","age")) %>% mutate(p0 = 1-n.AT/n.ind)
+ggplot(D, aes(x=age,y=p0, fill = sex)) + geom_bar(stat = "identity", position = "dodge") + theme_bw()+ ylab("Proportion of Inactive Travelers") + xlab("") + coord_cartesian(ylim = c(0.5, 1))
+@
+\caption{The proportion of inactive travelers in the Portland metropolitan area.}
+\end{figure}
 
 To esimate $\alpha_{\textrm{AT}}$ we use an estimate for the
 proportion of active travel time achieved by walking, $\hat{p_w}$ with
@@ -109,35 +133,13 @@ required for walking and cycling, respectively.
 \hat{p}_{w} = \frac{t_w}{t_w+t_c}
 \end{equation}
 
-\begin{figure}
-<<mandm21, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
-n.ind <- NHTS.df  %>% filter(!(location %in% c("-1","XXXX"))) %>% group_by(sex,age) %>% summarise(n.ind = n_distinct(id))
-
-n.AT <- NHTS.df %>% filter(!(location %in% c("-1","XXXX"))) %>% group_by(sex,age,id, mode) %>% summarise(durationTotal = sum(duration)) %>% ungroup() %>% group_by(sex,age) %>% filter(mode %in% c("walk","cycle")) %>% filter(durationTotal > 0) %>% summarise(n.AT = n_distinct(id))
-
-D <- inner_join(n.ind, n.AT, by = c("sex","age")) %>% mutate(p0 = 1-n.AT/n.ind)
-ggplot(D, aes(x=age,y=p0, fill = sex)) + geom_bar(stat = "identity", position = "dodge") + theme_bw() + ylab("Proportion of Inactive Travelers") + xlab("") + coord_cartesian(ylim = c(0.5, 1))
-@
-\caption{The proportion of inactive travelers in the combined U.S. metropolitan area.}
-\end{figure}
-\begin{figure}
-<<mandm222, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
-n.ind <- NHTS.df  %>% filter(location == 6442) %>% group_by(sex,age) %>% summarise(n.ind = n_distinct(id))
-
-n.AT <- NHTS.df %>% filter(location == 6442) %>% group_by(sex,age,id, mode) %>% summarise(durationTotal = sum(duration)) %>% ungroup() %>% group_by(sex,age) %>% filter(mode %in% c("walk","cycle")) %>% filter(durationTotal > 0) %>% summarise(n.AT = n_distinct(id))
-
-D <- inner_join(n.ind, n.AT, by = c("sex","age")) %>% mutate(p0 = 1-n.AT/n.ind)
-ggplot(D, aes(x=age,y=p0, fill = sex)) + geom_bar(stat = "identity", position = "dodge") + theme_bw()+ ylab("Proportion of Inactive Travelers") + xlab("") + coord_cartesian(ylim = c(0.5, 1))
-@
-\caption{The proportion of inactive travelers in the Portland metropolitan area.}
-\end{figure}
 Assume there exist two distinct subpopulations, active and inactive
 travelers.  Inactive travelers are defined as individuals who never
 use active transportation, $X=0$.  We assume that the distibution of
 travel activity among active travelers is log-normal.  The proportion
 of active travelers in all US MSAs is ?
 
-\subsection*{Active Travelers}
+\paragraph{Active Travelers}
 
 Among active travelers we see a log-normal distribution.
 
@@ -166,9 +168,6 @@ ggplot(D,aes(totalDuration)) + geom_histogram(aes(y=..density..), bins = 30, alp
   that within age and sex class, and among active travelers, travel
   activity has a log-normal distribution.}
 \end{figure}
-
-
-
 
 \begin{figure}
 <<mandm223, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
@@ -220,7 +219,8 @@ quantiles <- quantile(t.vec, prob = prob)
 D <- data.frame(quantiles = quantiles, prob = prob)
 ggplot(D, aes(x=quantiles, y = prob)) + geom_point(aes(x=quantiles,y=prob)) + geom_line(aes(x=quantiles,y=prob)) + coord_cartesian(ylim = c(1-p.AT.portland,1), xlim = c(0,200)) + theme_bw() + xlab("Travel Activity (MET-hrs./week)") + ylab("Cumulative Distribution")
 @
-\caption{Portland MSA}
+\caption{The cumulative distribution function for men between the age
+  of 45 and 59 living in the Portland metropolitan area.}
 \end{figure}
 
 \paragraph{Non-Travel-Related Physical Activity}
@@ -261,73 +261,3 @@ We need to addres $\gamma_{\textrm{AT}}$ and $\gamma_{\textrm{NT}}$,
 the coefficients of variation for the active transport time
 distributions and the non-travel physical activity distributions.
 Note that $\gamma$ is independent of sex and age ($i$ and $j$).
-
-
-
-
-
-%% \paragraph{Nationwide Health Benefits to Active Transport}
-
-%% For the purposes of this implementation we limited our analyses to
-%% metropolitan regions of the United States. To idenfity urban
-%% populations we used the National Center for Health Statistics 2013
-%% Urban-Rural Classification Scheme for Counties \cite{ingram2014}. We
-%% eliminated counties in the US with the classifcation of
-%% `nonmetropolitan' (noncore or micropolitan). We used this and similar
-%% classification schemes as well as county and state identifiers in
-%% other datsets (NHTS, ATUS, CDC WONDER) to ensure consistency in our
-%% estimates for input parameters.
-
-%% To test the new implementation of ITHIM's active transportation
-%% component, we used the US national metro population estimates for
-%% active travel time (walking and cycling) as the baseline. We obtained
-%% active travel time input parameters for alternate scenarios using
-%% states with large sample sizes. From these examples we were able to
-%% approximate low and high active travel scenarios. Finally, we applied
-%% these active travel times to the US metro population to perform the
-%% comparative risk assessment against the baseline US numbers. We then
-%% examined the sensitivity of disease burden estimates to input
-%% parameters including the active travel time and non-travel activity.
-
-% \begin{figure}[t]
-%   \centerline{\includegraphics[width=\textwidth]{./figures/fig1}}
-%     \caption{}\label{fig1}
-% \end{figure}
-
-% \begin{figure}[t]
-%   \centerline{\includegraphics[width=\textwidth]{./figures/fig2.pdf}}
-%     \caption{}\label{fig2}
-% \end{figure}
-
-% \begin{sidewaysfigure}[t]
-%   \centerline{\includegraphics[width=\textwidth]{./figures/fig3.pdf}}
-%   \caption{Estimates for disease burden nationwide in terms of thousands of
-%     DALYs for each of the six diseases included in the model.
-%   }\label{fig3}
-% \end{sidewaysfigure}
-%% \paragraph{Estimation of Disease Burden (Current Implementation)}
-
-%% The disease burden is found for each of the quantiles, $l=1,\ldots n$, using equation
-%% \ref{burden} where ${B_0}_{ijk}$ is the overall burden for the
-%% baseline.  The overall burden is then computed as the sum across
-%% quantiles, $B_{ijk}=\sum_{l=1}^n B_{ijkl}$.
-
-%% \begin{equation}
-%% B_{ijk}(x_l) = \delta_{ijk} {B_0}_{ijk}\frac{\RR(x_l)_{ijk}}{\sum_{l=1}^n \RR(x_l)_{ijk}}\label{burden}
-%% \end{equation}
-%% \begin{equation}
-%%   B_k = \frac{\displaystyle \sum_{i=1}^8 \displaystyle \sum_{j=1}^2  B_{ijk}}{\displaystyle \sum_{i=1}^8 \displaystyle \sum_{j=1}^2  {B_0}_{ijk}}
-%% \end{equation}
-
-%% \begin{equation}
-%%   \rho = 1-\frac{\displaystyle \sum_{k} \displaystyle \sum_{j} \displaystyle \sum_{i}  B_{ijk}}{\displaystyle \sum_{k} \displaystyle \sum_{j} \displaystyle \sum_{i}  {B_0}_{ijk}}
-%% \end{equation}
-% $\delta_{ijk}$ represents the disease burden in the
-% alternative scenario, relative to baseline, for age $i$, sex $j$ and
-% disease $k$.
-
-% \begin{equation}\label{delta}
-%   \delta_{ijk} = \frac{{\displaystyle \sum_{l=1}^n} R_{ijk}(x_l^\prime)}{{\displaystyle
-%     \sum_{l=1}^n} R_{ijk}(x_l)}
-% \end{equation}
-
