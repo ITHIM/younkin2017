@@ -114,21 +114,30 @@ D <- NHTS.df %>% filter(id %in% AT.id.vec) %>% group_by(id, sex, age) %>% summar
 \begin{figure}
 <<mandm23, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
 
-getQuantilesMixture <- function(p.AT, mean, sd){
+getQuantilesMixture <- function(p.AT, mean.AT, sd.AT, mean.NT, sd.NT){
 
-meanlog <- log(mean/sqrt(1+sd^2/mean^2))
-sdlog <- sqrt(log(1+sd^2/mean^2))
+meanlog.AT <- log(mean.AT/sqrt(1+sd.AT^2/mean.AT^2))
+sdlog.AT <- sqrt(log(1+sd.AT^2/mean.AT^2))
 
+meanlog.NT <- log(mean.NT/sqrt(1+sd.NT^2/mean.NT^2))
+sdlog.NT <- sqrt(log(1+sd.NT^2/mean.NT^2))
+
+at.vec <- c()
+nt.vec <- c()
 t.vec <- c()
 
 for( i in 1:1e4){
     if( runif(1) > p.AT ){
-        t <- 0
+        at <- 0
         }else{
-            t <- rlnorm(1,meanlog = meanlog, sdlog = sdlog)
+            at <- rlnorm(1,meanlog = meanlog.AT, sdlog = sdlog.AT)
             }
-    t.vec <- c(t.vec,t)
-    }
+    at.vec <- c(at.vec,at)
+    nt <- rlnorm(1,meanlog = meanlog.NT, sdlog = sdlog.NT)
+    nt.vec <- c(nt.vec,nt)
+}
+
+t.vec <- at.vec + nt.vec
 
 n <- 1e3
 prob <- seq(0,1,length.out=n)
@@ -138,16 +147,20 @@ return(D)
 
 }
 
-D <- getQuantilesMixture(p.AT = p.AT.portland, mean = summaryStats$mean, sd = summaryStats$sd)
+D.baseline <- getQuantilesMixture(p.AT = p.AT.portland, mean.AT = summaryStats$mean, sd.AT = summaryStats$sd, mean.NT = 5, sd.NT = 5)
+D.scenario <- getQuantilesMixture(p.AT = 1, mean.AT = summaryStats$mean, sd.AT = summaryStats$sd, mean.NT = 5, sd.NT = 5)
 
-ggplot(D, aes(x=quantiles, y = prob)) + geom_point(aes(x=quantiles,y=prob)) + geom_line(aes(x=quantiles,y=prob)) + coord_cartesian(ylim = c(1-p.AT.portland,1), xlim = c(0,200)) + theme_bw() + xlab("Travel Activity (MET-hrs./week)") + ylab("Cumulative Distribution")
+D <- rbind(data.frame(D.baseline,vision = "baseline"),data.frame(D.scenario,vision = "scenario"))
+
+ggplot(D, aes(x = quantiles, y = prob, colour = vision)) + geom_line(aes(x=quantiles,y=prob)) + coord_cartesian(xlim = c(0,150)) + theme_bw() + xlab("Physical Activity (MET-hrs./week)") + ylab("Cumulative Distribution")
+
 @
 \caption{The cumulative distribution function for men between the age
   of 45 and 59 living in the Portland metropolitan area.}
 \end{figure}
 
 \begin{figure}
-<<portland9, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
+<<portland9, echo = FALSE, eval = FALSE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
 
 computeAF <- function(pAT.baseline, pAT.scenario, mean.baseline, mean.scenario, sd.baseline, sd.scenario, alpha, k){
     D.baseline <- getQuantilesMixture(p.AT = pAT.baseline, mean = mean.baseline, sd = sd.baseline)

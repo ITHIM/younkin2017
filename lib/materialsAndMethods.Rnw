@@ -20,8 +20,8 @@ data.
 \af_{ijk} &=& \frac{\int \! R_{ijk}(x)P_{ij}(x) \, \mathrm{d}x - \int \! R_{ijk}(x)Q_{ij}(x)
   \, \mathrm{d}x}{\int \! R_{ijk}(x)P_{ij}(x) \, \mathrm{d}x}\\
   &\approx& 1 -
-\frac{{\displaystyle \sum_{l=1}^n} R_{ijk}(x_l^\prime)}{{\displaystyle
-    \sum_{l=1}^n} R_{ijk}(x_l)} = 1 - \delta_{ijk}
+\frac{{\displaystyle \sum_{l=1}^n} R_{ijk}(x_{ijl}^\prime)}{{\displaystyle
+    \sum_{l=1}^n} R_{ijk}(x_{ijl})} = 1 - \delta_{ijk}
   \label{paf}
 \end{eqnarray}
 
@@ -29,35 +29,43 @@ We see in Equation \ref{paf} the population attributable fraction
 given in terms of the distribution of physical activity in the
 baseline and alternative scenarios, $P_{ij}(x)$ and $Q_{ij}(x)$,
 respectively, and the risks, $R_{ijk}(x)$, given physical activity $x$
-(\mets) relative to having zero physical activity.  We use subscripts
-$i$, $j$ and $k$ to denote age class, sex and disease.
+(\mets) (relative to having no physical activity).  We use subscripts
+$i$, $j$ and $k$ to denote age class, sex and disease in Equation
+\ref{paf}.  For the sake of clarity we choose to neglect the subscripts
+in the rest of this paper, keeping in mind that the equations are
+specific to a given sex, age-class and disease combination.
 
 A numerical approximation to the integrals in Equation \ref{paf} can
 be expressed in terms of the quantiles of the distributions of
-physical activity levels.
-
-The vectors $\mathbf{x}$ and $\mathbf{x}^\prime$ represent quantiles
-for the exposure distribution in baseline and alternative scenarios,
-respectively.  With this implemntation in R we can now use any number
-of quantiles.  Originally five quantiles were used for this
-approximation, resulting in instability in the estimates of $\af{}$.
-For this paper, and by defaut, 99 percentiles are used.
+physical activity levels.  The vectors $\mathbf{x}$ and
+$\mathbf{x}^\prime$ represent quantiles for the exposure distribution
+in baseline and alternative scenarios, respectively.  With this
+implemntation in R we can now use any number of quantiles.  Originally
+five quantiles were used for this approximation, resulting in
+instability in the estimates of $\af{}$.
 
 \paragraph{Risk Functions}
 
-We assign risk based on dose-response curves for each of the diseases
-included in the model. \cite{woodcock2009, monninkhof2007,
-  harriss2009, hamer2009, jeon2007, hamer2007}
+We estimate relative risk for each of the diseases included in the
+model using dose-response curves of the form
+$\R(x) = \mathrm{e}^{-\alpha \tilde{x}}$, where $\tilde{x} = \sqrt{x}$
+\cite{woodcock2009, monninkhof2007, harriss2009, hamer2009, jeon2007,
+  hamer2007}.
 
-\begin{equation}
-\RR_{ijk}(x) = \mathrm{e}^{-\alpha_{ijk} \tilde{x}}
-\end{equation}
+Values for $\alpha$ may be found in the appendix.
 
-where $\tilde{x} = \sqrt{x}$.
-
-The exposure variable, $x$, physical activity is decomposed into two
-parts, travel and non-travel-related physical activity.  These
-components are treated as two independent random variables.
+% \begin{verbatim}
+% disease,subpop,RR_1MET
+% BreastCancer,F,0.973199069
+% BreastCancer,M,1
+% CVD,,0.93831942
+% Dementia,,0.943149062
+% Depression,15-29,0.955901887
+% Depression,>29,0.977950943
+% Diabetes,,0.94277975
+% Colon Cancer,M,0.960652476
+% Colon Cancer,F,0.97288384
+% \end{verbatim}
 
 <<RR21, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
 foo <- read.csv(file=system.file("dose-response-parameters.csv", package = "ITHIM"))
@@ -69,6 +77,10 @@ getRR <- function(x,alpha,k){
 
 \paragraph{Travel-Related Physical Activity}
 
+The exposure variable, $x$, physical activity is decomposed into two
+parts, travel and non-travel-related physical activity.  These
+components are treated as two independent random variables.
+
 Let $X$ be the travel activity in \METhrs{}.  We compute it by
 weighting the total active travel time (walking and cycling) by
 $\alpha_{\textrm{AT}}$, the average workload of active travel in METs.
@@ -77,8 +89,16 @@ $\alpha_{\textrm{AT}}$, the average workload of active travel in METs.
 X = \alpha_{\textrm{AT}}(T_w + T_c)
 \end{equation}
 
+Sadly, many Americans do not receive any travel-related activity.
+Using data from the National Househild Transportation Survey we
+observe that the majortiy of Americans living in a metropolitan area
+reported no active travel, see Figure \ref{InactiveNational}.  (Note
+that this is an over-estimate of the true proportion of inactive
+travelers.)  Due to the large proportion on inactive travelers we
+model the distribution of travel activity as a mixture of a point-mass
+at zero with a log-normal distribution.
 
-\begin{figure}
+\begin{figure}\label{InactiveNational}
 <<mandm21, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
 n.ind <- NHTS.df  %>% filter(!(location %in% c("-1","XXXX"))) %>% group_by(sex,age) %>% summarise(n.ind = n_distinct(id))
 
@@ -91,26 +111,20 @@ ggplot(D, aes(x=age,y=p0, fill = sex)) + geom_bar(stat = "identity", position = 
 \end{figure}
 
 
-To esimate $\alpha_{\textrm{AT}}$ we use an estimate for the
-proportion of active travel time achieved by walking, $\hat{p_w}$ with
-$\alpha_w$ and $\alpha_c$ fixed estimates of the amount of activity
-required for walking and cycling, respectively.
+% To esimate $\alpha_{\textrm{AT}}$ we use an estimate for the
+% proportion of active travel time achieved by walking, $\hat{p_w}$ with
+% $\alpha_w$ and $\alpha_c$ fixed estimates of the amount of activity
+% required for walking and cycling, respectively.
 
-\begin{equation}
-%\alpha_{\textrm{AT}} &=& \frac{T_w}{T_w+T_c}\alpha_w+\frac{T_c}{T_w+T_c}\alpha_{c}\\
-\hat{\alpha}_{\textrm{AT}} = \hat{p}_w\alpha_w  + (1-\hat{p}_w)\alpha_c
-\end{equation}
+% \begin{equation}
+% %\alpha_{\textrm{AT}} &=& \frac{T_w}{T_w+T_c}\alpha_w+\frac{T_c}{T_w+T_c}\alpha_{c}\\
+% \hat{\alpha}_{\textrm{AT}} = \hat{p}_w\alpha_w  + (1-\hat{p}_w)\alpha_c
+% \end{equation}
 
-\begin{equation}
-%\alpha_{\textrm{AT}} &=& \frac{T_w}{T_w+T_c}\alpha_w+\frac{T_c}{T_w+T_c}\alpha_{c}\\
-\hat{p}_{w} = \frac{t_w}{t_w+t_c}
-\end{equation}
-
-Assume there exist two distinct subpopulations, active and inactive
-travelers.  Inactive travelers are defined as individuals who never
-use active transportation, $X=0$.  We assume that the distibution of
-travel activity among active travelers is log-normal.  The proportion
-of active travelers in all US MSAs is ?
+% \begin{equation}
+% %\alpha_{\textrm{AT}} &=& \frac{T_w}{T_w+T_c}\alpha_w+\frac{T_c}{T_w+T_c}\alpha_{c}\\
+% \hat{p}_{w} = \frac{t_w}{t_w+t_c}
+% \end{equation}
 
 \paragraph{Active Travelers}
 
@@ -175,9 +189,9 @@ B_{ijk} = \delta_{ijk}{B_0}_{ijk}\label{burden2}
   \rho_k = 1-\frac{\displaystyle \sum_{i,j} {B}_{ijk}} {\displaystyle \sum_{i,j}  {B_0}_{ijk}}
 \end{equation}
 
-\paragraph{Nuisance Parameters}
+% \paragraph{Nuisance Parameters}
 
-We need to addres $\gamma_{\textrm{AT}}$ and $\gamma_{\textrm{NT}}$,
-the coefficients of variation for the active transport time
-distributions and the non-travel physical activity distributions.
-Note that $\gamma$ is independent of sex and age ($i$ and $j$).
+% We need to addres $\gamma_{\textrm{AT}}$ and $\gamma_{\textrm{NT}}$,
+% the coefficients of variation for the active transport time
+% distributions and the non-travel physical activity distributions.
+% Note that $\gamma$ is independent of sex and age ($i$ and $j$).
