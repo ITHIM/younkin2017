@@ -90,8 +90,8 @@ Jonathan Patz\textsuperscript{1, 2}
 \subsection*{Portland, Oregon Metropolitan Statistical Area}
 \Sexpr{knit_child('lib/portland.Rnw')}
 
-\subsection*{Value of Information}
-\Sexpr{knit_child('lib/valueOfInformation.Rnw')}
+% \subsection*{Value of Information}
+% \Sexpr{knit_child('lib/valueOfInformation.Rnw')}
 
 \section*{Results}
 \Sexpr{knit_child('lib/results.Rnw')}

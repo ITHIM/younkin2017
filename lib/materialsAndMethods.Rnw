@@ -44,6 +44,99 @@ implemntation in R we can now use any number of quantiles.  Originally
 five quantiles were used for this approximation, resulting in
 instability in the estimates of $\af{}$.
 
+
+\paragraph{Physical Activity}
+
+The exposure variable, $X$, physical activity, is decomposed into two
+parts, travel and non-travel-related physical activity.  These
+components are treated as two independent random variables.
+
+\subparagraph{Travel-Related Physical Activity}
+
+Let $T$ be the travel activity in \METhrs{}.  We compute it by
+weighting the total active travel time (walking and cycling) by
+$\alpha_{\textrm{AT}}$, the average workload of active travel in METs.
+
+\begin{equation}
+T = \alpha_{\textrm{AT}}(T_w + T_c)
+\end{equation}
+
+\subparagraph{Inactive Travelers}
+
+Sadly, many Americans do not receive any travel-related activity.
+Using data from the National Househild Transportation Survey we
+observe that the majortiy of Americans living in a metropolitan area
+reported no active travel, see Figure \ref{InactiveNational}.  (Note
+that this is an over-estimate of the true proportion of inactive
+travelers.)  Due to the large proportion on inactive travelers we
+model the distribution of travel activity as a mixture of a point-mass
+at zero with a log-normal distribution.
+
+\begin{figure}\label{InactiveNational}
+<<mandm21, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
+n.ind <- NHTS.df  %>% filter(!(location %in% c("-1","XXXX"))) %>% group_by(sex,age) %>% summarise(n.ind = n_distinct(id))
+
+n.AT <- NHTS.df %>% filter(!(location %in% c("-1","XXXX"))) %>% group_by(sex,age,id, mode) %>% summarise(durationTotal = sum(duration)) %>% ungroup() %>% group_by(sex,age) %>% filter(mode %in% c("walk","cycle")) %>% filter(durationTotal > 0) %>% summarise(n.AT = n_distinct(id))
+
+D <- inner_join(n.ind, n.AT, by = c("sex","age")) %>% mutate(p0 = 1-n.AT/n.ind)
+ggplot(D, aes(x=age,y=p0, fill = sex)) + geom_bar(stat = "identity", position = "dodge") + theme_bw() + ylab("Proportion of Inactive Travelers") + xlab("") + coord_cartesian(ylim = c(0.5, 1))
+@
+\caption{The proportion of inactive travelers in the combined U.S. metropolitan area.}
+\end{figure}
+
+\subparagraph{Active Travelers}
+
+Among active travelers we assume log-normal distribution of
+travel-related physical activity.  In Figure \ref{activeTravelers} we
+see the distribution of travel activity among American men, age 45-59,
+living in a metropolitan area, and having nonzero travel activity in
+the NHTS data.  Figure \ref{activeTravelers} displays an empirical
+distribution function along with a fitted log-normal distribution.
+
+\begin{figure}
+<<mandm22, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
+alpha.AT <- 4.5
+AT.id.vec <- NHTS.df %>% filter(!(location %in% c("-1","XXXX"))) %>% group_by(sex, age, id, mode) %>% summarise(durationTotal = sum(duration)) %>% ungroup() %>% filter(mode %in% c("walk","cycle")) %>% filter(durationTotal > 0) %>% select(id) %>% unlist()
+D <- NHTS.df %>% filter(id %in% AT.id.vec) %>% group_by(sex, age, id) %>% summarise(totalDuration = alpha.AT*sum(duration)*7/60)
+
+summaryStats <- D %>% summarise(mean = mean(totalDuration), sd=sd(totalDuration))
+
+D <- D %>% filter(age == "45-59" && sex == "M")
+summaryStats <- summaryStats %>% filter(age == "45-59" & sex == "M")
+
+ggplot(D,aes(totalDuration)) + geom_histogram(aes(y=..density..), bins = 30, alpha = 0.2 ) +
+    geom_line(aes(y = ..density.., color = "Empirical"), stat = 'density') +
+    theme_bw() + xlab("Travel Activity Met-hrs./week") + xlim(c(0,240)) +
+    stat_function(aes(color="Fitted"), fun = dlnorm,
+                  args = list(meanlog = with(summaryStats,log(mean/sqrt(1+sd^2/mean^2))),
+                              sdlog = with(summaryStats,sqrt(log(1+sd^2/mean^2)))))
+
+@
+\label{activeTravelers}
+\caption{Histogram of travel activity among male active travelers
+  between the age of 45 and 59 living in a U.S. metropolitan area.
+  Overlayed are both the empirical and fitted densities.  We assume
+  that within age and sex class, and among active travelers, travel
+  activity has a log-normal distribution.}
+\end{figure}
+
+
+\subparagraph{Non-Travel-Related Physical Activity}
+
+Within each age-sex class the non-travel-related exposure is modeled
+with a \logNormal{} distribution.  The age-sex specific mean ratios,
+$r_{ij} = \frac{\mu_{ij}}{\mu_0}$ and the coefficient of variation,
+$\gamma$, are estimated from the American Time Use Survey data
+\cite{ATUS}.
+
+\begin{equation}
+X_{ij}^{\mathrm{non-travel}} \sim \logNormalMath\left(\mu_{ij}, \gamma \mu_{ij}\right)
+\end{equation}
+
+With a simulated distribution for total physical activity in hand we
+compute the empirical percentiles in the baseline and alternate
+scenarios, $\mathbf{x}$ and $\mathbf{x}^\prime$ and use Equation \ref{paf}.
+
 \paragraph{Risk Functions}
 
 We estimate relative risk for each of the diseases included in the
@@ -75,40 +168,23 @@ getRR <- function(x,alpha,k){
 }
 @
 
-\paragraph{Travel-Related Physical Activity}
+\paragraph{Estimation of Disease Burden}
 
-The exposure variable, $x$, physical activity is decomposed into two
-parts, travel and non-travel-related physical activity.  These
-components are treated as two independent random variables.
-
-Let $X$ be the travel activity in \METhrs{}.  We compute it by
-weighting the total active travel time (walking and cycling) by
-$\alpha_{\textrm{AT}}$, the average workload of active travel in METs.
+$B_0$ is the overall burden at baseline.  We use $\delta$ to
+scale this burden and compute the total percent burden reduction by
+summing across age sex and disease.
 
 \begin{equation}
-X = \alpha_{\textrm{AT}}(T_w + T_c)
+B = \delta B_0\label{burden2}
 \end{equation}
 
-Sadly, many Americans do not receive any travel-related activity.
-Using data from the National Househild Transportation Survey we
-observe that the majortiy of Americans living in a metropolitan area
-reported no active travel, see Figure \ref{InactiveNational}.  (Note
-that this is an over-estimate of the true proportion of inactive
-travelers.)  Due to the large proportion on inactive travelers we
-model the distribution of travel activity as a mixture of a point-mass
-at zero with a log-normal distribution.
+For the total proportional change in disease burden, due to disease $k$, we sum
+across sex and age-class as follows.
 
-\begin{figure}\label{InactiveNational}
-<<mandm21, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
-n.ind <- NHTS.df  %>% filter(!(location %in% c("-1","XXXX"))) %>% group_by(sex,age) %>% summarise(n.ind = n_distinct(id))
+\begin{equation}
+  \beta_k = 1-\frac{\displaystyle \sum_{i,j} {B}_{ijk}} {\displaystyle \sum_{i,j}  {B_0}_{ijk}}
+\end{equation}
 
-n.AT <- NHTS.df %>% filter(!(location %in% c("-1","XXXX"))) %>% group_by(sex,age,id, mode) %>% summarise(durationTotal = sum(duration)) %>% ungroup() %>% group_by(sex,age) %>% filter(mode %in% c("walk","cycle")) %>% filter(durationTotal > 0) %>% summarise(n.AT = n_distinct(id))
-
-D <- inner_join(n.ind, n.AT, by = c("sex","age")) %>% mutate(p0 = 1-n.AT/n.ind)
-ggplot(D, aes(x=age,y=p0, fill = sex)) + geom_bar(stat = "identity", position = "dodge") + theme_bw() + ylab("Proportion of Inactive Travelers") + xlab("") + coord_cartesian(ylim = c(0.5, 1))
-@
-\caption{The proportion of inactive travelers in the combined U.S. metropolitan area.}
-\end{figure}
 
 
 % To esimate $\alpha_{\textrm{AT}}$ we use an estimate for the
@@ -125,73 +201,3 @@ ggplot(D, aes(x=age,y=p0, fill = sex)) + geom_bar(stat = "identity", position = 
 % %\alpha_{\textrm{AT}} &=& \frac{T_w}{T_w+T_c}\alpha_w+\frac{T_c}{T_w+T_c}\alpha_{c}\\
 % \hat{p}_{w} = \frac{t_w}{t_w+t_c}
 % \end{equation}
-
-\paragraph{Active Travelers}
-
-Among active travelers we see a log-normal distribution.
-
-\begin{figure}
-<<mandm22, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
-alpha.AT <- 4.5
-AT.id.vec <- NHTS.df %>% filter(!(location %in% c("-1","XXXX"))) %>% group_by(sex, age, id, mode) %>% summarise(durationTotal = sum(duration)) %>% ungroup() %>% filter(mode %in% c("walk","cycle")) %>% filter(durationTotal > 0) %>% select(id) %>% unlist()
-D <- NHTS.df %>% filter(id %in% AT.id.vec) %>% group_by(sex, age, id) %>% summarise(totalDuration = alpha.AT*sum(duration)*7/60)
-
-summaryStats <- D %>% summarise(mean = mean(totalDuration), sd=sd(totalDuration))
-
-D <- D %>% filter(age == "45-59" && sex == "M")
-summaryStats <- summaryStats %>% filter(age == "45-59" & sex == "M")
-
-ggplot(D,aes(totalDuration)) + geom_histogram(aes(y=..density..), bins = 30, alpha = 0.2 ) +
-    geom_line(aes(y = ..density.., color = "Empirical"), stat = 'density') +
-    theme_bw() + xlab("Travel Activity Met-hrs./week") + xlim(c(0,240)) +
-    stat_function(aes(color="Fitted"), fun = dlnorm,
-                  args = list(meanlog = with(summaryStats,log(mean/sqrt(1+sd^2/mean^2))),
-                              sdlog = with(summaryStats,sqrt(log(1+sd^2/mean^2)))))
-
-@
-\caption{Histogram of travel activity among male active travelers
-  between the age of 45 and 59 living in a U.S. metropolitan area.
-  Overlayed are both the empirical and fitted densities.  We assume
-  that within age and sex class, and among active travelers, travel
-  activity has a log-normal distribution.}
-\end{figure}
-
-
-\paragraph{Non-Travel-Related Physical Activity}
-
-Within each age-sex class the non-travel-related exposure is modeled
-with a \logNormal{} distribution.  The age-sex specific mean ratios,
-$r_{ij} = \frac{\mu_{ij}}{\mu_0}$ and the coefficient of variation,
-$\gamma$, are estimated from the American Time Use Survey data
-\cite{ATUS}.
-
-\begin{equation}
-X_{ij}^{\mathrm{non-travel}} \sim \logNormalMath\left(\mu_{ij}, \gamma \mu_{ij}\right)
-\end{equation}
-
-With a simulated distribution for total physical activity in hand we
-compute the empirical percentiles in the baseline and alternate
-scenarios, $\mathbf{x}$ and $\mathbf{x}^\prime$ and use Equation \ref{paf}.
-
-
-\paragraph{Estimation of Disease Burden}
-
-${B_0}_{ijk}$ is the overall burden at baseline for age class $i$, sex
-$j$ and disease $k$.  We use $\delta_{ijk}$ to scale this burden and
-compute the total percent burden reduction by summing across age sex
-and disease.
-
-\begin{equation}
-B_{ijk} = \delta_{ijk}{B_0}_{ijk}\label{burden2}
-\end{equation}
-
-\begin{equation}
-  \rho_k = 1-\frac{\displaystyle \sum_{i,j} {B}_{ijk}} {\displaystyle \sum_{i,j}  {B_0}_{ijk}}
-\end{equation}
-
-% \paragraph{Nuisance Parameters}
-
-% We need to addres $\gamma_{\textrm{AT}}$ and $\gamma_{\textrm{NT}}$,
-% the coefficients of variation for the active transport time
-% distributions and the non-travel physical activity distributions.
-% Note that $\gamma$ is independent of sex and age ($i$ and $j$).

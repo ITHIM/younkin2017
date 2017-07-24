@@ -1,65 +1,14 @@
+To demonstrate the potential health benefits associated with an
+increase in travel activity we target the Portland Metropolitan Area
+and estimate the change in DALYs associated with an increase of the
+proportion of active travelers.
 
-\begin{figure}\label{travelTime}
-<<portland2, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
-p <- ITHIM:::compareDistributions(ITHIM.baseline, ITHIM.scenario, type = "WalkingTime")
-p + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlim(1,1e3) + scale_x_continuous(trans='log10') + xlab("Walking Time (min/week)")
-@
-<<portland3, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
-p <- ITHIM:::compareDistributions(ITHIM.baseline, ITHIM.scenario, type = "CyclingTime")
-p + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlim(1,1e2) + scale_x_continuous(trans='log10') + xlab("Cycling Time (min/week)")
-@
-\caption{Distributions of walking and cycling transport time for
-  baseline and scenario models, stratified by age and sex.  In this
-  example the scenario was created by doubling the overall walking and
-  cycling means.}
-\end{figure}
-
-\begin{figure}\label{portland1}
-<<portland5, echo = FALSE, eval = TRUE, warning = FALSE, message = FALSE, fig.height = 3>>=
-results <- data.frame()
-ITHIM.portland <- ITHIM.baseline
-for( muNonTravel in seq(1,25, length.out = 5)){
-    ITHIM.baseline <- update(ITHIM.baseline, list(muNonTravel = muNonTravel))
-    ITHIM.scenario <- update(ITHIM.scenario, list(muNonTravel = muNonTravel))
-    foo <- ITHIM:::summarizeBurden(ITHIM.baseline, ITHIM.scenario)
-    results <- rbind(results, c(muNonTravel, foo))
-}
-names(results) <- c("muNonTravel",names(foo))
-p <- results %>% gather(.,disease,"rho",2:7) %>% ggplot(., aes(x = muNonTravel, y = rho))
-p + geom_line(aes(x=muNonTravel, y = rho*100, colour = disease)) + geom_vline(xintercept = c(ITHIM.portland@parameters@muNonTravel,c(500,1000)/60), linetype = c(1,2,2)) + xlab("Non-travel Physical Activity (MET-hrs./week)") + ylab("Percent Reduction of Deaths") + theme_bw()
-@
-\caption{The two vertical lines mark the interval for ``medium
-  activity`` defined by the U.S. Office of Disease Prevention and Health
-  Promotion.  Medium activity is 150 minutes to 300 (5 hours) minutes
-  of moderate-intensity activity a week (or 75 to 150 minutes of
-  vigorous-intensity physical activity a week). In scientific terms,
-  this range is approximately equivalent to 500 to 1,000 metabolic
-  equivalent (MET) minutes a week.}
-\end{figure}
-
-
-\begin{figure}\label{portland6}
-<<portland6, echo = FALSE, eval = TRUE, warning = FALSE, message = FALSE, fig.height = 3>>=
-msaID.portland <- "6442"
-p <- NHTS.df %>% filter(location == msaID.portland) %>% group_by(age,sex) %>% summarize(n.individuals = n_distinct(id)) %>% as.data.frame() %>% ggplot(.,aes(x=age,y=n.individuals, fill = sex))
-p + geom_bar(stat = "identity", position = "dodge") + theme_bw()
-@
-\caption{Foo}
-\end{figure}
-
-\begin{figure}\label{portland7}
-<<portland7, echo = FALSE, eval = TRUE, warning = FALSE, message = FALSE, fig.height = 3>>=
-D <- NHTS.df %>% filter(location == msaID.portland) %>% group_by(mode,age,sex) %>% summarise(n.trips = n()) %>% ungroup() %>% complete(age,sex,mode)  %>% arrange(sex,age) %>% filter(!is.na(mode)) %>% as.data.frame()
-p <- ggplot(D, aes(x = age, y = n.trips, fill = mode))
-p + geom_bar(stat = "identity", postion = "dodge") + facet_grid( . ~ sex ) + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1))
-@
-\caption{Foo}
-\end{figure}
+In Figure \ref{portland8} we see that
 
 \begin{figure}\label{portland8}
 <<portland8, echo = FALSE, eval = TRUE, warning = FALSE, message = FALSE, fig.height = 3>>=
-sampleSize <- NHTS.df %>% filter(!(location %in% c("-1","XXXX"))) %>% group_by(sex,age) %>% summarise(n=n_distinct(id))
-tripDuration <- NHTS.df %>% filter(!(location %in% c("-1","XXXX"))) %>% group_by(mode,sex,age) %>% summarise(total=sum(duration))
+sampleSize <- NHTS.df %>% filter(location == 6442) %>% group_by(sex,age) %>% summarise(n=n_distinct(id))
+tripDuration <- NHTS.df %>% filter(location == 6442) %>% group_by(mode,sex,age) %>% summarise(total=sum(duration))
 foo <- right_join(sampleSize,tripDuration, by = c("sex","age")) %>% ungroup() %>% mutate(mean = total/n*7) %>% select(mode,sex,age,mean) %>% complete(mode,sex,age)
 meanByMode <- split(foo,foo$mode)
 
@@ -67,6 +16,8 @@ D <- melt(meanByMode) %>% select(mode,sex,age,value)
 p <- ggplot(D, aes(x = age, y = value, fill = mode))
 p + geom_bar(stat = "identity", postion = "dodge") + facet_grid( . ~ sex ) + ylab("Mean Weekly Travel Time (minutes)") + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 @
+\caption{The mean weekly travel time in the Portland Metropolitan Area
+  stratified by age-class, sex and mode.}
 \end{figure}
 
 \begin{figure}
@@ -181,3 +132,59 @@ plot(pAT.scenario.vec,AF.vec)
 @
 
 \end{figure}
+
+
+% \begin{figure}\label{travelTime}
+% <<portland2, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
+% p <- ITHIM:::compareDistributions(ITHIM.baseline, ITHIM.scenario, type = "WalkingTime")
+% p + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlim(1,1e3) + scale_x_continuous(trans='log10') + xlab("Walking Time (min/week)")
+% @
+% <<portland3, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
+% p <- ITHIM:::compareDistributions(ITHIM.baseline, ITHIM.scenario, type = "CyclingTime")
+% p + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlim(1,1e2) + scale_x_continuous(trans='log10') + xlab("Cycling Time (min/week)")
+% @
+% \caption{Distributions of walking and cycling transport time for
+%   baseline and scenario models, stratified by age and sex.  In this
+%   example the scenario was created by doubling the overall walking and
+%   cycling means.}
+% \end{figure}
+
+% \begin{figure}\label{portland1}
+% <<portland5, echo = FALSE, eval = TRUE, warning = FALSE, message = FALSE, fig.height = 3>>=
+% results <- data.frame()
+% ITHIM.portland <- ITHIM.baseline
+% for( muNonTravel in seq(1,25, length.out = 5)){
+%     ITHIM.baseline <- update(ITHIM.baseline, list(muNonTravel = muNonTravel))
+%     ITHIM.scenario <- update(ITHIM.scenario, list(muNonTravel = muNonTravel))
+%     foo <- ITHIM:::summarizeBurden(ITHIM.baseline, ITHIM.scenario)
+%     results <- rbind(results, c(muNonTravel, foo))
+% }
+% names(results) <- c("muNonTravel",names(foo))
+% p <- results %>% gather(.,disease,"rho",2:7) %>% ggplot(., aes(x = muNonTravel, y = rho))
+% p + geom_line(aes(x=muNonTravel, y = rho*100, colour = disease)) + geom_vline(xintercept = c(ITHIM.portland@parameters@muNonTravel,c(500,1000)/60), linetype = c(1,2,2)) + xlab("Non-travel Physical Activity (MET-hrs./week)") + ylab("Percent Reduction of Deaths") + theme_bw()
+% @
+% \caption{The two vertical lines mark the interval for ``medium
+%   activity`` defined by the U.S. Office of Disease Prevention and Health
+%   Promotion.  Medium activity is 150 minutes to 300 (5 hours) minutes
+%   of moderate-intensity activity a week (or 75 to 150 minutes of
+%   vigorous-intensity physical activity a week). In scientific terms,
+%   this range is approximately equivalent to 500 to 1,000 metabolic
+%   equivalent (MET) minutes a week.}
+% \end{figure}
+% \begin{figure}\label{portland7}
+% <<portland7, echo = FALSE, eval = TRUE, warning = FALSE, message = FALSE, fig.height = 3>>=
+% D <- NHTS.df %>% filter(location == msaID.portland) %>% group_by(mode,age,sex) %>% summarise(n.trips = n()) %>% ungroup() %>% complete(age,sex,mode)  %>% arrange(sex,age) %>% filter(!is.na(mode)) %>% as.data.frame()
+% p <- ggplot(D, aes(x = age, y = n.trips, fill = mode))
+% p + geom_bar(stat = "identity", postion = "dodge") + facet_grid( . ~ sex ) + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+% @
+% \caption{Foo}
+% \end{figure}
+% \begin{figure}\label{portland6}
+% <<portland6, echo = FALSE, eval = TRUE, warning = FALSE, message = FALSE, fig.height = 3>>=
+% msaID.portland <- "6442"
+% p <- NHTS.df %>% filter(location == msaID.portland) %>% group_by(age,sex) %>% summarize(n.individuals = n_distinct(id)) %>% as.data.frame() %>% ggplot(.,aes(x=age,y=n.individuals, fill = sex))
+% p + geom_bar(stat = "identity", position = "dodge") + theme_bw() + xlab("") + ylab("Sample Size")
+% @
+% \caption{The sample size contained in the National Household
+%   Transportation Survey for the Portland Metropolitan Area}
+% \end{figure}
