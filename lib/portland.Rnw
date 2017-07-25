@@ -163,7 +163,7 @@ D.scenario.4 <- getQuantilesMixture(p.AT = 1, mean.AT = summaryStats$mean, sd.AT
 
 D <- rbind(data.frame(D.baseline,pAT = as.character(round(p.AT.portland,2))),data.frame(D.scenario.1,pAT = "0.7"),data.frame(D.scenario.2,pAT = "0.8"),data.frame(D.scenario.3,pAT = "0.9"),data.frame(D.scenario.4,pAT = "1"))
 
-ggplot(D, aes(x = quantiles, y = prob, colour = pAT)) + geom_line(aes(x=quantiles,y=prob)) + coord_cartesian(xlim = c(0,150)) + theme_bw() + xlab("Physical Activity (MET-hrs./week)") + ylab("Cumulative Distribution")
+ggplot(D, aes(x = quantiles, y = prob, colour = pAT)) + geom_line(aes(x=quantiles,y=prob)) + coord_cartesian(xlim = c(0,100)) + theme_bw() + xlab("Physical Activity (MET-hrs./week)") + ylab("Cumulative Distribution")
 
 @
 \caption{Cumulative distribution function for men between the age of
@@ -199,11 +199,12 @@ ggplot(D, aes(x = quantiles, y = prob, colour = pAT)) + geom_line(aes(x=quantile
 % \label{mandm233}
 % \end{figure}
 
+\begin{figure}
 <<mandm235, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
-
+deaths.CVD <- 242.8
 alpha.CVD <- log(0.93831942)
 mean.NT.vec <- c(1,5,10,25,50); cv <- 1;
-p.AT.scenario.vec <- seq(p.AT.portland,1,length.out = 50)
+p.AT.scenario.vec <- seq(p.AT.portland,1,length.out = 25)
 
 results <- data.frame()
 
@@ -217,10 +218,16 @@ for( mean.NT in mean.NT.vec ){
 
 results <- within(results, mean.NT <- factor(mean.NT, levels = c("1","5","10","25","50")))
 
-ggplot(results, aes(x = p.AT.scenario, y = 242.8*af, color = mean.NT)) + geom_line(aes(x=p.AT.scenario,y=242.8*af)) + theme_bw() + xlab("Proportion of Active Travelers") + ylab("CVD Deaths Averted") #+ coord_cartesian(xlim = c(0,150))
+ggplot(results, aes(x = p.AT.scenario, y = deaths.CVD*af, color = mean.NT)) + geom_point(aes(x=p.AT.scenario,y=deaths.CVD*af)) + stat_smooth() + theme_bw() + xlab("Proportion of Active Travelers") + ylab("CVD Deaths Averted") + scale_colour_discrete(name="Mean Non-\nTravel Activity\n(MET-hrs/week)") #+ coord_cartesian(xlim = c(0,150))
 
 @
-
+\caption{The number of deaths due to cardiovascular disease (CVD)
+  averted among males age 45-59 in the Portland area as a function of
+  proportion of active travelers and mean non-travel activity.  Note
+  that the coefficient of variation for non-travel activity is fixed
+  at 1.}
+\label{mandm235}
+\end{figure}
 
 
 % \begin{figure}
