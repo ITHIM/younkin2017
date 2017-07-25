@@ -4,20 +4,19 @@ Regular exercise has been shown to provide health benefits in terms of
 chronic disease prevention \cite{warburton2006}, cognitive function
 \cite{hillman2008}, and overall well being and satisfaction with life
 \cite{maher2013}. Still only half of Americans obtain the recommended
-levels of aerobic activity of 2.5 hours per week. There is
+levels of aerobic activity of 2.5 hours per week (30min/day). There is
 considerable variability in the attainment of this goal by location
 within the country. Supportive local built and policy environments are
 important determinants of population-level activity
 patterns. Particularly, as they facilitate and foster routine and
 moderate physical activity, such as walking, local decisions on design
-and policy can play a huge role in improving the nation's health.
+and policy can play a huge role in improving the nation's health \cite{mueller2015}.
 
-Given the constraints and complexity of local governance and
-infrastructure investments, land use, and human behavior there is a
+Given the constraints and complexity of local governance, infrastructure 
+investments, land use, and human behavior there is a
 need for high quality and reliable data and tools for decision-making
-related to urban transportaiton systems. The lack of accurate and
-availbale estimates of the health impacts of such decisions has
-limited the effectiveness of efforts to encourage non-motorized
+related to urban transportaiton systems. The lack of accurate estimates 
+\of the health impacts of such decisions limits the effectiveness of efforts to encourage non-motorized
 transport in the US and in other countries. In the last decade new
 tools, applying comparative risk assessment methodologies, have made
 progress toward quantifying the multple health impacts of changes to
@@ -31,10 +30,32 @@ scenarios. The model has been used to calculate the health impacts of
 walking and bicycling short distances usually traveled by car or
 driving low-emission automobiles \cite{woodcock2013,maizlish2013}.
 
-ITHIM uses a comparative risk assessment framework for the active
-transport component of the model.  We improve on the existing
+ITHIM uses a comparative risk assessment (CRA) framework for the active
+transport component of the model.  We improve on the previous
 implementation of the active transport component by including the
 distribution of non-travel-related activity, improving numerical
 precision when computing the population attributable fraction and
 creating a simple user-interface for the custom-built \R{} package
 \package{}.
+
+The ITHIM model was developed at Cambridge's CEntre for Diet and Activity Research (CEDAR). 
+The undelying CRA was first demonstrated in 2009 \cite{woodcock2009} and first formalized in 
+a 2013 analysis in England and Wales \cite{woodcock2013}. The same year a version of ITHIM was 
+implemented in the San Francisco Bay Area \cite{maizlish2013}. Since these initial demonstrations on a common platform, 
+the development, maintainence and documentation of ITHIM in the UK and US have followed diverent paths. 
+In the US ITHIM has been implemented solely using the 'spreadsheet' version of the tool. Following the Bay Area 
+it has been used in Nashville \cite{whitfield2017} and other California communities \cite{maizlish2017}. The tool has also undergone 
+incremental improvements to add some uncertainties to estimates and economic cost calculations. CEDAR's 
+development of ITHIM includes transition to Cambridge Analytics Analytica platform \cite{gotschi2015, thiago2015, tainio2016} 
+and future plans to implement ITHIM in R. 
+
+Our motivation for this work is to push US implementations of ITHIM forward by transitioning to R. 
+This work announces an R package which performs a CRA for changing active travel behaviors among a population, 
+and documents the methods therein though a case study with the Portland, OR metropoitan area. 
+We have chosen to focus on the active transport module of ITHIM — 
+seperate from CRAs involving air pollution exposures and raod injuries - based on the results of earlier ITHIM
+work which has shown the physical activity component to produce the largest helath benefits for populations \cite{woodcock2013, maizlish2013, whitfield2017}.
+We expect that the shift to a more robust computing platfor for US implementations of ITHIM will 
+result in improved performance in the calcualtions involved in the CRA, more fluid and rapid experimentation with
+data sets, spatial definitions, and scenarios, and easier replication of ITHIM's CRA resulting in wider application 
+for transportation planning.
