@@ -6,12 +6,12 @@ transportation in the population can be quantified by the population
 attributable fraction, $\af$.  The population attributable fraction
 represents the proportional change in disease burden that results from
 the new transportation behavior.  To address the dependency in
-transportation behavior on age and sex we stratify the population by
+transportation behavior on cohorts within the whole population, we stratify by
 sex and age using eight age classes (0-4 yrs.\ old, 5-14, 15-29,
-30-44, 45-59, 60-69, 70-79, 80+).  For a given disease the population
+30-44, 45-59, 60-69, 70-79, 80+).  Age-sex-disease specific burdens are calculated using detailed mortality data from the CDC Wide-ranging ONline Data for Epidemiologic Research (WONDER) database and the 2010 Global Burden of Disease \cite{WHOGBD}. For a given disease the population
 attributable fraction is then computed for each of these classes.
-ITHIM includes Breast Cancer (C50), Colon Cancer (C18-C21), Dementia
-(G30), Diabetes (E10-E14) and Cardiovascular disease (I10, I12, I15,
+ITHIM physical activity component includes Breast Cancer (C50), Colon Cancers (C18-C21), Dementia
+(G30), Diabetes (E10-E14) and Cardiovascular diseases (I10, I12, I15,
 I20-I25, I30-I31, I33, I40).  We also include the disability impacts
 of depression, though it is not listed as a cause of death in the CDC
 data.
@@ -40,7 +40,7 @@ be expressed in terms of the quantiles of the distributions of
 physical activity levels.  The vectors $\mathbf{x}$ and
 $\mathbf{x}^\prime$ represent quantiles for the exposure distribution
 in baseline and alternative scenarios, respectively.  With this
-implemntation in R we can now use any number of quantiles.  Originally
+implementation in R we can now use any number of quantiles.  Originally
 five quantiles were used for this approximation, resulting in
 instability in the estimates of $\af{}$.
 
@@ -63,12 +63,14 @@ T = \alpha_{\textrm{AT}}(T_w + T_c)
 
 \subparagraph{Inactive Travelers}
 
-Sadly, many Americans do not receive any travel-related activity.
-Using data from the National Househild Transportation Survey we
-observe that the majortiy of Americans living in a metropolitan area
-reported no active travel, see Figure \ref{InactiveNational}.  (Note
-that this is an over-estimate of the true proportion of inactive
-travelers.)  Due to the large proportion on inactive travelers we
+Data from the National Household Transportation Survey (NHTS) sample were used to examine active transportation behaviors. 
+This analysis was limited to individuals residing in one of the __???__ metropolitan areas within the survey with an 
+identified Metropolitan Statistical Area. This subsample still constitutes ___???___% of the total sample in 2009.  
+The NHTS is limited to a single day of travel. 
+Using data from the National Household Transportation Survey we
+observe that the majority of Americans living in these MSAs
+reported no active travel (trip mode as walk or cycle), see Figure \ref{InactiveNational}.  
+Due to the large proportion on inactive travelers we
 model the distribution of travel activity as a mixture of a point-mass
 at zero with a log-normal distribution.
 
@@ -81,7 +83,9 @@ n.AT <- NHTS.df %>% filter(!(location %in% c("-1","XXXX"))) %>% group_by(sex,age
 D <- inner_join(n.ind, n.AT, by = c("sex","age")) %>% mutate(p0 = 1-n.AT/n.ind)
 ggplot(D, aes(x=age,y=p0, fill = sex)) + geom_bar(stat = "identity", position = "dodge") + theme_bw() + ylab("Proportion of Inactive Travelers") + xlab("") + coord_cartesian(ylim = c(0.5, 1))
 @
-\caption{The proportion of inactive travelers in the combined U.S. metropolitan area.}
+\caption{The proportion of inactive travelers in the combined U.S. metropolitan area. (Note
+that this is an over-estimate of the true proportion of inactive
+travelers.)}
 \end{figure}
 
 \subparagraph{Active Travelers}
@@ -123,10 +127,10 @@ ggplot(D,aes(totalDuration)) + geom_histogram(aes(y=..density..), bins = 30, alp
 
 \subparagraph{Non-Travel-Related Physical Activity}
 
-Within each age-sex class the non-travel-related exposure is modeled
+Within each age-sex class the non-travel-related exposure is also modeled
 with a \logNormal{} distribution.  The age-sex specific mean ratios,
 $r_{ij} = \frac{\mu_{ij}}{\mu_0}$ and the coefficient of variation,
-$\gamma$, are estimated from the American Time Use Survey data
+$\gamma$, are estimated from the American Time Use Survey (ATUS) data for the year ___???___
 \cite{ATUS}.
 
 \begin{equation}
@@ -140,7 +144,7 @@ scenarios, $\mathbf{x}$ and $\mathbf{x}^\prime$ and use Equation \ref{paf}.
 \paragraph{Risk Functions}
 
 We estimate relative risk for each of the diseases included in the
-model using dose-response curves of the form
+model using published dose-response relationships of the form
 $\R(x) = \mathrm{e}^{-\alpha \tilde{x}}$, where $\tilde{x} = \sqrt{x}$
 \cite{woodcock2009, monninkhof2007, harriss2009, hamer2009, jeon2007,
   hamer2007}.
