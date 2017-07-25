@@ -84,10 +84,10 @@ Jonathan Patz\textsuperscript{1, 2}
 \section*{Introduction}
 \Sexpr{knit_child('lib/introduction.Rnw')}
 
-\section*{Materials and Methods}
+\section*{Materials \& Methods}
 \Sexpr{knit_child('lib/materialsAndMethods.Rnw')}
 
-\subsection*{Portland, Oregon Metropolitan Statistical Area}
+\section*{Portland, Oregon, Metropolitan Statistical Area}
 \Sexpr{knit_child('lib/portland.Rnw')}
 
 % \subsection*{Value of Information}

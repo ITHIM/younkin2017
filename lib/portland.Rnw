@@ -1,11 +1,22 @@
 To demonstrate the potential health benefits associated with an
-increase in travel activity we target the Portland Metropolitan Area
-and estimate the change in DALYs associated with an increase of the
-proportion of active travelers.
+increase in travel activity that can result from a smal lchange in
+transportation behavior we present a brief case study of the Portland
+Oregon, U.S.A., Metropolitan Area.  In Figure \ref{portland8} we see
+that in Portland the majority of travel is done by modes other than
+walking or cycling.  Among several of the classes we see no observed
+cycling trips.  The sparseness of cycling data, particularly in the
+U.S., has prompted us to reparameterize the model in terms of combined
+travel actvity which avoids the diffuculty of estimating mean cycle
+time when there are so few cycling trips in the data.
 
-In Figure \ref{portland8} we see that
+\paragraph{Travel Activity}
+We see in Figure \ref{portland9} the extent of the proportion of
+inactive travel.  More than sixty percent of people in the Portland
+Metropolitan area are inactive travelers. (Note that this is an
+over-estimate of the true value.  We need to adjust this estimate by a
+factor that is a function of the mean frequency of active travel.)
 
-\begin{figure}\label{portland8}
+\begin{figure}
 <<portland8, echo = FALSE, eval = TRUE, warning = FALSE, message = FALSE, fig.height = 3>>=
 sampleSize <- NHTS.df %>% filter(location == 6442) %>% group_by(sex,age) %>% summarise(n=n_distinct(id))
 tripDuration <- NHTS.df %>% filter(location == 6442) %>% group_by(mode,sex,age) %>% summarise(total=sum(duration))
@@ -16,8 +27,9 @@ D <- melt(meanByMode) %>% select(mode,sex,age,value)
 p <- ggplot(D, aes(x = age, y = value, fill = mode))
 p + geom_bar(stat = "identity", postion = "dodge") + facet_grid( . ~ sex ) + ylab("Mean Weekly Travel Time (minutes)") + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 @
-\caption{The mean weekly travel time in the Portland Metropolitan Area
+\caption{The mean weekly travel time (minutes) in the Portland Metropolitan Area
   stratified by age-class, sex and mode.}
+\label{portland8}
 \end{figure}
 
 \begin{figure}
@@ -31,7 +43,34 @@ ggplot(D, aes(x=age,y=p0, fill = sex)) + geom_bar(stat = "identity", position = 
 p.AT.portland <- D %>% ungroup() %>% filter(age == "45-59" & sex == "M") %>% select(p0) %>% as.numeric()
 @
 \caption{The proportion of inactive travelers in the Portland metropolitan area.}
+\label{portland9}
 \end{figure}
+
+All inactive travelers have zero active travel and are therefore
+non-random, but among the active travelers we fit a log-noraml
+distibution and use estimates for within-class means and standard
+deviations in the comparitive risk assesment.  In Figure
+\ref{mandm223} we display the fitted and empirical distributions for
+travel activity amon men in Portland age 45-59. (Note that for the
+same reason we over-estimate the proportion of inactive travelers, we
+also over-estimate weekly travel-activity among active traveler.
+Again we need a scaling coefficient that is a function of the true
+frequency of active travel.)
+
+\begin{figure}
+<<mandm2223, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
+D <- NHTS.df %>% filter(id %in% AT.id.vec) %>% group_by(id, sex, age) %>% summarise(totalDuration = alpha.AT*sum(duration)*7/60) %>% ungroup() %>% group_by(age,sex) %>% summarise(mean = mean(totalDuration), sd=sd(totalDuration))
+ggplot(D, aes(x=age,y=mean, fill = sex)) + geom_bar(stat = "identity", position = "dodge") + theme_bw()+ ylab("Mean Travel Actvity among Active Travelers") + xlab("Age") #+ coord_cartesian(ylim = c(0.5, 1))
+@
+\label{mandm2223}
+\caption{Mean travel activity (\METhrs{}) among active travelers in the Portland Metropolitan area.}
+\end{figure}
+
+
+\paragraph{Non-Travel-Related Physical Activity}
+
+We assume that\ldots
+
 
 \begin{figure}
 <<mandm223, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
@@ -56,15 +95,18 @@ ggplot(D,aes(totalDuration)) + geom_histogram(aes(y=..density..), bins = 10, alp
   Overlayed are both the empirical and fitted densities.  We assume
   that within age and sex class, and among active travelers, travel
   activity has a log-normal distribution.}
+\label{mandm223}
 \end{figure}
 
-<<mandm2223, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
-D <- NHTS.df %>% filter(id %in% AT.id.vec) %>% group_by(id, sex, age) %>% summarise(totalDuration = alpha.AT*sum(duration)*7/60) %>% ungroup() %>% group_by(age,sex) %>% summarise(mean = mean(totalDuration), sd=sd(totalDuration))
-@
+\paragraph{Physical Activity}
+In Figure \ref{mandm23} we show the cumulative distribution function
+for physical activity among men age 45-59 in the Portland area.  The
+baseline distribution is computed as a mixture of the inactive and
+active travelers, while the alternative scenario assumes that everyone
+is an active traveler.  A comparison of these two distributions yields
+and atrribuatable
 
-\begin{figure}
-<<mandm23, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
-
+<<functions, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
 getQuantilesMixture <- function(p.AT, mean.AT, sd.AT, mean.NT, sd.NT){
 
 meanlog.AT <- log(mean.AT/sqrt(1+sd.AT^2/mean.AT^2))
@@ -90,48 +132,107 @@ for( i in 1:1e4){
 
 t.vec <- at.vec + nt.vec
 
-n <- 1e3
+n <- 1e2
 prob <- seq(0,1,length.out=n)
 quantiles <- quantile(t.vec, prob = prob)
 D <- data.frame(quantiles = quantiles, prob = prob)
 return(D)
 
 }
-
-D.baseline <- getQuantilesMixture(p.AT = p.AT.portland, mean.AT = summaryStats$mean, sd.AT = summaryStats$sd, mean.NT = 5, sd.NT = 5)
-D.scenario <- getQuantilesMixture(p.AT = 1, mean.AT = summaryStats$mean, sd.AT = summaryStats$sd, mean.NT = 5, sd.NT = 5)
-
-D <- rbind(data.frame(D.baseline,vision = "baseline"),data.frame(D.scenario,vision = "scenario"))
-
-ggplot(D, aes(x = quantiles, y = prob, colour = vision)) + geom_line(aes(x=quantiles,y=prob)) + coord_cartesian(xlim = c(0,150)) + theme_bw() + xlab("Physical Activity (MET-hrs./week)") + ylab("Cumulative Distribution")
-
-@
-\caption{The cumulative distribution function for men between the age
-  of 45 and 59 living in the Portland metropolitan area.}
-\end{figure}
-
-\begin{figure}
-<<portland9, echo = FALSE, eval = FALSE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
-
-computeAF <- function(pAT.baseline, pAT.scenario, mean.baseline, mean.scenario, sd.baseline, sd.scenario, alpha, k){
-    D.baseline <- getQuantilesMixture(p.AT = pAT.baseline, mean = mean.baseline, sd = sd.baseline)
+computeAF <- function(p.AT.baseline, p.AT.scenario, mean.AT.baseline, mean.AT.scenario, sd.AT.baseline, sd.AT.scenario, mean.NT.baseline, mean.NT.scenario, sd.NT.baseline, sd.NT.scenario, alpha, k){
+    D.baseline <- getQuantilesMixture(p.AT = p.AT.baseline, mean.AT = mean.AT.baseline, sd.AT = sd.AT.baseline, mean.NT = mean.NT.baseline, sd.NT = sd.NT.baseline)
     RR.baseline <- getRR(D.baseline$quantiles, alpha = alpha, k = k)
-    D.scenario <- getQuantilesMixture(p.AT = pAT.scenario, mean = mean.scenario, sd = sd.scenario)
+    D.scenario <- getQuantilesMixture(p.AT = p.AT.scenario, mean.AT = mean.AT.scenario, sd.AT = sd.AT.scenario, mean.NT = mean.NT.scenario, sd.NT = sd.NT.scenario)
     RR.scenario <- getRR(D.scenario$quantiles, alpha = alpha, k = k)
     AF <- 1 - sum(RR.scenario)/sum(RR.baseline)
     return(AF)
 }
-
-pAT.scenario.vec <- seq(0.6,1,length.out = 1e2)
-AF.vec <- c()
-for( pAT.scenario in pAT.scenario.vec ){
-    AF <- computeAF(pAT.baseline = 0.6, pAT.scenario = pAT.scenario, mean.baseline = mean <- summaryStats$mean, mean.scenario = mean, sd.baseline = sd <- summaryStats$sd, sd.scenario = sd, alpha = alpha.cvd, k = 1/2)
-    AF.vec <- c(AF.vec, AF)
-}
-plot(pAT.scenario.vec,AF.vec)
 @
 
+\begin{figure}
+<<mandm23, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
+mean.NT <- 5; cv <- 1; sd.NT <- cv*mean.NT;
+
+D.baseline <- getQuantilesMixture(p.AT = p.AT.portland, mean.AT = summaryStats$mean, sd.AT = summaryStats$sd, mean.NT = mean.NT, sd.NT = sd.NT)
+
+D.scenario.1 <- getQuantilesMixture(p.AT = 0.7, mean.AT = summaryStats$mean, sd.AT = summaryStats$sd, mean.NT = mean.NT, sd.NT = sd.NT)
+D.scenario.2 <- getQuantilesMixture(p.AT = 0.8, mean.AT = summaryStats$mean, sd.AT = summaryStats$sd, mean.NT = mean.NT, sd.NT = sd.NT)
+D.scenario.3 <- getQuantilesMixture(p.AT = 0.9, mean.AT = summaryStats$mean, sd.AT = summaryStats$sd, mean.NT = mean.NT, sd.NT = sd.NT)
+D.scenario.4 <- getQuantilesMixture(p.AT = 1, mean.AT = summaryStats$mean, sd.AT = summaryStats$sd, mean.NT = mean.NT, sd.NT = sd.NT)
+
+
+D <- rbind(data.frame(D.baseline,pAT = as.character(round(p.AT.portland,2))),data.frame(D.scenario.1,pAT = "0.7"),data.frame(D.scenario.2,pAT = "0.8"),data.frame(D.scenario.3,pAT = "0.9"),data.frame(D.scenario.4,pAT = "1"))
+
+ggplot(D, aes(x = quantiles, y = prob, colour = pAT)) + geom_line(aes(x=quantiles,y=prob)) + coord_cartesian(xlim = c(0,150)) + theme_bw() + xlab("Physical Activity (MET-hrs./week)") + ylab("Cumulative Distribution")
+
+@
+\caption{Cumulative distribution function for men between the age of
+  45 and 59 living in the Portland metropolitan area at baseline
+  ($p_{\mathrm{AT}}=\Sexpr{round(p.AT.portland,2)}$) and four different
+  scenarios with $p_{\mathrm{AT}}=0.7,0.8,0.9,1$.  Mean
+  non-travel-related activity is \Sexpr{round(mean.NT,1)}.}
+\label{mandm23}
 \end{figure}
+
+\begin{figure}
+<<mandm233, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
+mean.NT <- 10; cv <- 1; sd.NT <- cv*mean.NT;
+
+D.baseline <- getQuantilesMixture(p.AT = p.AT.portland, mean.AT = summaryStats$mean, sd.AT = summaryStats$sd, mean.NT = mean.NT, sd.NT = sd.NT)
+
+D.scenario.1 <- getQuantilesMixture(p.AT = 0.7, mean.AT = summaryStats$mean, sd.AT = summaryStats$sd, mean.NT = mean.NT, sd.NT = sd.NT)
+D.scenario.2 <- getQuantilesMixture(p.AT = 0.8, mean.AT = summaryStats$mean, sd.AT = summaryStats$sd, mean.NT = mean.NT, sd.NT = sd.NT)
+D.scenario.3 <- getQuantilesMixture(p.AT = 0.9, mean.AT = summaryStats$mean, sd.AT = summaryStats$sd, mean.NT = mean.NT, sd.NT = sd.NT)
+D.scenario.4 <- getQuantilesMixture(p.AT = 1, mean.AT = summaryStats$mean, sd.AT = summaryStats$sd, mean.NT = mean.NT, sd.NT = sd.NT)
+
+
+D <- rbind(data.frame(D.baseline,pAT = as.character(round(p.AT.portland,2))),data.frame(D.scenario.1,pAT = "0.7"),data.frame(D.scenario.2,pAT = "0.8"),data.frame(D.scenario.3,pAT = "0.9"),data.frame(D.scenario.4,pAT = "1"))
+
+ggplot(D, aes(x = quantiles, y = prob, colour = pAT)) + geom_line(aes(x=quantiles,y=prob)) + coord_cartesian(xlim = c(0,150)) + theme_bw() + xlab("Physical Activity (MET-hrs./week)") + ylab("Cumulative Distribution")
+
+@
+\caption{Cumulative distribution function for men between the age of
+  45 and 59 living in the Portland metropolitan area at baseline
+  ($p_{\mathrm{AT}}=\Sexpr{round(p.AT.portland,2)}$) and four different
+  scenarios with $p_{\mathrm{AT}}=0.7,0.8,0.9,1$.  Mean
+  non-travel-related activity is \Sexpr{round(mean.NT,1)}.}
+\label{mandm233}
+\end{figure}
+
+<<mandm235, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
+
+alpha.CVD <- log(0.93831942)
+mean.NT.vec <- c(1,5,10,25,50); cv <- 1;
+p.AT.scenario.vec <- seq(p.AT.portland,1,length.out = 20)
+
+results <- data.frame()
+
+for( mean.NT in mean.NT.vec ){
+    sd.NT <- cv*mean.NT;
+    for(p.AT.scenario in p.AT.scenario.vec ){
+        af <- computeAF(p.AT.baseline = p.AT.portland, p.AT.scenario = p.AT.scenario, mean.AT.baseline = summaryStats$mean, sd.AT.baseline = summaryStats$sd, mean.AT.scenario = summaryStats$mean, sd.AT.scenario = summaryStats$sd, mean.NT.baseline = mean.NT,sd.NT.baseline = sd.NT, mean.NT.scenario = mean.NT, sd.NT.scenario = sd.NT, alpha = alpha.CVD, k = 1/2)
+        results <-  rbind(results, data.frame(mean.NT, p.AT.scenario, af))
+    }
+}
+
+ggplot(results, aes(x = p.AT.scenario, y = af, color = as.character(mean.NT))) + geom_line(aes(x=p.AT.scenario,y=af)) + theme_bw() + xlab("Proportion of Active Travelers") + ylab("Attributable Fraction (CVD)") #+ coord_cartesian(xlim = c(0,150))
+
+@
+
+
+
+% \begin{figure}
+% <<portland9, echo = FALSE, eval = FALSE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
+% pAT.scenario.vec <- seq(0.6,1,length.out = 1e2)
+% AF.vec <- c()
+% for( pAT.scenario in pAT.scenario.vec ){
+%     AF <- computeAF(pAT.baseline = 0.6, pAT.scenario = pAT.scenario, mean.baseline = mean <- summaryStats$mean, mean.scenario = mean, sd.baseline = sd <- summaryStats$sd, sd.scenario = sd, alpha = alpha.cvd, k = 1/2)
+%     AF.vec <- c(AF.vec, AF)
+% }
+% plot(pAT.scenario.vec,AF.vec)
+% @
+
+% \end{figure}
 
 
 % \begin{figure}\label{travelTime}
