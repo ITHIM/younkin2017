@@ -87,20 +87,20 @@ Jonathan Patz\textsuperscript{1, 2}
 \section*{Materials \& Methods}
 \Sexpr{knit_child('lib/materialsAndMethods.Rnw')}
 
-\section*{Portland, Oregon, Metropolitan Statistical Area}
+\section*{Portland, Oregon}
 \Sexpr{knit_child('lib/portland.Rnw')}
 
 % \subsection*{Value of Information}
 % \Sexpr{knit_child('lib/valueOfInformation.Rnw')}
 
-\section*{Results}
-\Sexpr{knit_child('lib/results.Rnw')}
+% \section*{Results}
+% \Sexpr{knit_child('lib/results.Rnw')}
 
 \section*{Discussion}
 \Sexpr{knit_child('lib/discussion.Rnw')}
 
-\section*{Conclusion}
-\Sexpr{knit_child('lib/conclusion.Rnw')}
+% \section*{Conclusion}
+% \Sexpr{knit_child('lib/conclusion.Rnw')}
 
 \singlespacing
 \nolinenumbers

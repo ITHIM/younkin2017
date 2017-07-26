@@ -32,6 +32,17 @@ p + geom_bar(stat = "identity", postion = "dodge") + facet_grid( . ~ sex ) + yla
 \label{portland8}
 \end{figure}
 
+All inactive travelers have zero active travel and are therefore
+non-random, but among the active travelers we fit a log-noraml
+distibution and use estimates for within-class means and standard
+deviations in the comparitive risk assesment.  In Figure
+\ref{mandm223} we display the fitted and empirical distributions for
+travel activity amon men in Portland age 45-59. (Note that for the
+same reason we over-estimate the proportion of inactive travelers, we
+also over-estimate weekly travel-activity among active traveler.
+Again we need a scaling coefficient that is a function of the true
+frequency of active travel.)
+
 \begin{figure}
 <<mandm222, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
 n.ind <- NHTS.df  %>% filter(location == 6442) %>% group_by(sex,age) %>% summarise(n.ind = n_distinct(id))
@@ -46,16 +57,6 @@ p.AT.portland <- D %>% ungroup() %>% filter(age == "45-59" & sex == "M") %>% sel
 \label{portland9}
 \end{figure}
 
-All inactive travelers have zero active travel and are therefore
-non-random, but among the active travelers we fit a log-noraml
-distibution and use estimates for within-class means and standard
-deviations in the comparitive risk assesment.  In Figure
-\ref{mandm223} we display the fitted and empirical distributions for
-travel activity amon men in Portland age 45-59. (Note that for the
-same reason we over-estimate the proportion of inactive travelers, we
-also over-estimate weekly travel-activity among active traveler.
-Again we need a scaling coefficient that is a function of the true
-frequency of active travel.)
 
 \begin{figure}
 <<mandm2223, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
@@ -99,12 +100,20 @@ ggplot(D,aes(totalDuration)) + geom_histogram(aes(y=..density..), bins = 10, alp
 \end{figure}
 
 \paragraph{Physical Activity}
-In Figure \ref{mandm23} we show the cumulative distribution function
-for physical activity among men age 45-59 in the Portland area.  The
-baseline distribution is computed as a mixture of the inactive and
-active travelers, while the alternative scenario assumes that everyone
-is an active traveler.  A comparison of these two distributions yields
-and atrribuatable
+
+An increase in physical activity decreases risk for each of the
+diseases inlcuded here in the ITHIM model.  Physical activity may be
+decomposed into a travel-related and a non-travel-related components.
+The travel-related activity is a mixture of two distributions; one for
+active travelers and one for inactive travelers.  We focus on males
+age 45-59 and display in Figure \ref{mandm23} the cumulative
+distribution function for physical activity among men age 45-59 in the
+Portland area.  The distribution of physical activity depends on the
+proportion of active travelers in the population.  We demonstrate how
+this affects the distribution by including distributins for
+$p_{\mathrm{AT}}=0.7,0.8,0.9,1$.  By applying Equation \ref{paf} to
+two of these distributions we can compute the attributable fraction
+associates with an increase in proportion of active travelers.
 
 <<functions, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
 getQuantilesMixture <- function(p.AT, mean.AT, sd.AT, mean.NT, sd.NT){
@@ -173,6 +182,22 @@ ggplot(D, aes(x = quantiles, y = prob, colour = pAT)) + geom_line(aes(x=quantile
   non-travel-related activity is \Sexpr{round(mean.NT,1)}.}
 \label{mandm23}
 \end{figure}
+
+In Figure \ref{mandm235} we see the results of the comparitive risk
+assesment.  For the sake of example we show the results for males age
+45-50.  As the proportion of active travelers increases, deaths due
+to, in this case cardiovascular disease, are averted.  The extent to
+which deaths are reduced depends on the amount of non-travel-related
+activity the cohort experiences.  An increase in the level of
+``background'' physical activity diminishes the helath-benefits due to
+travel.  It is difficult to estimate precisely the level of
+``background'' physical activity yet we see that for any reasonable
+``background'' level, i.e., 1-50 \METhrs, an increase in the
+proportion of active travelers from 0.62 to 0.8 would result in 9-15
+deaths averted.  Note that this is for one disease and one age-sex
+class.  To compute the overall reduction in deaths we need to iterate
+this process over all age-sex classes and diseases.  See Table ? for
+the results.
 
 \begin{figure}
 <<mandm235, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
