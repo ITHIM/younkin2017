@@ -174,31 +174,6 @@ ggplot(D, aes(x = quantiles, y = prob, colour = pAT)) + geom_line(aes(x=quantile
 \label{mandm23}
 \end{figure}
 
-% \begin{figure}
-% <<mandm233, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
-% mean.NT <- 10; cv <- 1; sd.NT <- cv*mean.NT;
-
-% D.baseline <- getQuantilesMixture(p.AT = p.AT.portland, mean.AT = summaryStats$mean, sd.AT = summaryStats$sd, mean.NT = mean.NT, sd.NT = sd.NT)
-
-% D.scenario.1 <- getQuantilesMixture(p.AT = 0.7, mean.AT = summaryStats$mean, sd.AT = summaryStats$sd, mean.NT = mean.NT, sd.NT = sd.NT)
-% D.scenario.2 <- getQuantilesMixture(p.AT = 0.8, mean.AT = summaryStats$mean, sd.AT = summaryStats$sd, mean.NT = mean.NT, sd.NT = sd.NT)
-% D.scenario.3 <- getQuantilesMixture(p.AT = 0.9, mean.AT = summaryStats$mean, sd.AT = summaryStats$sd, mean.NT = mean.NT, sd.NT = sd.NT)
-% D.scenario.4 <- getQuantilesMixture(p.AT = 1, mean.AT = summaryStats$mean, sd.AT = summaryStats$sd, mean.NT = mean.NT, sd.NT = sd.NT)
-
-
-% D <- rbind(data.frame(D.baseline,pAT = as.character(round(p.AT.portland,2))),data.frame(D.scenario.1,pAT = "0.7"),data.frame(D.scenario.2,pAT = "0.8"),data.frame(D.scenario.3,pAT = "0.9"),data.frame(D.scenario.4,pAT = "1"))
-
-% ggplot(D, aes(x = quantiles, y = prob, colour = pAT)) + geom_line(aes(x=quantiles,y=prob)) + coord_cartesian(xlim = c(0,150)) + theme_bw() + xlab("Physical Activity (MET-hrs./week)") + ylab("Cumulative Distribution")
-
-% @
-% \caption{Cumulative distribution function for men between the age of
-%   45 and 59 living in the Portland metropolitan area at baseline
-%   ($p_{\mathrm{AT}}=\Sexpr{round(p.AT.portland,2)}$) and four different
-%   scenarios with $p_{\mathrm{AT}}=0.7,0.8,0.9,1$.  Mean
-%   non-travel-related activity is \Sexpr{round(mean.NT,1)}.}
-% \label{mandm233}
-% \end{figure}
-
 \begin{figure}
 <<mandm235, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
 deaths.CVD <- 242.8
