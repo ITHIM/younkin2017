@@ -87,7 +87,8 @@ would therefore over-count the number of inactive travelers.  Let
 $\fAT$ be the expected weekly rate of active travel for an active
 traveler (days with active travel per week).  We correct for the bias
 by scaling $\pi_0$ by $\fAT$.  (Currently $\fAT=1$.  There is
-currently no correction being performed to this estimator.))
+currently nociperceptive correction being performed to this
+estimator.))
 
 \begin{figure}\label{InactiveNational}
 <<mandm21, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
