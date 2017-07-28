@@ -80,6 +80,15 @@ to the large proportion on inactive travelers we model the
 distribution of travel activity as a mixture of a point-mass at zero
 with a log-normal distribution.
 
+Simply counting the proportion of individuals with no active travel
+reported in the survey data results in a biased estimator, for even
+active travelers sometimes have days with no active travel and we
+would therefore over-count the number of inactive travelers.  Let
+$\fAT$ be the expected weekly rate of active travel for an active
+traveler (days with active travel per week).  We correct for the bias
+by scaling $\pi_0$ by $\fAT$.  (Currently $\fAT=1$.  There is
+currently no correction being performed to this estimator.))
+
 \begin{figure}\label{InactiveNational}
 <<mandm21, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
 n.ind <- NHTS.df  %>% filter(!(location %in% c("-1","XXXX"))) %>% group_by(sex,age) %>% summarise(n.ind = n_distinct(id))
@@ -127,7 +136,8 @@ ggplot(D,aes(totalDuration)) + geom_histogram(aes(y=..density..), bins = 30, alp
   between the age of 45 and 59 living in a U.S. metropolitan area.
   Overlayed are both the empirical and fitted densities.  We assume
   that within age and sex class, and among active travelers, travel
-  activity has a log-normal distribution.}
+  activity has a log-normal
+  distribution. ($\alpha_{\mathrm{AT}}=\Sexpr{alpha.AT}$)}
 \end{figure}
 
 
@@ -178,24 +188,22 @@ getRR <- function(x,alpha,k){
 }
 @
 
-\paragraph{Estimation of Disease Burden}
+\paragraph{Estimation of Baseline Disease Burden}
 
-$B_0$ is the overall burden at baseline.  We use $\delta$ to
-scale this burden and compute the total percent burden reduction by
-summing across age sex and disease.
+$B_0$ is the overall burden at baseline.  Vargo and Eric's work here.
+How did we arrive at the disease burden estimates for Portland?
 
-\begin{equation}
-B = \delta B_0\label{burden2}
-\end{equation}
+\paragraph{Health Benefits}
 
-For the total proportional change in disease burden, due to disease $k$, we sum
-across sex and age-class as follows.
+We scale the baseline burden with the attributable fraction to
+estimate the reslting disease burden, $B = \delta B_0$. The total
+percent burden reduction, $\beta$, is computed by summing across age
+sex and disease as in Equation \ref{beta}.
 
-\begin{equation}
-  \beta_k = 1-\frac{\displaystyle \sum_{i,j} {B}_{ijk}} {\displaystyle \sum_{i,j}  {B_0}_{ijk}}
-\end{equation}
-
-
+\begin{eqnarray}
+  \beta &=& 1-\frac{\displaystyle \sum_{i,j,k} \delta_{ijk}{B_0}_{ijk}} {\displaystyle \sum_{i,j,k}  {B_0}_{ijk}}
+  \label{beta}
+\end{eqnarray}
 
 % To esimate $\alpha_{\textrm{AT}}$ we use an estimate for the
 % proportion of active travel time achieved by walking, $\hat{p_w}$ with

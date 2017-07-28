@@ -214,7 +214,7 @@ the results.
 deaths.CVD <- 242.8
 alpha.CVD <- log(0.93831942)
 mean.NT.vec <- c(1,5,10,25,50); cv <- 1;
-p.AT.scenario.vec <- seq(p.AT.portland,1,length.out = 25)
+p.AT.scenario.vec <- seq(p.AT.portland,1,length.out = 5)
 
 results <- data.frame()
 

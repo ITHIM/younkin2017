@@ -36,45 +36,6 @@ Jonathan Patz\textsuperscript{1, 2}
 \\
 \bigskip
 \end{center}
-\section*{Outline}
-\bi
-\item Abstract and Introduction
-  \bi
-  \item History of ITHIM
-    \bi
-    \item Origin in UK
-    \item Application in US
-      \bi
-      \item Bay Area
-      \item Nashville
-      \ei
-    \ei
-  \item Motivations
-    \bi
-    \item Expanding the application of ITHIM for US beyond the most dedicated metros - using national datasets
-    \item Improving the performance and documentation of the model by moving to R
-    \item Mirroring improvements made in the UK with Analytica
-    \item Easing the connections of ITHIM to existing scenario planning tools
-    \ei
-  \item Purpose
-    \bi
-    \item Documentation of the method in math notation
-    \item Presentation of the R implementation with a US metro area example
-    \ei
-  \ei
-\item Description of Method
-\item Demonstration of R package via an analysis of the Portland MSA
-  \bi
-  \item data from Eric Main
-    \bi
-    \item burden estimated using technique from WHO
-    \item Travel times estimated from NHTS
-    \ei
-  \ei
-\item Sensitivity Analysis/Value of Information
-\item
-\ei
-\clearpage
 \section*{Abstract}
 \Sexpr{knit_child('lib/abstract.Rnw')}
 
@@ -96,8 +57,12 @@ Jonathan Patz\textsuperscript{1, 2}
 % \section*{Results}
 % \Sexpr{knit_child('lib/results.Rnw')}
 
+\clearpage
 \section*{Discussion}
 \Sexpr{knit_child('lib/discussion.Rnw')}
+
+\section*{Appendix}
+\Sexpr{knit_child('lib/appendix.Rnw')}
 
 % \section*{Conclusion}
 % \Sexpr{knit_child('lib/conclusion.Rnw')}

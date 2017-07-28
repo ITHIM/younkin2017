@@ -4,6 +4,7 @@ younkin2017.pdf: ./younkin2017.Rnw ./lib/ITHIM.bib ./lib/materialsAndMethods.Rnw
 	bibtex younkin2017.aux
 	pdflatex younkin2017.tex
 	pdflatex younkin2017.tex
+	cp -v younkin2017.tex younkin2017.pdf ~/box/syounkin/ITHIM/
 
 clean:
 	rm -rf ./*.aux
