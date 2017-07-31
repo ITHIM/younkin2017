@@ -2,30 +2,51 @@
 % !TeX root = ../ITHIM-manuscript.Rnw
 
 Restate the results
-
-Justify the methodlogical changes
-__improved stability as non-travel activity changes (a parameter with high uncertainty)__
-__clearer documentation and records of runs and changes to the model (increasingly important as adoption and userbase grows)__
-__facilitation of rapid what-if scenarios (and subsequent vizualizations)__
-__ease of integration with other (upstream) scenario planning tools__
+\bi
+\item Justify the methodlogical changes
+\item improved stability as non-travel activity changes (a parameter
+  with high uncertainty)
+\item clearer documentation and records of runs and changes to the
+  model (increasingly important as adoption and userbase grows)
+\item facilitation of rapid what-if scenarios (and subsequent
+  vizualizations)
+\item ease of integration with other (upstream) scenario planning
+  tools
+\ei
 
 Justify assumptions and simplifications with the data
-__moving to joint distribution of travel and non-travel physical activity (I think this happened, yes?)__
-__relying on NHTS and simplifying seperate walk and cycle to overall active travel__
-__attempting to move to a mixed distribution of individuals with and without any recorded travel activity__
-___this make facilitate later use of more widely available estimates from American Community Survey for example___
+\bi
+\item moving to joint distribution of travel and non-travel physical
+  activity (I think this happened, yes?)
+\item relying on NHTS and simplifying seperate walk and cycle to
+  overall active travel
+\item attempting to move to a mixed distribution of individuals with
+  and without any recorded travel activity
+\item this make facilitate later use of more widely available
+  estimates from American Community Survey for example
+\ei
 
-Many of these changes have already been pursued and examined in the UK by CEDAR but this is the first time they have been implemented for a US Metro. (cite personal communication with James [maybe we don't need to if he is an author], as well as Marco's and Thiago's papers)
+Many of these changes have already been pursued and examined in the UK
+by CEDAR but this is the first time they have been implemented for a
+US Metro. (cite personal communication with James [maybe we don't need
+to if he is an author], as well as Marco's and Thiago's papers)
 
 Future improvements
-__reduction of age stratification to improve the estaimation of input parametere (perhaps show the proportion of the health benefit accrued by the older age groups in the case study)__
-__addition of race as a stratification and inout parameter__
-__addition of other health endpoints (exposure pathways, air quality, injuries)__
-
+\bi
+\item reduction of age stratification to improve the estaimation of
+  input parametere (perhaps show the proportion of the health benefit
+  accrued by the older age groups in the case study)
+\item addition of race as a stratification and inout parameter
+\item addition of other health endpoints (exposure pathways, air
+  quality, injuries) \ei
 
 Next Steps
-__finish cultivating input data bases for nationwide run__
-__being pursuing more streamlined integration with scenario Planning tools such as Urban Sim__
-__test the importance of spatial resolution on resutls__
+\bi
+\item finish cultivating input data bases for nationwide run
+\item being pursuing more streamlined integration with scenario
+  Planning tools such as Urban Sim
+\item test the importance of spatial resolution on resutls
+\ei
 
-(should we include, somewhere, a clarification of how this method is an improvement over UD4H tool for Urban Footprint and EPA?)
+Should we include, somewhere, a clarification of how this method is an
+improvement over UD4H tool for Urban Footprint and EPA?
