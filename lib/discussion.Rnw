@@ -7,3 +7,53 @@
   \item The health benefits are qunatified by scaling baseline disease
     burden tith the attributable fraction, $\af{}$, associated with
 \ei
+
+Restate the results
+\bi
+\item Justify the methodlogical changes
+\item improved stability as non-travel activity changes (a parameter
+  with high uncertainty)
+\item clearer documentation and records of runs and changes to the
+  model (increasingly important as adoption and userbase grows)
+\item facilitation of rapid what-if scenarios (and subsequent
+  vizualizations)
+\item ease of integration with other (upstream) scenario planning
+  tools
+\ei
+
+Justify assumptions and simplifications with the data
+\bi
+\item moving to joint distribution of travel and non-travel physical
+  activity (I think this happened, yes?)
+\item relying on NHTS and simplifying seperate walk and cycle to
+  overall active travel
+\item attempting to move to a mixed distribution of individuals with
+  and without any recorded travel activity
+\item this make facilitate later use of more widely available
+  estimates from American Community Survey for example
+\ei
+
+Many of these changes have already been pursued and examined in the UK
+by CEDAR but this is the first time they have been implemented for a
+US Metro. (cite personal communication with James [maybe we don't need
+to if he is an author], as well as Marco's and Thiago's papers)
+
+Future improvements
+\bi
+\item reduction of age stratification to improve the estaimation of
+  input parametere (perhaps show the proportion of the health benefit
+  accrued by the older age groups in the case study)
+\item addition of race as a stratification and inout parameter
+\item addition of other health endpoints (exposure pathways, air
+  quality, injuries) \ei
+
+Next Steps
+\bi
+\item finish cultivating input data bases for nationwide run
+\item being pursuing more streamlined integration with scenario
+  Planning tools such as Urban Sim
+\item test the importance of spatial resolution on resutls
+\ei
+
+Should we include, somewhere, a clarification of how this method is an
+improvement over UD4H tool for Urban Footprint and EPA?

@@ -12,7 +12,7 @@ in the UK and has been adapted for use in the US, primarily
 California. Here we present an implementation of the active
 transportation component of ITHIM to model the health impacts of
 modified active transportation levels.
-  
+
 The R package implemention of ITHIM's physical activity component
 provides a robust environment for exploring the relationship between
 active transportation and positive health outcomes.  A web-based
