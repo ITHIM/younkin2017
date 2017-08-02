@@ -84,11 +84,19 @@ Simply counting the proportion of individuals with no active travel
 reported in the survey data results in a biased estimator, for even
 active travelers sometimes have days with no active travel and we
 would therefore over-count the number of inactive travelers.  Let
-$\fAT$ be the expected weekly rate of active travel for an active
-traveler (days with active travel per week).  We correct for the bias
-by scaling $\pi_0$ by $\fAT$.  (Currently $\fAT=\frac{4}{7}$.  There is
-currently nociperceptive correction being performed to this
-estimator.))
+$\pi_0$ be the proportion of inactive travelers (drivers) and
+$\fAT = P\{T>0|\mathrm{active}\}$ be the proportion of active
+travelers who reported active travel on the day of the survey.  We
+estimate $\fAT$ with the average weekly rate of active travel among
+active travelers (days with active travel per week).  We correct for
+the potential bias by dividing the proportion of individuals with
+nonzero active travel by $\fAT$.  (Currently $\fAThat=\frac{4}{7}$.)
+
+\begin{equation}
+%P\{T>0\} &=& P\{T>0|\mathrm{active}\}P\{\mathrm{active}\} + P\{T>0|\mathrm{inactive}\}P\{\mathrm{inactive}\}\\
+%P\{\mathrm{active}\} &=& \frac{P\{T>0\}}{P\{T>0|\mathrm{active}\}} = \frac{1}{\fAT}P\{T>0\}\\
+\pi_0 = 1 - \frac{1}{\fAT}P\{T>0\}
+\end{equation}
 
 \begin{figure}\label{InactiveNational}
 <<mandm21, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=

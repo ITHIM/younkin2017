@@ -14,14 +14,14 @@ U.S., is what has prompted us to reparameterize the model in terms of
 combined travel actvity, avoiding the diffuculty of estimating mean
 cycle time when there are so few cycling trips in the data.
 
-The age-sex class with the largest trip duration is women beyween the
+The age-sex class with the largest trip duration is women between the
 age of 15 and 29 with over 700 combined minutes of travel per week
 (1.6 hours a day!).  (Seems like an over-estimate.  We really need
 confidence intervals on these estimates.)
 
 \paragraph{Travel Activity}
 We see in Figure \ref{portland9} the extent of the proportion of
-inactive travel.  More than sixty percent of people in the Portland
+inactive travel.  More than  percent of people in the Portland
 Metropolitan area are inactive travelers. (Note that this is an
 over-estimate of the true value.  We need to adjust this estimate by a
 factor that is a function of the mean frequency of active travel.)
