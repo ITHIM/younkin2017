@@ -61,7 +61,13 @@ n.AT <- NHTS.df %>% filter(location == 6442) %>% group_by(sex,age,id, mode) %>% 
 
 D <- inner_join(n.ind, n.AT, by = c("sex","age")) %>% mutate(p0 = 1-n.AT/n.ind)
 ggplot(D, aes(x=age,y=p0, fill = sex)) + geom_bar(stat = "identity", position = "dodge") + theme_bw()+ ylab("Proportion of Inactive Travelers") + xlab("") + coord_cartesian(ylim = c(0.25, 1))
-p.AT.portland <- D %>% ungroup() %>% filter(age == "45-59" & sex == "M") %>% select(p0) %>% as.numeric()
+
+p0.portland <- D %>% ungroup() %>% filter(age == "45-59" & sex == "M") %>% select(p0) %>% as.numeric()
+p.AT.portland <- 1 - p0.portland
+
+p0.portland.F <- D %>% ungroup() %>% filter(age == "45-59" & sex == "F") %>% select(p0) %>% as.numeric()
+p.AT.portland.F <- 1 - p0.portland.F
+
 @
 \caption{The proportion of inactive travelers in the Portland metropolitan area.}
 \label{portland9}
@@ -86,12 +92,12 @@ We assume that\ldots
 \begin{figure}
 <<mandm223, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
 AT.id.vec <- NHTS.df %>% filter(location == 6442 ) %>% group_by(sex, age, id, mode) %>% summarise(durationTotal = fAT*sum(duration)) %>% ungroup() %>% filter(mode %in% c("walk","cycle")) %>% filter(durationTotal > 0) %>% select(id) %>% unlist()
-D <- NHTS.df %>% filter(id %in% AT.id.vec) %>% group_by(sex, age, id) %>% summarise(totalDuration = alpha.AT*sum(duration)*7/60*fAT)
+DAll <- NHTS.df %>% filter(id %in% AT.id.vec) %>% group_by(sex, age, id) %>% summarise(totalDuration = alpha.AT*sum(duration)*7/60*fAT)
 
-summaryStats <- D %>% summarise(mean = mean(totalDuration), sd=sd(totalDuration))
+summaryStatsAll <- DAll %>% summarise(mean = mean(totalDuration), sd=sd(totalDuration))
 
-D <- D %>% filter(age == "45-59" && sex == "M")
-summaryStats <- summaryStats %>% filter(age == "45-59" & sex == "M")
+D <- DAll %>% filter(age == "45-59" && sex == "M")
+summaryStats <- summaryStatsAll %>% filter(age == "45-59" & sex == "M")
 
 ggplot(D,aes(totalDuration)) + geom_histogram(aes(y=..density..), bins = 10, alpha = 0.2 ) +
     geom_line(aes(y = ..density.., color = "Empirical"), stat = 'density') +
@@ -214,7 +220,7 @@ the results.
 deaths.CVD <- 242.8
 alpha.CVD <- log(0.93831942)
 mean.NT.vec <- c(1,5,10,25,50); cv <- 1;
-p.AT.scenario.vec <- seq(p.AT.portland,1,length.out = 5)
+p.AT.scenario.vec <- c(p.AT.portland,seq(0,1,length.out = 5))
 
 results <- data.frame()
 
@@ -228,7 +234,7 @@ for( mean.NT in mean.NT.vec ){
 
 results <- within(results, mean.NT <- factor(mean.NT, levels = c("1","5","10","25","50")))
 
-ggplot(results, aes(x = p.AT.scenario, y = deaths.CVD*af, color = mean.NT)) + geom_point(aes(x=p.AT.scenario,y=deaths.CVD*af)) + stat_smooth() + theme_bw() + xlab("Proportion of Active Travelers") + ylab("CVD Deaths Averted") + scale_colour_discrete(name="Mean Non-\nTravel Activity\n(MET-hrs/week)") #+ coord_cartesian(xlim = c(0,150))
+ggplot(results, aes(x = p.AT.scenario, y = deaths.CVD*af, color = mean.NT)) + geom_line(aes(x=p.AT.scenario,y=deaths.CVD*af)) + theme_bw() + xlab("Proportion of Active Travelers") + ylab("CVD Deaths Averted") + scale_colour_discrete(name="Mean Non-\nTravel Activity\n(MET-hrs/week)") #+ coord_cartesian(xlim = c(0,150))
 
 @
 \caption{The number of deaths due to cardiovascular disease (CVD)
@@ -237,4 +243,64 @@ ggplot(results, aes(x = p.AT.scenario, y = deaths.CVD*af, color = mean.NT)) + ge
   that the coefficient of variation for non-travel activity is fixed
   at 1.}
 \label{mandm235}
+\end{figure}
+
+\subsection*{Equity}
+
+We are interested in quantifying the degree of disparateness in the
+health benefits being achieved across subpopulations.  For the sake of
+demonstration we investigate the difference in health benefits
+observed in men age 45-59 and women age 45-59.  (Note that this is
+simply an example to facilitate discussion about the Bullitt
+Foundation proposal.)
+
+We see in Figure \ref{mandm235} that if the proportion of active
+travelers is set to zero, i.e., no active transport, that
+approximately 20-40 CVD deaths are averted.
+
+
+
+\begin{figure}
+<<mandm2355, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
+D <- DAll %>% filter(age == "45-59" && sex == "F")
+summaryStats <- summaryStatsAll %>% filter(age == "45-59" & sex == "F")
+
+ggplot(D,aes(totalDuration)) + geom_histogram(aes(y=..density..), bins = 10, alpha = 0.2 ) +
+    geom_line(aes(y = ..density.., color = "Empirical"), stat = 'density') +
+    theme_bw() + xlab("Travel Activity Met-hrs./week") + xlim(c(0,240)) +
+    stat_function(aes(color="Fitted"), fun = dlnorm,
+                  args = list(meanlog = with(summaryStats,log(mean/sqrt(1+sd^2/mean^2))),
+                              sdlog = with(summaryStats,sqrt(log(1+sd^2/mean^2)))))
+@
+\end{figure}
+
+\begin{figure}
+<<mandm2356, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
+p.AT.portland <- p.AT.portland.F
+deaths.CVD <- 65.8 #ageClass5, F, deaths, CVD
+alpha.CVD <- log(0.93831942)
+mean.NT.vec <- c(1,5,10,25,50); cv <- 1;
+p.AT.scenario.vec <- c(p.AT.portland,seq(0,1,length.out = 5))
+
+results <- data.frame()
+
+for( mean.NT in mean.NT.vec ){
+    sd.NT <- cv*mean.NT;
+    for(p.AT.scenario in p.AT.scenario.vec ){
+        af <- computeAF(p.AT.baseline = p.AT.portland, p.AT.scenario = p.AT.scenario, mean.AT.baseline = summaryStats$mean, sd.AT.baseline = summaryStats$sd, mean.AT.scenario = summaryStats$mean, sd.AT.scenario = summaryStats$sd, mean.NT.baseline = mean.NT,sd.NT.baseline = sd.NT, mean.NT.scenario = mean.NT, sd.NT.scenario = sd.NT, alpha = alpha.CVD, k = 1/2)
+        results <-  rbind(results, data.frame(mean.NT, p.AT.scenario, af))
+    }
+}
+
+results <- within(results, mean.NT <- factor(mean.NT, levels = c("1","5","10","25","50")))
+
+ggplot(results, aes(x = p.AT.scenario, y = deaths.CVD*af, color = mean.NT)) + geom_line(aes(x=p.AT.scenario,y=deaths.CVD*af)) + theme_bw() + xlab("Proportion of Active Travelers") + ylab("CVD Deaths Averted") + scale_colour_discrete(name="Mean Non-\nTravel Activity\n(MET-hrs/week)") #+ coord_cartesian(xlim = c(0,150))
+#ggplot(results, aes(x = p.AT.scenario, y = deaths.CVD*af, color = mean.NT)) + geom_point(aes(x=p.AT.scenario,y=deaths.CVD*af)) + stat_smooth() + theme_bw() + xlab("Proportion of Active Travelers") + ylab("CVD Deaths Averted") + scale_colour_discrete(name="Mean Non-\nTravel Activity\n(MET-hrs/week)") #+ coord_cartesian(xlim = c(0,150))
+@
+\caption{The number of deaths due to cardiovascular disease (CVD)
+  averted among females age 45-59 in the Portland area as a function of
+  proportion of active travelers and mean non-travel activity.  Note
+  that the coefficient of variation for non-travel activity is fixed
+  at 1.}
+\label{mandm2356}
 \end{figure}
