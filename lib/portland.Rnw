@@ -308,7 +308,7 @@ ggplot(results, aes(x = p.AT.scenario, y = deaths.CVD*af, color = mean.NT)) + ge
 \subsection*{Proportion of Active Travelers by MSA}
 
 \begin{figure}
-<<equity1, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 9>>=
+<<pATbyMSA, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 9, dev = "png">>=
 D.pAT <- NHTS.df %>% filter(!(location %in% c("-1", NA))) %>% group_by(id, location) %>% summarise(AT = (first(nwalktrp)+first(nbiketrp)) > 0) %>% ungroup() %>% group_by(location) %>% summarise(pAT = sum(AT, na.rm = TRUE)/sum(!is.na(AT)),pAT.se = sqrt(pAT*(1-pAT)/sum(!is.na(AT)))) %>% arrange(pAT)
 
 msaIDFile <- read.csv(system.file("join2.csv", package = "ITHIM"), stringsAsFactors = FALSE)
