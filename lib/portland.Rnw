@@ -219,8 +219,8 @@ the results.
 <<mandm235, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
 deaths.CVD <- 242.8
 alpha.CVD <- log(0.93831942)
-mean.NT.vec <- c(1,5,10,25,50); cv <- 1;
-p.AT.scenario.vec <- c(p.AT.portland,seq(0,1,length.out = 5))
+mean.NT.vec <- c(1,10,100); cv <- 1;
+p.AT.scenario.vec <- seq(p.AT.portland,1,length.out = 3)
 
 results <- data.frame()
 
@@ -232,9 +232,9 @@ for( mean.NT in mean.NT.vec ){
     }
 }
 
-results <- within(results, mean.NT <- factor(mean.NT, levels = c("1","5","10","25","50")))
+results <- within(results, mean.NT <- factor(mean.NT, levels = c("1","5","10","25","50","100")))
 
-ggplot(results, aes(x = p.AT.scenario, y = deaths.CVD*af, color = mean.NT)) + geom_line(aes(x=p.AT.scenario,y=deaths.CVD*af)) + theme_bw() + xlab("Proportion of Active Travelers") + ylab("CVD Deaths Averted") + scale_colour_discrete(name="Mean Non-\nTravel Activity\n(MET-hrs/week)") #+ coord_cartesian(xlim = c(0,150))
+ggplot(results, aes(x = p.AT.scenario, y = deaths.CVD*af, color = mean.NT)) + geom_line(aes(x=p.AT.scenario,y=deaths.CVD*af)) + theme_bw() + xlab("Proportion of Active Travelers") + ylab("CVD Deaths Averted") + scale_colour_discrete(name="Mean Non-\nTravel Activity\n(MET-hrs/week)")# + coord_cartesian(xlim = c(p.AT.portland,1), ylim = c(0,20))
 
 @
 \caption{The number of deaths due to cardiovascular disease (CVD)
