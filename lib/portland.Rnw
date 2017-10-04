@@ -220,7 +220,7 @@ the results.
 deaths.CVD <- 242.8
 alpha.CVD <- log(0.93831942)
 mean.NT.vec <- c(1,10,100); cv <- 1;
-p.AT.scenario.vec <- seq(p.AT.portland,1,length.out = 3)
+p.AT.scenario.vec <- seq(p.AT.portland,1,length.out = 5)
 
 results <- data.frame()
 
@@ -232,9 +232,9 @@ for( mean.NT in mean.NT.vec ){
     }
 }
 
-results <- within(results, mean.NT <- factor(mean.NT, levels = c("1","5","10","25","50","100")))
+results <- within(results, mean.NT <- factor(mean.NT, levels = c("1","10","100"), labels = c("low","medium","high")))
 
-ggplot(results, aes(x = p.AT.scenario, y = deaths.CVD*af, color = mean.NT)) + geom_line(aes(x=p.AT.scenario,y=deaths.CVD*af)) + theme_bw() + xlab("Proportion of Active Travelers") + ylab("CVD Deaths Averted") + scale_colour_discrete(name="Mean Non-\nTravel Activity\n(MET-hrs/week)")# + coord_cartesian(xlim = c(p.AT.portland,1), ylim = c(0,20))
+ggplot(results, aes(x = p.AT.scenario, y = deaths.CVD*af, color = mean.NT)) + geom_line(aes(x=p.AT.scenario,y=deaths.CVD*af)) + theme_bw() + xlab("Proportion with At Least One Trip\nPortland, OR, Male, 45-59") + ylab("Cardiovascular Disease\nDeaths Averted") + scale_colour_discrete(name="Physical Activity")# + coord_cartesian(xlim = c(p.AT.portland,1), ylim = c(0,20))
 
 @
 \caption{The number of deaths due to cardiovascular disease (CVD)
@@ -308,16 +308,31 @@ ggplot(results, aes(x = p.AT.scenario, y = deaths.CVD*af, color = mean.NT)) + ge
 \subsection*{Proportion of Active Travelers by MSA}
 
 \begin{figure}
-<<pATbyMSA, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 9, dev = "png">>=
-D.pAT <- NHTS.df %>% filter(!(location %in% c("-1", NA))) %>% group_by(id, location) %>% summarise(AT = (first(nwalktrp)+first(nbiketrp)) > 0) %>% ungroup() %>% group_by(location) %>% summarise(pAT = sum(AT, na.rm = TRUE)/sum(!is.na(AT)),pAT.se = sqrt(pAT*(1-pAT)/sum(!is.na(AT)))) %>% arrange(pAT)
+<<pATbyMSA, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 9, dev = c("pdf","png")>>=
+#D.pAT <- NHTS.df %>% filter(!(location %in% c("-1", NA))) %>% group_by(id, location) %>% summarise(AT = (first(nwalktrp)+first(nbiketrp)) > 0) %>% ungroup() %>% group_by(location) %>% summarise(pAT = sum(AT, na.rm = TRUE)/sum(!is.na(AT)),pAT.se = sqrt(pAT*(1-pAT)/sum(!is.na(AT)))) %>% arrange(pAT)
+
+D.pAT <- NHTS.df %>% filter(!(location %in% c("-1", NA))) %>% group_by(id, location) %>% summarise(AT = first(nwalktrp)+first(nbiketrp)) %>% ungroup() %>% mutate( AT.level = ifelse(AT == 0, "0 trips", ifelse(AT < 5, "< 5 trips", "> 5 trips"))) %>% group_by(location, AT.level) %>% summarise( count = n()) %>% ungroup()
+
+D.pAT <- within(D.pAT, AT.level <- factor(AT.level, levels = rev(c("0 trips", "< 5 trips", "> 5 trips"))))
+
+D.total <- D.pAT %>% group_by(location) %>% summarise(total = sum(count))
+
+D.pAT <- full_join(D.pAT,D.total,by="location") %>% mutate(prop = count/total) %>% arrange(desc(AT.level),count)
+
+#%>% summarise(pAT = sum(AT, na.rm = TRUE)/sum(!is.na(AT)),pAT.se = sqrt(pAT*(1-pAT)/sum(!is.na(AT)))) %>% arrange(pAT)
 
 msaIDFile <- read.csv(system.file("join2.csv", package = "ITHIM"), stringsAsFactors = FALSE)
 msaIDFile %>% select(msaName, msaNHTS) %>% filter(!is.na(msaNHTS)) %>% distinct(msaName, msaNHTS)
 bar <- msaIDFile %>% select(msaName, msaNHTS) %>% filter(!is.na(msaNHTS)) %>% group_by(msaNHTS) %>% summarise(msaName = first(msaName))
 bar <- within(bar, msaNHTS <- factor(msaNHTS))
+
 D.pAT <- full_join(D.pAT, bar, by = c("location" = "msaNHTS"))
 
-ggplot(D.pAT, aes(x = factor(msaName, levels = D.pAT$msaName), y = pAT)) + geom_bar(position = position_dodge(), stat = "identity") + geom_errorbar(aes(ymin=pAT-1.96*pAT.se, ymax=pAT+1.96*pAT.se)) + theme_bw() + ylab("Proportion of Active Travelers") + xlab("Metropolitan Statistical Area (MSA)") + coord_flip() + scale_y_continuous(limits=c(0,1), breaks=0:10*0.1)
+D.pAT <- subset(D.pAT, !is.na(AT.level))
+
+ggplot(D.pAT, aes(x = factor(msaName, levels = D.pAT$msaName), y = prop, fill = AT.level)) + geom_bar(stat = "identity") + theme_bw() + ylab("Proportion") + xlab("Metropolitan Statistical Area (MSA)") + coord_flip() #+ scale_y_continuous(limits=c(0,1), breaks=0:10*0.1)
+
+#ggplot(D.pAT, aes(x = factor(msaName, levels = D.pAT$msaName), y = pAT)) + geom_bar(position = position_dodge(), stat = "identity") + geom_errorbar(aes(ymin=pAT-1.96*pAT.se, ymax=pAT+1.96*pAT.se)) + theme_bw() + ylab("Proportion of Active Travelers") + xlab("Metropolitan Statistical Area (MSA)") + coord_flip() + scale_y_continuous(limits=c(0,1), breaks=0:10*0.1)
 
 #+ theme(axis.text.x = element_text(angle = 60, hjust = 1))
 @

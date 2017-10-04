@@ -56,17 +56,13 @@ Jonathan Patz\textsuperscript{1, 2}
 
 % \section*{Results}
 % \Sexpr{knit_child('lib/results.Rnw')}
-
 \clearpage
 \section*{Discussion}
 \Sexpr{knit_child('lib/discussion.Rnw')}
-
 \section*{Appendix}
 \Sexpr{knit_child('lib/appendix.Rnw')}
-
 % \section*{Conclusion}
 % \Sexpr{knit_child('lib/conclusion.Rnw')}
-
 \singlespacing
 \nolinenumbers
 \bibliography{./lib/ITHIM}
