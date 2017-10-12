@@ -69,7 +69,8 @@ p0.portland.F <- D %>% ungroup() %>% filter(age == "45-59" & sex == "F") %>% sel
 p.AT.portland.F <- 1 - p0.portland.F
 
 @
-\caption{The proportion of inactive travelers in the Portland metropolitan area.}
+\caption{The proportion of inactive travelers in the Portland
+  metropolitan area. (NHTS)}
 \label{portland9}
 \end{figure}
 
@@ -80,9 +81,60 @@ D <- NHTS.df %>% filter(id %in% AT.id.vec) %>% group_by(id, sex, age) %>% summar
 ggplot(D, aes(x=age,y=mean, fill = sex)) + geom_bar(stat = "identity", position = "dodge") + theme_bw()+ ylab("Mean Travel Actvity among Active Travelers") + xlab("Age") #+ coord_cartesian(ylim = c(0.5, 1))
 @
 \label{mandm2223}
-\caption{Mean travel activity (\METhrs{}) among active travelers in the Portland Metropolitan area.}
+\caption{Mean travel activity (\METhrs{}) among active travelers in
+  the Portland Metropolitan area. (NHTS)}
 \end{figure}
 
+\paragraph{Oregon Household Activity Survey}
+<<ohas1, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
+OHAS.df <- readRDS(file = "/Users/syounkin/Bullitt/data/OHAS/OHAS.df.rds")
+countyList <- c("Benton","Clackamas","Deschutes","Jackson","Josephine","Lane","Linn","Marion","Multnomah","Polk","Washington")
+OHAS.df <- OHAS.df %>% filter(COUNTYNAME %in% countyList)
+OHAS.df <- within(OHAS.df, COUNTYNAME <- factor(COUNTYNAME, levels = countyList))
+@
+
+We include the following counties in the following analysis: \Sexpr{countyList}.
+
+\begin{figure}
+<<allCounties, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = TRUE, fig.height = 3>>=
+D <- full_join(
+  OHAS.df %>% mutate(AGECLASS = ITHIM:::convertToAgeClass(AGE)) %>% group_by(MODE,GEND,AGECLASS) %>% summarise(TOTDUR = sum(TRPDUR)) %>% filter(MODE %in% c("walk","cycle")) %>% arrange(MODE, GEND, AGECLASS),
+  OHAS.df %>% mutate(AGECLASS = ITHIM:::convertToAgeClass(AGE)) %>% group_by(GEND,AGECLASS) %>% summarise(N=n_distinct(paste0(SAMPN,PERNO))), by = c("GEND","AGECLASS")
+) %>% mutate(MEAN = TOTDUR/N)
+
+ggplot(D, aes(x = AGECLASS, y = MEAN, fill = GEND)) + geom_bar(position = "dodge", stat = "identity") + xlab("Age Class") + ylab("Mean Individual Travel Duration (min./week)") + facet_grid(MODE ~ .)
+@
+\label{allCounties}
+\caption{Travel Duration (OHAS)}
+\end{figure}
+
+\paragraph{Per person mean walk and bike times by county.}
+<<totaldur, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = TRUE>>=
+D <- OHAS.df %>% filter(MODE %in% c("walk","cycle")) %>% group_by(MODE,COUNTYNAME) %>% summarise(TOTDUR = sum(TRPDUR)) %>% arrange(COUNTYNAME,MODE)
+D2 <- OHAS.df %>% group_by(COUNTYNAME) %>% summarise(n = n_distinct(paste0(SAMPN,PERNO)))
+full_join(D,D2,by="COUNTYNAME") %>% mutate(mean = TOTDUR/n) %>% arrange(MODE,desc(mean)) %>% as.data.frame()
+@
+
+\paragraph{AgeClass by Sex by Five Counties}
+<<pertable, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = TRUE>>=
+AGECLASS <- ITHIM:::convertToAgeClass(OHAS.df$AGE)
+@
+
+\begin{figure}
+<<sampSize, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = TRUE, fig.height = 9>>=
+D <- data.frame(GEND = OHAS.df$GEND, AGECLASS = AGECLASS, COUNTYNAME = OHAS.df$COUNTYNAME, INCOME = OHAS.df$INCOME, RACE = OHAS.df$RACE)
+ggplot(D, aes(x = AGECLASS, fill = GEND)) + geom_bar(position = "dodge") + facet_grid(COUNTYNAME ~ .)
+#ggplot(D, aes(x = INCOME, fill = COUNTYNAME)) + geom_bar(position = "dodge")
+@
+\label{sampSize}
+\caption{Sample size by age, sex and county (OHAS)}
+\end{figure}
+
+\paragraph{Household Table (HH)}
+COUNTYNAME, INCOME \& RACE
+<<hhtable, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = TRUE>>=
+with(OHAS.df,table(INCOME,RACE,COUNTYNAME))
+@
 
 \paragraph{Non-Travel-Related Physical Activity}
 

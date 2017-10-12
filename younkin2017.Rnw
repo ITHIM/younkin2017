@@ -10,7 +10,7 @@
 <<lib, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE>>=
 opts_knit$set(self.contained=FALSE)
 library("devtools")
-install_github("ITHIM/ITHIM", ref="sam")
+install_github("ITHIM/ITHIM", ref="devel")
 #install("~/ITHIM/")
 library("ITHIM")
 NHTS.df <- readRDS(file = "~/GHI/R/data/NHTS.df.rds")

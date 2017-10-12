@@ -8,3 +8,5 @@
 *.Rhistory
 .DS_Store
 *.png
+*.gif
+log/
