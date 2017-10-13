@@ -138,8 +138,7 @@ with(OHAS.df,table(INCOME,RACE,COUNTYNAME))
 
 \paragraph{Non-Travel-Related Physical Activity}
 
-We assume that\ldots
-
+\Sexpr{knit_child('./ATUS.Rnw')}
 
 \begin{figure}
 <<mandm223, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
