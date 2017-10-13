@@ -130,7 +130,7 @@ fiveYear <- bind_rows(readATUS1yr(year = 2011, stateFIPS = 41, metroCode = 1, me
 
 
 fiveYear  %>%
-ggplot(aes(x = METs, ..density.., colour = AGECAT)) + geom_freqpoly(binwidth = 10) + facet_grid( SEX ~ .) + labs(x = "Non-Travel Marginal MET-hrs./week", colour = "Age") + coord_cartesian(xlim = c(0, 400))
+ggplot(aes(x = METs, ..density.., colour = AGECAT)) + geom_freqpoly(binwidth = 25) + facet_grid( SEX ~ .) + labs(x = "Non-Travel Marginal MET-hrs./week", colour = "Age") + coord_cartesian(xlim = c(0, 250))
 
 (parameters <- fiveYear %>%  group_by(SEX, AGECAT) %>% summarise(mean = mean(METs, na.rm=T), sd = sd(METs, na.rm=T)))
 
@@ -145,5 +145,6 @@ METmatrix[2,] <- METmatrix[3,]
 rownames(METmatrix) <- paste0("ageClass",1:8)
 colnames(METmatrix) <- c("M","F")
 METmatrix
+parameters
 @
 \end{figure}

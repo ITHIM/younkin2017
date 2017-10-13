@@ -267,7 +267,7 @@ this process over all age-sex classes and diseases.  See Table ? for
 the results.
 
 \begin{figure}
-<<mandm235, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
+<<mandm235, echo = FALSE, eval = FALSE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
 deaths.CVD <- 242.8
 alpha.CVD <- log(0.93831942)
 mean.NT.vec <- c(1,10,100); cv <- 1;
@@ -326,7 +326,7 @@ ggplot(D,aes(totalDuration)) + geom_histogram(aes(y=..density..), bins = 10, alp
 \end{figure}
 
 \begin{figure}
-<<mandm2356, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
+<<mandm2356, echo = FALSE, eval = FALSE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
 p.AT.portland <- p.AT.portland.F
 deaths.CVD <- 65.8 #ageClass5, F, deaths, CVD
 alpha.CVD <- log(0.93831942)
