@@ -1,5 +1,6 @@
+
 \begin{figure}
-<<atus1, echo = FALSE, eval = TRUE, warning = FALSE, message = FALSE, fig.height = 3>>=
+<<atus1, echo = FALSE, eval = TRUE, warning = FALSE, message = FALSE, fig.height = 6>>=
 newMETsFile <-'https://raw.githubusercontent.com/vargovargo/ACS_ITHIM/master/ATUS_to_METS_key.csv'
 
 newMETs <- read.csv(file = newMETsFile, stringsAsFactors = FALSE, colClasses = c("character","character","character","character","numeric","character","character","character"))
@@ -129,29 +130,31 @@ fiveYear <- bind_rows(readATUS1yr(year = 2011, stateFIPS = 41, metroCode = 1, me
                       )
 
 
-fiveYear  %>%
-ggplot(aes(x = METs, ..density.., colour = AGECAT)) + geom_freqpoly(binwidth = 25) + facet_grid( SEX ~ .) + labs(x = "Non-Travel Marginal MET-hrs./week", colour = "Age") + coord_cartesian(xlim = c(0, 250))
+# fiveYear  %>% ggplot(aes(x = METs, ..density.., colour = AGECAT)) + geom_freqpoly(binwidth = 25) + facet_grid( SEX ~ .) + labs(x = "Non-Travel Marginal MET-hrs./week", colour = "Age") + coord_cartesian(xlim = c(0, 250))
 
 
-ggplot(fiveYear, aes(x = SEX, y = METs, fill = AGECAT)) + geom_boxplot() + ylab("Leisure Activity (MET-hrs./week)")
+ggplot(fiveYear, aes(x = SEX, y = log(METs), fill = AGECAT)) + geom_boxplot() + ylab("Leisure Activity (log-scale) (MET-hrs./week)") + theme_bw() 
 
+parameters.LA <- fiveYear %>% mutate(logLA = log(METs)) %>% group_by(SEX, AGECAT) %>% summarise( meanLogLA = mean(logLA), sdLogLA = sd(logLA))
 
 #ggplot(subset(D, TA > 0), aes(x = GEND, y = TA, fill = AGECLASS)) + geom_boxplot() + ylab("Travel Activity (MET-hrs./week)")
 
 
-(parameters <- fiveYear %>%  group_by(SEX, AGECAT) %>% summarise(mean = mean(METs, na.rm=T), sd = sd(METs, na.rm=T)))
+#parameters <- fiveYear %>%  group_by(SEX, AGECAT) %>% summarise(mean = mean(METs, na.rm=T), sd = sd(METs, na.rm=T))
 
-METmatrix <- rbind(matrix(0,nrow = 2, ncol = 2), matrix(parameters$mean, ncol = 2))
+#METmatrix <- rbind(matrix(0,nrow = 2, ncol = 2), matrix(parameters$mean, ncol = 2))
 
-colnames(METmatrix) <- c(as.character(parameters$SEX[1]),as.character(rev(parameters$SEX)[1]))
+#colnames(METmatrix) <- c(as.character(parameters$SEX[1]),as.character(rev(parameters$SEX)[1]))
 
-METmatrix <- METmatrix[,c("male","female")]
+#METmatrix <- METmatrix[,c("male","female")]
 
-METmatrix <- METmatrix/METmatrix[3,2]
-METmatrix[2,] <- METmatrix[3,]
-rownames(METmatrix) <- paste0("ageClass",1:8)
-colnames(METmatrix) <- c("M","F")
-METmatrix
-parameters
+#METmatrix <- METmatrix/METmatrix[3,2]
+#METmatrix[2,] <- METmatrix[3,]
+#rownames(METmatrix) <- paste0("ageClass",1:8)
+#colnames(METmatrix) <- c("M","F")
+#METmatrix
+#parameters
 @
+\caption{Leisure Activity (log-scale) in the Portland Metropolitan Area}
+\label{ATUS}
 \end{figure}
