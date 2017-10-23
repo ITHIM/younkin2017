@@ -21,7 +21,7 @@ confidence intervals on these estimates.)
 
 \paragraph{Travel Activity}
 We see in Figure \ref{portland9} the extent of the proportion of
-inactive travel.  More than  percent of people in the Portland
+inactive travel.  More than $x$ percent of people in the Portland
 Metropolitan area are inactive travelers. (Note that this is an
 over-estimate of the true value.  We need to adjust this estimate by a
 factor that is a function of the mean frequency of active travel.)
@@ -38,7 +38,7 @@ p <- ggplot(D, aes(x = age, y = value, fill = mode))
 p + geom_bar(stat = "identity", postion = "dodge") + facet_grid( . ~ sex ) + ylab("Mean Weekly Travel Time (minutes)") + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 @
 \caption{The mean weekly travel time (minutes) in the Portland Metropolitan Area
-  stratified by age-class, sex and mode.}
+  stratified by age-class, sex and mode. (NHTS)}
 \label{portland8}
 \end{figure}
 
@@ -96,16 +96,37 @@ OHAS.df <- within(OHAS.df, COUNTYNAME <- factor(COUNTYNAME, levels = countyList)
 We include the following counties in the following analysis: \Sexpr{countyList}.
 
 \begin{figure}
-<<allCounties, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = TRUE, fig.height = 3>>=
-D <- full_join(
-  OHAS.df %>% mutate(AGECLASS = ITHIM:::convertToAgeClass(AGE)) %>% group_by(MODE,GEND,AGECLASS) %>% summarise(TOTDUR = sum(TRPDUR)) %>% filter(MODE %in% c("walk","cycle")) %>% arrange(MODE, GEND, AGECLASS),
-  OHAS.df %>% mutate(AGECLASS = ITHIM:::convertToAgeClass(AGE)) %>% group_by(GEND,AGECLASS) %>% summarise(N=n_distinct(paste0(SAMPN,PERNO))), by = c("GEND","AGECLASS")
-) %>% mutate(MEAN = TOTDUR/N)
+<<allCounties, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = TRUE, fig.height = 6>>=
+alpha_w <- 3
+alpha_c <- 6
 
-ggplot(D, aes(x = AGECLASS, y = MEAN, fill = GEND)) + geom_bar(position = "dodge", stat = "identity") + xlab("Age Class") + ylab("Mean Individual Travel Duration (min./week)") + facet_grid(MODE ~ .)
+OHAS.df <- OHAS.df %>% mutate(ID = paste0(SAMPN, "-", PERNO)) %>% mutate(AGECLASS = ITHIM:::convertToAgeClass(AGE))
+
+trip.df <-  OHAS.df %>% filter( !(TPURP %in% c("20", "96")) & TRPDUR <= 60) %>% complete(ID,MODE) %>% filter(MODE %in% c("walk","cycle")) %>% select(ID, MODE, TPURP, TRPDUR)
+
+subject.df <- OHAS.df %>% select(ID, GEND, AGECLASS) %>% distinct()
+
+D <- full_join(trip.df, subject.df, by = "ID", suffix = c(".trip",".subject")) %>% group_by(ID, MODE, GEND, AGECLASS) %>% summarise(TOTDUR = sum(TRPDUR)) %>% ungroup() %>% spread(MODE,TOTDUR) %>% mutate(TA = 7/60*(alpha_w*ifelse(is.na(walk),0,walk) + alpha_c*ifelse(is.na(cycle),0,cycle)))
+
+#ggplot(D, aes(x = GEND, y = TA, fill = AGECLASS)) + geom_boxplot() + ylab("Travel Activity (MET-hrs./week)") + coord_cartesian(ylim = c(0, 150))
+
+ggplot(subset(D, TA > 0), aes(x = GEND, y = TA, fill = AGECLASS)) + geom_boxplot() + ylab("Travel Activity (MET-hrs./week)") + coord_cartesian(ylim = c(0, 150))
+
+## D <- full_join(
+##   OHAS.df %>% mutate(AGECLASS = ITHIM:::convertToAgeClass(AGE)) %>% group_by(MODE,GEND,AGECLASS) %>% summarise(TOTDUR = sum(TRPDUR)) %>% filter(MODE %in% c("walk","cycle")) %>% arrange(MODE, GEND, AGECLASS) %>% spread(MODE,TOTDUR),
+##   OHAS.df %>% mutate(AGECLASS = ITHIM:::convertToAgeClass(AGE)) %>% group_by(GEND,AGECLASS) %>% summarise(N=n_distinct(paste0(SAMPN,PERNO))), by = c("GEND","AGECLASS") ) %>% mutate(MUWT = walk/N, MUCT = cycle/N) %>% mutate( TA = alpha_w*MUWT + alpha_c*MUCT )
+
+#ggplot(D, aes(x = TA, ..density.., colour = AGECLASS)) + geom_freqpoly(binwidth = 5) + facet_grid( GEND ~ .) + labs(x = "", colour = "Age") + coord_cartesian(xlim = c(0, 50))
+
+#ggplot(D, aes(x = TA, colour = GEND)) + geom_freqpoly(binwidth = 5) + facet_grid( AGECLASS ~ .) + labs(x = "", colour = "Age") + coord_cartesian(xlim = c(0, 20))
+
+#ggplot(D, aes(x = TA)) + geom_freqpoly(binwidth = 5) + coord_cartesian(xlim = c(0, 100))
+
+#
 @
 \label{allCounties}
-\caption{Travel Duration (OHAS)}
+\caption{Travel Activity ($T = \alpha_w t_w + \alpha_c t_c$) for Portland
+  Metro Area Active Travelers ($T > 0$) (OHAS)}
 \end{figure}
 
 \paragraph{Per person mean walk and bike times by county.}
