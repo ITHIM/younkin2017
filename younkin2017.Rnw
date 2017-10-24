@@ -10,11 +10,11 @@
 <<lib, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE>>=
 opts_knit$set(self.contained=FALSE)
 library("devtools")
-install_github("ITHIM/ITHIM", ref="devel")
-#install("~/ITHIM/")
+#install_github("ITHIM/ITHIM", ref="ithimus")
+install("~/ITHIM/")
 library("ITHIM")
-NHTS.df <- readRDS(file = "~/GHI/R/data/NHTS.df.rds")
-example("ITHIM")
+#NHTS.df <- readRDS(file = "~/GHI/R/data/NHTS.df.rds")
+#example("ITHIM")
 @
 \begin{center}
 {\Large \textbf\newline{A Comparative Risk Assessment of Active Transportation in the United
