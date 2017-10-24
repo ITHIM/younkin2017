@@ -13,52 +13,26 @@ two of these distributions we can compute the attributable fraction
 associates with an increase in proportion of active travelers.
 
 <<parameters, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
-parameters <- inner_join(pAT, inner_join(parameters.TA,parameters.LA))
+(parameters <- inner_join(pAT, inner_join(parameters.TA, parameters.LA)))
+
+
+pSet <- with(parameters,{
+  new("ParameterSet", pAT = pAT[1], meanLogTA = meanLogTA[1], meanLogLA =
+  meanLogLA[1], sdLogTA = sdLogTA[1], sdLogLA = sdLogLA[1], metWalk = 3,
+  metCycle = 6, alpha = alpha[1], k = 0.5, quantiles = 1:99/100, label = "First Row")
+})
+
 @
 
 
-<<functions, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
-getQuantilesMixture <- function(p.AT, mean.AT, sd.AT, mean.NT, sd.NT){
 
-meanlog.AT <- log(mean.AT/sqrt(1+sd.AT^2/mean.AT^2))
-sdlog.AT <- sqrt(log(1+sd.AT^2/mean.AT^2))
 
-meanlog.NT <- log(mean.NT/sqrt(1+sd.NT^2/mean.NT^2))
-sdlog.NT <- sqrt(log(1+sd.NT^2/mean.NT^2))
 
-at.vec <- c()
-nt.vec <- c()
-t.vec <- c()
 
-for( i in 1:1e4){
-    if( runif(1) > p.AT ){
-        at <- 0
-        }else{
-            at <- rlnorm(1,meanlog = meanlog.AT, sdlog = sdlog.AT)
-            }
-    at.vec <- c(at.vec,at)
-    nt <- rlnorm(1,meanlog = meanlog.NT, sdlog = sdlog.NT)
-    nt.vec <- c(nt.vec,nt)
-}
 
-t.vec <- at.vec + nt.vec
 
-n <- 1e2
-prob <- seq(0,1,length.out=n)
-quantiles <- quantile(t.vec, prob = prob)
-D <- data.frame(quantiles = quantiles, prob = prob)
-return(D)
 
-}
-computeAF <- function(p.AT.baseline, p.AT.scenario, mean.AT.baseline, mean.AT.scenario, sd.AT.baseline, sd.AT.scenario, mean.NT.baseline, mean.NT.scenario, sd.NT.baseline, sd.NT.scenario, alpha, k){
-    D.baseline <- getQuantilesMixture(p.AT = p.AT.baseline, mean.AT = mean.AT.baseline, sd.AT = sd.AT.baseline, mean.NT = mean.NT.baseline, sd.NT = sd.NT.baseline)
-    RR.baseline <- getRR(D.baseline$quantiles, alpha = alpha, k = k)
-    D.scenario <- getQuantilesMixture(p.AT = p.AT.scenario, mean.AT = mean.AT.scenario, sd.AT = sd.AT.scenario, mean.NT = mean.NT.scenario, sd.NT = sd.NT.scenario)
-    RR.scenario <- getRR(D.scenario$quantiles, alpha = alpha, k = k)
-    AF <- 1 - sum(RR.scenario)/sum(RR.baseline)
-    return(AF)
-}
-@
+
 
 In Figure \ref{mandm235} we see the results of the comparitive risk
 assesment.  For the sake of example we show the results for males age
@@ -75,3 +49,49 @@ deaths averted.  Note that this is for one disease and one age-sex
 class.  To compute the overall reduction in deaths we need to iterate
 this process over all age-sex classes and diseases.  See Table ? for
 the results.
+
+
+
+
+% <<functions, echo = FALSE, eval = FALSE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
+% getQuantilesMixture <- function(p.AT, mean.AT, sd.AT, mean.NT, sd.NT){
+
+% meanlog.AT <- log(mean.AT/sqrt(1+sd.AT^2/mean.AT^2))
+% sdlog.AT <- sqrt(log(1+sd.AT^2/mean.AT^2))
+
+% meanlog.NT <- log(mean.NT/sqrt(1+sd.NT^2/mean.NT^2))
+% sdlog.NT <- sqrt(log(1+sd.NT^2/mean.NT^2))
+
+% at.vec <- c()
+% nt.vec <- c()
+% t.vec <- c()
+
+% for( i in 1:1e4){
+%     if( runif(1) > p.AT ){
+%         at <- 0
+%         }else{
+%             at <- rlnorm(1,meanlog = meanlog.AT, sdlog = sdlog.AT)
+%             }
+%     at.vec <- c(at.vec,at)
+%     nt <- rlnorm(1,meanlog = meanlog.NT, sdlog = sdlog.NT)
+%     nt.vec <- c(nt.vec,nt)
+% }
+
+% t.vec <- at.vec + nt.vec
+
+% n <- 1e2
+% prob <- seq(0,1,length.out=n)
+% quantiles <- quantile(t.vec, prob = prob)
+% D <- data.frame(quantiles = quantiles, prob = prob)
+% return(D)
+
+% }
+% computeAF <- function(p.AT.baseline, p.AT.scenario, mean.AT.baseline, mean.AT.scenario, sd.AT.baseline, sd.AT.scenario, mean.NT.baseline, mean.NT.scenario, sd.NT.baseline, sd.NT.scenario, alpha, k){
+%     D.baseline <- getQuantilesMixture(p.AT = p.AT.baseline, mean.AT = mean.AT.baseline, sd.AT = sd.AT.baseline, mean.NT = mean.NT.baseline, sd.NT = sd.NT.baseline)
+%     RR.baseline <- getRR(D.baseline$quantiles, alpha = alpha, k = k)
+%     D.scenario <- getQuantilesMixture(p.AT = p.AT.scenario, mean.AT = mean.AT.scenario, sd.AT = sd.AT.scenario, mean.NT = mean.NT.scenario, sd.NT = sd.NT.scenario)
+%     RR.scenario <- getRR(D.scenario$quantiles, alpha = alpha, k = k)
+%     AF <- 1 - sum(RR.scenario)/sum(RR.baseline)
+%     return(AF)
+% }
+% @

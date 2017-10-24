@@ -8,6 +8,7 @@
 \input{./lib/sgy}
 \begin{document}
 <<lib, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE>>=
+rm(list=ls())
 opts_knit$set(self.contained=FALSE)
 library("devtools")
 #install_github("ITHIM/ITHIM", ref="ithimus")
