@@ -133,9 +133,15 @@ fiveYear <- bind_rows(readATUS1yr(year = 2011, stateFIPS = 41, metroCode = 1, me
 # fiveYear  %>% ggplot(aes(x = METs, ..density.., colour = AGECAT)) + geom_freqpoly(binwidth = 25) + facet_grid( SEX ~ .) + labs(x = "Non-Travel Marginal MET-hrs./week", colour = "Age") + coord_cartesian(xlim = c(0, 250))
 
 
-ggplot(fiveYear, aes(x = SEX, y = log(METs), fill = AGECAT)) + geom_boxplot() + ylab("Leisure Activity (log-scale) (MET-hrs./week)") + theme_bw() 
+ggplot(fiveYear, aes(x = SEX, y = log(METs), fill = AGECAT)) + geom_boxplot() + ylab("Leisure Activity (log-scale) (MET-hrs./week)") + theme_bw()
 
 parameters.LA <- fiveYear %>% mutate(logLA = log(METs)) %>% group_by(SEX, AGECAT) %>% summarise( meanLogLA = mean(logLA), sdLogLA = sd(logLA))
+
+parameters.LA <- with(parameters.LA, data.frame(GEND = ifelse(SEX == "female","F", ifelse(SEX == "male", "M", NA)), AGECLASS = AGECAT, meanLogLA, sdLogLA))
+
+
+# Note the arbitrary numbers inserted here for bottom two age classes.
+parameters.LA <- rbind(data.frame(GEND = c("F","F","M","M"), AGECLASS = rep(c("00-04", "05-14"),2),meanLogLA = 4, sdLogLA = 0.5), parameters.LA) %>% arrange(GEND, AGECLASS)
 
 #ggplot(subset(D, TA > 0), aes(x = GEND, y = TA, fill = AGECLASS)) + geom_boxplot() + ylab("Travel Activity (MET-hrs./week)")
 
