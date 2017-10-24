@@ -22,17 +22,25 @@ States}}
 \newline
 \\
 Samuel Younkin\textsuperscript{1},\
-Jason Vargo\textsuperscript{1, 2},\
-\ldots,\
-James Woodcock\textsuperscript{3},\
-Jonathan Patz\textsuperscript{1, 2}
+Jason Vargo\textsuperscript{2},\
+Eric Main\textsuperscript{3},\
+Brendon Haggerty \textsuperscript{4},\
+James Woodcock\textsuperscript{5},\
+Jonathan Patz\textsuperscript{1, 6}
 \\
 \bigskip
 \textbf{1} Global Health Institute, University of Wisconsin{\textendash}Madison, Madison, WI, USA
 \\
-\textbf{2} Nelson Institute for Environmental Studies Center for Sustainability and the Global Environment, University of Wisconsin{\textendash}Madison, Madison, WI, USA
+\textbf{2} California Department of Public Health, Richmond, CA, USA
 \\
-\textbf{3} CEDAR
+\textbf{3} Oregon Health Authority, Portland, OR, USA
+\\
+\textbf{4} Multnomah County Department of Public Health, Portland, OR, USA
+\\
+\textbf{5} Centre for Education of Diet and Activity Research,
+Cambridge University, Cambridge, UK
+\\
+\textbf{6} Nelson Institute for Environmental Studies Center for Sustainability and the Global Environment, University of Wisconsin{\textendash}Madison, Madison, WI, USA
 \\
 \bigskip
 \end{center}
