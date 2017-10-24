@@ -17,8 +17,7 @@ library("ITHIM")
 #example("ITHIM")
 @
 \begin{center}
-{\Large \textbf\newline{A Comparative Risk Assessment of Active Transportation in the United
-States}}
+{\Large \textbf\newline{Working Title}}
 \newline
 \\
 Samuel Younkin\textsuperscript{1},\
