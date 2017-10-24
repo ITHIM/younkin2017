@@ -38,8 +38,6 @@ also over-estimate weekly travel-activity among active traveler.
 Again we need a scaling coefficient that is a function of the true
 frequency of active travel.)
 
-
-\paragraph{Oregon Household Activity Survey}
 <<ohas1, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
 #OHAS.df <- readRDS(file = "/Users/syounkin/Bullitt/data/OHAS/OHAS.df.rds")
 OHAS.df <- readRDS(file = "~/Bullitt/data/OHAS/OHAS.df.rds")
@@ -56,29 +54,25 @@ alpha_w <- 3
 alpha_c <- 6
 
 OHAS.df <- OHAS.df %>% mutate(ID = paste0(SAMPN, "-", PERNO)) %>% mutate(AGECLASS = ITHIM:::convertToAgeClass(AGE))
-
 trip.df <-  OHAS.df %>% filter( !(TPURP %in% c("20", "96")) & TRPDUR <= 1e9) %>% complete(ID,MODE) %>% filter(MODE %in% c("walk","cycle")) %>% select(ID, MODE, TPURP, TRPDUR)
-
 subject.df <- OHAS.df %>% select(ID, GEND, AGECLASS) %>% distinct()
 
 D <- full_join(trip.df, subject.df, by = "ID", suffix = c(".trip",".subject")) %>% group_by(ID, MODE, GEND, AGECLASS) %>% summarise(TOTDUR = sum(TRPDUR)) %>% ungroup() %>% spread(MODE,TOTDUR) %>% mutate(TA = 7/60*(alpha_w*ifelse(is.na(walk),0,walk) + alpha_c*ifelse(is.na(cycle),0,cycle)))
-
-ggplot(subset(D, TA > 0), aes(x = GEND, y = log(TA), fill = AGECLASS)) + geom_boxplot() + ylab("Travel Activity (MET-hrs./week) (log-scale)") + theme_bw() # + coord_cartesian(ylim = c(0, 150))
-
 parameters.TA <- D %>% filter(TA > 0) %>% mutate(logTA = log(TA)) %>% group_by(GEND, AGECLASS) %>% summarise( meanLogTA = mean(logTA), sdLogTA = sd(logTA))
+ggplot(subset(D, TA > 0), aes(x = GEND, y = log(TA), fill = AGECLASS)) + geom_boxplot() + ylab("Travel Activity (MET-hrs./week) (log-scale)") + theme_bw() # + coord_cartesian(ylim = c(0, 150))
 @
 \label{allCounties}
 \caption{Travel Activity ($T = \alpha_w t_w + \alpha_c t_c$) for Portland
   Metro Area Active Travelers ($T > 0$) (OHAS)}
 \end{figure}
 
-Proportion of inactive travelers ($T = 0$).
+
 
 \begin{figure}
 <<inactivePortland, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = TRUE, fig.height = 3>>=
 D %>% group_by(GEND, AGECLASS) %>% summarise( pAT = sum(TA > 0, na.rm = TRUE)/length(TA)) %>% ggplot(aes(x = GEND, y = pAT, fill = AGECLASS)) + geom_bar(stat = "identity", position = "dodge") + theme_bw()
 @
-\caption{Proportion of active travelers in Portland Metro area}
+\caption{Proportion of inactive travelers ($T = 0$) in Portland Metro area}
 \label{inactivePortland}
 \end{figure}
 
@@ -86,8 +80,11 @@ D %>% group_by(GEND, AGECLASS) %>% summarise( pAT = sum(TA > 0, na.rm = TRUE)/le
 \Sexpr{knit_child('./ATUS.Rnw')}
 
 
-\paragraph{Physical Activity}
+\paragraph{Disease Burden}
+\Sexpr{knit_child('./burden.Rnw')}
 
+
+\paragraph{Health Outcomes}
 An increase in physical activity decreases risk for each of the
 diseases inlcuded here in the ITHIM model.  Physical activity may be
 decomposed into a travel-related and a non-travel-related components.
@@ -161,63 +158,65 @@ class.  To compute the overall reduction in deaths we need to iterate
 this process over all age-sex classes and diseases.  See Table ? for
 the results.
 
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+% \subsection*{Proportion of Active Travelers by MSA}
 
-\subsection*{Proportion of Active Travelers by MSA}
+% \begin{figure}
+% <<pATbyMSA, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 9, dev = c("pdf","png")>>=
+% D.pAT <- NHTS.df %>% filter(!(location %in% c("-1", NA))) %>% group_by(id, location) %>% summarise(AT = first(nwalktrp)+first(nbiketrp)) %>% ungroup() %>% mutate( AT.level = ifelse(AT == 0, "0 trips", ifelse(AT < 5, "< 5 trips", "> 5 trips"))) %>% group_by(location, AT.level) %>% summarise( count = n()) %>% ungroup()
 
-\begin{figure}
-<<pATbyMSA, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 9, dev = c("pdf","png")>>=
-D.pAT <- NHTS.df %>% filter(!(location %in% c("-1", NA))) %>% group_by(id, location) %>% summarise(AT = first(nwalktrp)+first(nbiketrp)) %>% ungroup() %>% mutate( AT.level = ifelse(AT == 0, "0 trips", ifelse(AT < 5, "< 5 trips", "> 5 trips"))) %>% group_by(location, AT.level) %>% summarise( count = n()) %>% ungroup()
+% D.pAT <- within(D.pAT, AT.level <- factor(AT.level, levels = rev(c("0 trips", "< 5 trips", "> 5 trips"))))
 
-D.pAT <- within(D.pAT, AT.level <- factor(AT.level, levels = rev(c("0 trips", "< 5 trips", "> 5 trips"))))
+% D.total <- D.pAT %>% group_by(location) %>% summarise(total = sum(count))
 
-D.total <- D.pAT %>% group_by(location) %>% summarise(total = sum(count))
-
-D.pAT <- full_join(D.pAT,D.total,by="location") %>% mutate(prop = count/total) %>% arrange(desc(AT.level),count)
+% D.pAT <- full_join(D.pAT,D.total,by="location") %>% mutate(prop = count/total) %>% arrange(desc(AT.level),count)
 
 
-msaIDFile <- read.csv(system.file("join2.csv", package = "ITHIM"), stringsAsFactors = FALSE)
-msaIDFile %>% select(msaName, msaNHTS) %>% filter(!is.na(msaNHTS)) %>% distinct(msaName, msaNHTS)
-bar <- msaIDFile %>% select(msaName, msaNHTS) %>% filter(!is.na(msaNHTS)) %>% group_by(msaNHTS) %>% summarise(msaName = first(msaName))
-bar <- within(bar, msaNHTS <- factor(msaNHTS))
+% msaIDFile <- read.csv(system.file("join2.csv", package = "ITHIM"), stringsAsFactors = FALSE)
+% msaIDFile %>% select(msaName, msaNHTS) %>% filter(!is.na(msaNHTS)) %>% distinct(msaName, msaNHTS)
+% bar <- msaIDFile %>% select(msaName, msaNHTS) %>% filter(!is.na(msaNHTS)) %>% group_by(msaNHTS) %>% summarise(msaName = first(msaName))
+% bar <- within(bar, msaNHTS <- factor(msaNHTS))
 
-D.pAT <- full_join(D.pAT, bar, by = c("location" = "msaNHTS"))
+% D.pAT <- full_join(D.pAT, bar, by = c("location" = "msaNHTS"))
 
-D.pAT <- subset(D.pAT, !is.na(AT.level))
+% D.pAT <- subset(D.pAT, !is.na(AT.level))
 
-ggplot(D.pAT, aes(x = factor(msaName, levels = D.pAT$msaName), y = prop, fill = AT.level)) + geom_bar(stat = "identity") + theme_bw() + ylab("Proportion") + xlab("Metropolitan Statistical Area (MSA)") + coord_flip()
+% ggplot(D.pAT, aes(x = factor(msaName, levels = D.pAT$msaName), y = prop, fill = AT.level)) + geom_bar(stat = "identity") + theme_bw() + ylab("Proportion") + xlab("Metropolitan Statistical Area (MSA)") + coord_flip()
 
-@
-\caption{}
-\label{equity1}
-\end{figure}
+% @
+% \caption{}
+% \label{equity1}
+% \end{figure}
 
-\paragraph{Per person mean walk and bike times by county.}
-<<totaldur, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = TRUE>>=
-D <- OHAS.df %>% filter(MODE %in% c("walk","cycle")) %>% group_by(MODE,COUNTYNAME) %>% summarise(TOTDUR = sum(TRPDUR)) %>% arrange(COUNTYNAME,MODE)
-D2 <- OHAS.df %>% group_by(COUNTYNAME) %>% summarise(n = n_distinct(paste0(SAMPN,PERNO)))
-full_join(D,D2,by="COUNTYNAME") %>% mutate(mean = TOTDUR/n) %>% arrange(MODE,desc(mean)) %>% as.data.frame()
-@
+% \paragraph{Per person mean walk and bike times by county.}
+% <<totaldur, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = TRUE>>=
+% D <- OHAS.df %>% filter(MODE %in% c("walk","cycle")) %>% group_by(MODE,COUNTYNAME) %>% summarise(TOTDUR = sum(TRPDUR)) %>% arrange(COUNTYNAME,MODE)
+% D2 <- OHAS.df %>% group_by(COUNTYNAME) %>% summarise(n = n_distinct(paste0(SAMPN,PERNO)))
+% full_join(D,D2,by="COUNTYNAME") %>% mutate(mean = TOTDUR/n) %>% arrange(MODE,desc(mean)) %>% as.data.frame()
+% @
 
-\paragraph{AgeClass by Sex by Five Counties}
-<<pertable, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = TRUE>>=
-AGECLASS <- ITHIM:::convertToAgeClass(OHAS.df$AGE)
-@
+% \paragraph{AgeClass by Sex by Five Counties}
+% <<pertable, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = TRUE>>=
+% AGECLASS <- ITHIM:::convertToAgeClass(OHAS.df$AGE)
+% @
 
-\begin{figure}
-<<sampSize, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = TRUE, fig.height = 9>>=
-D <- data.frame(GEND = OHAS.df$GEND, AGECLASS = AGECLASS, COUNTYNAME = OHAS.df$COUNTYNAME, INCOME = OHAS.df$INCOME, RACE = OHAS.df$RACE)
-ggplot(D, aes(x = AGECLASS, fill = GEND)) + geom_bar(position = "dodge") + facet_grid(COUNTYNAME ~ .)
-#ggplot(D, aes(x = INCOME, fill = COUNTYNAME)) + geom_bar(position = "dodge")
-@
-\label{sampSize}
-\caption{Sample size by age, sex and county (OHAS)}
-\end{figure}
+% \begin{figure}
+% <<sampSize, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = TRUE, fig.height = 9>>=
+% D <- data.frame(GEND = OHAS.df$GEND, AGECLASS = AGECLASS, COUNTYNAME = OHAS.df$COUNTYNAME, INCOME = OHAS.df$INCOME, RACE = OHAS.df$RACE)
+% ggplot(D, aes(x = AGECLASS, fill = GEND)) + geom_bar(position = "dodge") + facet_grid(COUNTYNAME ~ .)
+% #ggplot(D, aes(x = INCOME, fill = COUNTYNAME)) + geom_bar(position = "dodge")
+% @
+% \label{sampSize}
+% \caption{Sample size by age, sex and county (OHAS)}
+% \end{figure}
 
-\paragraph{Household Table (HH)}
-COUNTYNAME, INCOME \& RACE
-<<hhtable, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = TRUE>>=
-with(OHAS.df,table(INCOME,RACE,COUNTYNAME))
-@
+% \paragraph{Household Table (HH)}
+% COUNTYNAME, INCOME \& RACE
+% <<hhtable, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = TRUE>>=
+% with(OHAS.df,table(INCOME,RACE,COUNTYNAME))
+% @
 
 %% #+ theme(axis.text.x = element_text(angle = 60, hjust = 1))
 %% \begin{figure}
