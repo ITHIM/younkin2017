@@ -48,14 +48,14 @@ We include the following counties in the following analysis: \Sexpr{countyList}.
 
 \begin{figure}
 <<allCounties, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = TRUE, fig.height = 6>>=
-alpha_w <- 3
-alpha_c <- 6
+alpha_w <- 3; alpha_c <- 6;
 
 OHAS.df <- OHAS.df %>% mutate(ID = paste0(SAMPN, "-", PERNO)) %>% mutate(AGECLASS = ITHIM:::convertToAgeClass(AGE))
 trip.df <-  OHAS.df %>% filter( !(TPURP %in% c("20", "96")) & TRPDUR <= 1e9) %>% complete(ID,MODE) %>% filter(MODE %in% c("walk","cycle")) %>% select(ID, MODE, TPURP, TRPDUR)
 subject.df <- OHAS.df %>% select(ID, GEND, AGECLASS) %>% distinct()
 
 D <- full_join(trip.df, subject.df, by = "ID", suffix = c(".trip",".subject")) %>% group_by(ID, MODE, GEND, AGECLASS) %>% summarise(TOTDUR = sum(TRPDUR)) %>% ungroup() %>% spread(MODE,TOTDUR) %>% mutate(TA = 7/60*(alpha_w*ifelse(is.na(walk),0,walk) + alpha_c*ifelse(is.na(cycle),0,cycle)))
+
 parameters.TA <- D %>% filter(TA > 0) %>% mutate(logTA = log(TA)) %>% group_by(GEND, AGECLASS) %>% summarise( meanLogTA = mean(logTA), sdLogTA = sd(logTA))
 ggplot(subset(D, TA > 0), aes(x = GEND, y = log(TA), fill = AGECLASS)) + geom_boxplot() + ylab("Travel Activity (MET-hrs./week) (log-scale)") + theme_bw() # + coord_cartesian(ylim = c(0, 150))
 @
@@ -66,7 +66,10 @@ ggplot(subset(D, TA > 0), aes(x = GEND, y = log(TA), fill = AGECLASS)) + geom_bo
 
 \begin{figure}
 <<inactivePortland, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = TRUE, fig.height = 3>>=
-D %>% group_by(GEND, AGECLASS) %>% summarise( pAT = sum(TA > 0, na.rm = TRUE)/length(TA)) %>% ggplot(aes(x = GEND, y = pAT, fill = AGECLASS)) + geom_bar(stat = "identity", position = "dodge") + theme_bw()
+pAT <- D %>% group_by(GEND, AGECLASS) %>% summarise( pAT = sum(TA > 0, na.rm = TRUE)/length(TA))
+pAT <- within(pAT, AGECLASS <- factor(AGECLASS))
+pAT <- within(pAT, GEND <- factor(GEND))
+pAT %>% ggplot(aes(x = GEND, y = pAT, fill = AGECLASS)) + geom_bar(stat = "identity", position = "dodge") + theme_bw()
 @
 \caption{Proportion of inactive travelers ($T = 0$) in Portland Metro area}
 \label{inactivePortland}

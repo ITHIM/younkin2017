@@ -12,6 +12,11 @@ $p_{\mathrm{AT}}=0.7,0.8,0.9,1$.  By applying Equation \ref{paf} to
 two of these distributions we can compute the attributable fraction
 associates with an increase in proportion of active travelers.
 
+<<parameters, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
+parameters <- inner_join(pAT, inner_join(parameters.TA,parameters.LA))
+@
+
+
 <<functions, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
 getQuantilesMixture <- function(p.AT, mean.AT, sd.AT, mean.NT, sd.NT){
 

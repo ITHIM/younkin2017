@@ -143,6 +143,8 @@ parameters.LA <- with(parameters.LA, data.frame(GEND = ifelse(SEX == "female","F
 # Note the arbitrary numbers inserted here for bottom two age classes.
 parameters.LA <- rbind(data.frame(GEND = c("F","F","M","M"), AGECLASS = rep(c("00-04", "05-14"),2),meanLogLA = 4, sdLogLA = 0.5), parameters.LA) %>% arrange(GEND, AGECLASS)
 
+parameters.LA <- within(parameters.LA, GEND <- factor(GEND, levels = c("M","F")))
+
 #ggplot(subset(D, TA > 0), aes(x = GEND, y = TA, fill = AGECLASS)) + geom_boxplot() + ylab("Travel Activity (MET-hrs./week)")
 
 
