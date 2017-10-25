@@ -73,12 +73,12 @@ T = 7 \times \left(\alpha_w T_w + \alpha_c T_c\right)
 Data from the National Household Transportation Survey (NHTS) sample
 were used to examine active transportation behaviors.  This analysis
 was limited to individuals residing in the Portland, OR metropolitan
-area within the survey ???(NHTS_MSA = ####)???. We model the
+area within the survey ???(NHTS.MSA = XXXX)???. We model the
 distribution of travel activity as a mixture of a point-mass at zero
-with a log-normal distribution. To determine the proportion of adults in 
-each age-sex cohort making any active travel trip in a given week, 
-we used questions ???x and y???. To describe the active travel behaviors 
-of those making such trips we use the trip information for the single 
+with a log-normal distribution. To determine the proportion of adults in
+each age-sex cohort making any active travel trip in a given week,
+we used questions ???x and y???. To describe the active travel behaviors
+of those making such trips we use the trip information for the single
 day of travelin the NHTS.
 
 Simply counting the proportion of individuals with no active travel
@@ -160,10 +160,10 @@ with a \logNormal{} distribution.  The age-sex specific mean ratios,
 $r_{ij} = \frac{\mu_{ij}}{\mu_0}$ and the coefficient of variation,
 $\gamma$, are estimated from the American Time Use Survey (ATUS) data
 \cite{ATUS}. We use geographic indentfiers within the ATUS' summary file
-to limit our analysis to the sample of respondents residing within metropolitan 
-areas in the state of Oregon. Leisure-time Metabolic Equivalents (METs) 
-for each respondent were calculated using activity times and energy equilance 
-from the Ainsworth Compendium of Physical Actvitites \cite{}. To grow the sample size, 
+to limit our analysis to the sample of respondents residing within metropolitan
+areas in the state of Oregon. Leisure-time Metabolic Equivalents (METs)
+for each respondent were calculated using activity times and energy equilance
+from the Ainsworth Compendium of Physical Actvitites \cite{}. To grow the sample size,
 we pooled ATUS responses for the years 2011-2015.
 
 \begin{equation}
@@ -207,12 +207,12 @@ getRR <- function(x,alpha,k){
 
 \paragraph{Estimation of Baseline Disease Burden}
 
-$B_0$ is the overall burden at baseline. Estimates of the age-sex-cause-specific number of deaths 
-were obtained from the Oregon Health Authorites Vital Statistics Records for the year 2015 \cite{}. 
-Burden estimates for Years-of-Life-Lost (YLL) and Years-Lost-to-Diability (YLD) were calculated 
-using median age for each range and the country-specific life expectancy according the World Health Organization 
-Guidelines. ???verify with Eric??? The final metric of disease burden, 
-Disability Adjusted Life Years (DALYs) is the sum of YLL and YLD. 
+$B_0$ is the overall burden at baseline. Estimates of the age-sex-cause-specific number of deaths
+were obtained from the Oregon Health Authorites Vital Statistics Records for the year 2015 \cite{}.
+Burden estimates for Years-of-Life-Lost (YLL) and Years-Lost-to-Diability (YLD) were calculated
+using median age for each range and the country-specific life expectancy according the World Health Organization
+Guidelines. ???verify with Eric??? The final metric of disease burden,
+Disability Adjusted Life Years (DALYs) is the sum of YLL and YLD.
 
 \paragraph{Health Benefits}
 

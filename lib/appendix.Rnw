@@ -1,6 +1,11 @@
 % !Rnw root = ../ITHIM-manuscript.Rnw
 % !TeX root = ../ITHIM-manuscript.Rnw
 
+<<appendix, echo = FALSE, eval = TRUE, results = "show", warning = FALSE, message = FALSE, fig.height = 3>>=
+doseResponse %>% mutate(alpha = log(RR1MET)) %>% select(disease,GEND,AGECLASS,alpha) %>% distinct %>% arrange(disease, GEND, AGECLASS)
+@
+
+
 \bi
 \item Abstract and Introduction
   \bi

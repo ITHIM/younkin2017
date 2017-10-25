@@ -13,26 +13,38 @@ two of these distributions we can compute the attributable fraction
 associates with an increase in proportion of active travelers.
 
 <<parameters, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
-(parameters <- inner_join(pAT, inner_join(parameters.TA, parameters.LA)))
 
+doseResponse <- read.csv(file = "./../data/dose-response.csv", header = TRUE)
+doseResponse <- within(doseResponse, GEND <- factor(GEND, levels = c("M","F")))
+parameters <- inner_join(burden, inner_join(inner_join(pAT, inner_join(parameters.TA, parameters.LA)), doseResponse))
 
-pSet <- with(parameters,{
-  new("ParameterSet", pAT = pAT[1], meanLogTA = meanLogTA[1], meanLogLA =
-  meanLogLA[1], sdLogTA = sdLogTA[1], sdLogLA = sdLogLA[1], metWalk = 3,
-  metCycle = 6, alpha = alpha[1], k = 0.5, quantiles = 1:99/100, label = "First Row")
-})
+pSetList <- list()
 
+for( i in 1:nrow(parameters) ){
+
+  pSetList[[i]] <- with(parameters,{
+      new("ParameterSet",
+          pAT = pAT[i],
+          meanLogTA = meanLogTA[i],
+          meanLogLA = meanLogLA[i],
+          sdLogTA = sdLogTA[i],
+          sdLogLA = sdLogLA[i],
+          metWalk = 3,
+          metCycle = 6,
+          alpha = log(RR1MET)[i],
+          k = k[i],
+          quantiles = 1:99/100,
+          label = as.character(i),
+          disease = disease[i],
+          sex = GEND[i],
+          age = AGECLASS[i],
+          burdenType = burdenType[i],
+          burdenValue = value)
+  })
+}
+
+portlandITHIM <- new("ITHIM", pSetList)
 @
-
-
-
-
-
-
-
-
-
-
 
 In Figure \ref{mandm235} we see the results of the comparitive risk
 assesment.  For the sake of example we show the results for males age
