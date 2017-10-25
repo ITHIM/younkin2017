@@ -3,7 +3,8 @@
 <<atus1, echo = FALSE, eval = TRUE, warning = FALSE, message = FALSE, fig.height = 6>>=
 newMETsFile <-'https://raw.githubusercontent.com/vargovargo/ACS_ITHIM/master/ATUS_to_METS_key.csv'
 
-newMETs <- read.csv(file = newMETsFile, stringsAsFactors = FALSE, colClasses = c("character","character","character","character","numeric","character","character","character"))
+newMETs <- read.csv(file = newMETsFile, stringsAsFactors = FALSE, colClasses = c("character","character","character","character","numeric","character","character","character"))  %>% 
+  filter(X6.digit.activity.code >= 13000 & X6.digit.activity.code < 14000)
 dataColumns <- c(1,5)
 D <- newMETs[,dataColumns]
 metaData <- newMETs[,-dataColumns]
