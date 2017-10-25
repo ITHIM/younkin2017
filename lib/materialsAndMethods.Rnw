@@ -1,8 +1,8 @@
 % !Rnw root = ../ITHIM-manuscript.Rnw
 % !TeX root = ../ITHIM-manuscript.Rnw
 
-The health impacts that result from an increase in active
-transportation in the population can be quantified by the population
+The health impacts that result from population level increases in active
+transportation can be quantified by the population
 attributable fraction, $\af$.  The population attributable fraction
 represents the proportional change in disease burden that results from
 the new transportation behavior.  To address the dependency in
@@ -29,7 +29,7 @@ data.
   \label{paf}
 \end{eqnarray}
 
-We see in Equation \ref{paf} the population attributable fraction
+We see in Equation \ref{paf} ??? paf equation includes two but references in the text only refer to the the second equation??? the population attributable fraction
 given in terms of the distribution of physical activity in the
 baseline and alternative scenarios, $P_{ij}(x)$ and $Q_{ij}(x)$,
 respectively, and the risks, $R_{ijk}(x)$, given physical activity $x$
@@ -72,16 +72,14 @@ T = 7 \times \left(\alpha_w T_w + \alpha_c T_c\right)
 
 Data from the National Household Transportation Survey (NHTS) sample
 were used to examine active transportation behaviors.  This analysis
-was limited to individuals residing in one of the ??? metropolitan
-areas within the survey with an identified Metropolitan Statistical
-Area. This subsample still constitutes ???\% of the total sample in
-2009.  The NHTS is limited to a single day of travel.  Using data from
-the National Household Transportation Survey we observe that the
-majority of Americans living in these MSAs reported no active travel
-(trip mode as walk or cycle), see Figure \ref{InactiveNational}.  Due
-to the large proportion on inactive travelers we model the
+was limited to individuals residing in the Portland, OR metropolitan
+area within the survey ???(NHTS_MSA = ####)???. We model the
 distribution of travel activity as a mixture of a point-mass at zero
-with a log-normal distribution.
+with a log-normal distribution. To determine the proportion of adults in 
+each age-sex cohort making any active travel trip in a given week, 
+we used questions ???x and y???. To describe the active travel behaviors 
+of those making such trips we use the trip information for the single 
+day of travelin the NHTS.
 
 Simply counting the proportion of individuals with no active travel
 reported in the survey data results in a biased estimator, for even
@@ -160,8 +158,13 @@ distribution function along with a fitted log-normal distribution.
 Within each age-sex class the non-travel-related exposure is also modeled
 with a \logNormal{} distribution.  The age-sex specific mean ratios,
 $r_{ij} = \frac{\mu_{ij}}{\mu_0}$ and the coefficient of variation,
-$\gamma$, are estimated from the American Time Use Survey (ATUS) data for the year ???
-\cite{ATUS}.
+$\gamma$, are estimated from the American Time Use Survey (ATUS) data
+\cite{ATUS}. We use geographic indentfiers within the ATUS' summary file
+to limit our analysis to the sample of respondents residing within metropolitan 
+areas in the state of Oregon. Leisure-time Metabolic Equivalents (METs) 
+for each respondent were calculated using activity times and energy equilance 
+from the Ainsworth Compendium of Physical Actvitites \cite{}. To grow the sample size, 
+we pooled ATUS responses for the years 2011-2015.
 
 \begin{equation}
 X_{ij}^{\mathrm{non-travel}} \sim \logNormalMath\left(\mu_{ij}, \gamma \mu_{ij}\right)
@@ -204,13 +207,17 @@ getRR <- function(x,alpha,k){
 
 \paragraph{Estimation of Baseline Disease Burden}
 
-$B_0$ is the overall burden at baseline.  Vargo and Eric's work here.
-How did we arrive at the disease burden estimates for Portland?
+$B_0$ is the overall burden at baseline. Estimates of the age-sex-cause-specific number of deaths 
+were obtained from the Oregon Health Authorites Vital Statistics Records for the year 2015 \cite{}. 
+Burden estimates for Years-of-Life-Lost (YLL) and Years-Lost-to-Diability (YLD) were calculated 
+using median age for each range and the country-specific life expectancy according the World Health Organization 
+Guidelines. ???verify with Eric??? The final metric of disease burden, 
+Disability Adjusted Life Years (DALYs) is the sum of YLL and YLD. 
 
 \paragraph{Health Benefits}
 
 We scale the baseline burden with the attributable fraction to
-estimate the reslting disease burden, $B = \delta B_0$. The total
+estimate the resulting disease burden, $B = \delta B_0$. The total
 percent burden reduction, $\beta$, is computed by summing across age
 sex and disease as in Equation \ref{beta}.
 
