@@ -10,6 +10,7 @@ burden <- within(burden, {
     AGECLASS <- factor(as.character(ageBins[ageClass]))
     GEND <- factor(sex, levels = c("M","F"))
     disease <- factor(disease, levels = c("BreastCancer","ColonCancer","CVD","Dementia","Depression","Diabetes"))
+    burdenType <- factor(burdenType, levels = c("daly","yll","yld","deaths"))
 })
 
 @

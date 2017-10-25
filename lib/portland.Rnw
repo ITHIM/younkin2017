@@ -24,7 +24,7 @@ We see in Figure \ref{portland9} the extent of the proportion of
 inactive travel.  More than $x$ percent of people in the Portland
 Metropolitan area are inactive travelers. (Note that this is an
 over-estimate of the true value.  We need to adjust this estimate by a
-factor that is a function of the mean frequency of active travel.) 
+factor that is a function of the mean frequency of active travel.)
 ???is this current???
 
 All inactive travelers have zero active travel and are therefore
@@ -35,7 +35,7 @@ deviations in the comparitive risk assesment.  In Figure
 travel activity among men in Portland age 45-59. (Note that for the
 same reason we over-estimate the proportion of inactive travelers, we
 also over-estimate weekly travel-activity among active travelers.
-These estimates are dependant on a scaling coefficient that is a function 
+These estimates are dependant on a scaling coefficient that is a function
 of the true weekly frequency of active travel.)
 
 <<ohas1, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=

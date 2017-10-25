@@ -1,11 +1,20 @@
 % !Rnw root = ../ITHIM-manuscript.Rnw
 % !TeX root = ../ITHIM-manuscript.Rnw
 
-<<appendix, echo = FALSE, eval = TRUE, results = "show", warning = FALSE, message = FALSE, fig.height = 3>>=
-doseResponse %>% mutate(alpha = log(RR1MET)) %>% select(disease,GEND,AGECLASS,alpha) %>% distinct %>% arrange(disease, GEND, AGECLASS)
+\paragraph{Dose-Respone Curves}
+
+We estimate relative risk for each of the diseases included in the
+model using published dose-response relationships of the form
+$\R(x) = \mathrm{e}^{-\alpha \tilde{x}}$, where $\tilde{x} = \sqrt{x}$
+\cite{woodcock2009, monninkhof2007, harriss2009, hamer2009, jeon2007,
+  hamer2007}.  See the following output for values of $\alpha$,
+
+<<appendix, echo = FALSE, eval = TRUE, results = "asis", collapse = TRUE, warning = FALSE, message = FALSE, fig.height = 3>>=
+doseResponseTable <- doseResponse %>% mutate(alpha = -log(RR1MET)) %>% select(disease,GEND,AGECLASS,alpha) %>% distinct %>% arrange(disease, GEND, AGECLASS)
+as.data.frame(doseResponseTable)
 @
 
-
+\paragraph{Old Outline}
 \bi
 \item Abstract and Introduction
   \bi
