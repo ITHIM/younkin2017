@@ -80,7 +80,7 @@ with probabilty ($\pi_0 = 1 - \pAT$) and a log-normal distribution for
 active travelers.
 
 \begin{figure}
-<<pATbyMSA, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 9, dev = c("pdf","png")>>=
+<<pATbyMSA, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 6>>=
 D.pAT <- NHTS.df %>% filter(!(location %in% c("-1", NA))) %>% group_by(id, location) %>% summarise(AT = first(nwalktrp)+first(nbiketrp)) %>% ungroup() %>% mutate( AT.level = ifelse(AT == 0, "0 trips", ifelse(AT < 5, "< 5 trips", "> 5 trips"))) %>% group_by(location, AT.level) %>% summarise( count = n()) %>% ungroup()
 D.pAT <- within(D.pAT, AT.level <- factor(AT.level, levels = rev(c("0 trips", "< 5 trips", "> 5 trips"))))
 D.total <- D.pAT %>% group_by(location) %>% summarise(total = sum(count))
@@ -98,6 +98,72 @@ ggplot(D.pAT, aes(x = factor(msaName, levels = D.pAT$msaName), y = prop, fill = 
   areas.  Data from the 200? National Household Travel Survey}
 \label{inactiveMSA}
 \end{figure}
+
+
+\subparagraph{Leisure Activity}
+
+Within each age-sex class the leisure activity is modeled with a
+\logNormal{} distribution.  In this paper we estimate the age-sex
+specific means and standard deviations using the American Time Use
+Survey (ATUS) data \cite{ATUS}. We use geographic indentfiers within
+the ATUS summary file to limit our analysis to the sample of
+respondents residing within metropolitan areas in the state of
+Oregon. Leisure-time Metabolic Equivalents (METs) for each respondent
+were calculated using activity times and energy equilance from the
+Ainsworth Compendium of Physical Actvitites \cite{}. For more
+discussion see Section \ref{ATUS}.
+
+\paragraph{Risk Functions}
+
+We estimate relative risk for each of the diseases included in the
+model using published dose-response relationships of the form
+$\R(x) = \mathrm{e}^{-\alpha \tilde{x}}$, where $\tilde{x} = \sqrt{x}$
+\cite{woodcock2009, monninkhof2007, harriss2009, hamer2009, jeon2007,
+  hamer2007}.
+
+Values for $\alpha$ may be found in the appendix.
+
+\paragraph{Health Benefits}
+
+The population attrubutable fraction represents the proportional
+change in disease burden, so we must first estimate the initial
+disease burden, $B_0$. Here, we consider four burden types
+and six diseases for each of the 16 age-sex classes.  An example
+estimate for $B_0$ can be seen in section \ref{burden}.
+
+To estimate the resulting disease burden we simply scale $B_0$ by
+$\delta=1-\af$, Equation \ref{paf2}.  The total disease-specific
+burden reduction, $\delta_B$, is computed by summing across age and sex
+as in Equation \ref{delta}.
+
+\begin{eqnarray}
+  \delta_B &=& \displaystyle \sum_{i,j} \delta_{ij}{B_0}_{ij}
+  \label{delta}
+\end{eqnarray}
+
+% \begin{verbatim}
+% disease,subpop,RR_1MET
+% BreastCancer,F,0.973199069
+% BreastCancer,M,1
+% CVD,,0.93831942
+% Dementia,,0.943149062
+% Depression,15-29,0.955901887
+% Depression,>29,0.977950943
+% Diabetes,,0.94277975
+% Colon Cancer,M,0.960652476
+% Colon Cancer,F,0.97288384
+% \end{verbatim}
+
+% <<RR21, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
+% foo <- read.csv(file=system.file("dose-response-parameters.csv", package = "ITHIM"))
+% alpha.cvd <- log(foo[foo$disease == "CVD",c("RR_1MET")])
+% getRR <- function(x,alpha,k){
+%     return(exp(alpha*(x^k)))
+% }
+% @
+
+%\paragraph{Estimation of Baseline Disease Burden}
+
 
 % \subparagraph{Active Travelers}
 
@@ -137,18 +203,6 @@ ggplot(D.pAT, aes(x = factor(msaName, levels = D.pAT$msaName), y = prop, fill = 
 %% \end{figure}
 
 
-\subparagraph{Leisure Activity}
-
-Within each age-sex class the leisure activity is modeled with a
-\logNormal{} distribution.  In this paper we estimate the age-sex
-specific means and standard deviations using the American Time Use
-Survey (ATUS) data \cite{ATUS}. We use geographic indentfiers within
-the ATUS summary file to limit our analysis to the sample of
-respondents residing within metropolitan areas in the state of
-Oregon. Leisure-time Metabolic Equivalents (METs) for each respondent
-were calculated using activity times and energy equilance from the
-Ainsworth Compendium of Physical Actvitites \cite{}. For more
-discussion see Section \ref{ATUS}.
 
 % \begin{equation}
 % X_{ij}^{\mathrm{lei}} \sim \logNormalMath\left(\mu_{ij}, \gamma \mu_{ij}\right)
@@ -158,57 +212,6 @@ discussion see Section \ref{ATUS}.
 % compute the empirical percentiles in the baseline and alternate
 % scenarios, $\mathbf{x}$ and $\mathbf{x}^\prime$ and use Equation \ref{paf}.
 
-\paragraph{Risk Functions}
-
-We estimate relative risk for each of the diseases included in the
-model using published dose-response relationships of the form
-$\R(x) = \mathrm{e}^{-\alpha \tilde{x}}$, where $\tilde{x} = \sqrt{x}$
-\cite{woodcock2009, monninkhof2007, harriss2009, hamer2009, jeon2007,
-  hamer2007}.
-
-Values for $\alpha$ may be found in the appendix.
-
-% \begin{verbatim}
-% disease,subpop,RR_1MET
-% BreastCancer,F,0.973199069
-% BreastCancer,M,1
-% CVD,,0.93831942
-% Dementia,,0.943149062
-% Depression,15-29,0.955901887
-% Depression,>29,0.977950943
-% Diabetes,,0.94277975
-% Colon Cancer,M,0.960652476
-% Colon Cancer,F,0.97288384
-% \end{verbatim}
-
-% <<RR21, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
-% foo <- read.csv(file=system.file("dose-response-parameters.csv", package = "ITHIM"))
-% alpha.cvd <- log(foo[foo$disease == "CVD",c("RR_1MET")])
-% getRR <- function(x,alpha,k){
-%     return(exp(alpha*(x^k)))
-% }
-% @
-
-%\paragraph{Estimation of Baseline Disease Burden}
-
-
-\paragraph{Health Benefits}
-
-The population attrubutable fraction represents the proportional
-change in disease burden, so we must first estimate the initial
-disease burden, $B_0$. Here, we consider four burden types
-and six diseases for each of the 16 age-sex classes.  An example
-estimate for $B_0$ can be seen in section \ref{burden}.
-
-To estimate the resulting disease burden we simply scale $B_0$ by
-$\delta=1-\af$, Equation \ref{paf2}.  The total disease-specific
-burden reduction, $\delta_B$, is computed by summing across age and sex
-as in Equation \ref{delta}.
-
-\begin{eqnarray}
-  \delta_B &=& \displaystyle \sum_{i,j} \delta_{ij}{B_0}_{ij}
-  \label{beta}
-\end{eqnarray}
 
 % To esimate $\alpha_{\textrm{AT}}$ we use an estimate for the
 % proportion of active travel time achieved by walking, $\hat{p_w}$ with
