@@ -77,10 +77,10 @@ subject.df <- OHAS.df %>% select(ID, GEND, AGECLASS) %>% distinct()
 D <- full_join(trip.df, subject.df, by = "ID", suffix = c(".trip",".subject")) %>% group_by(ID, MODE, GEND, AGECLASS) %>% summarise(TOTDUR = sum(TRPDUR)) %>% ungroup() %>% spread(MODE,TOTDUR) %>% mutate(TA = 7/60*fAT*(alpha_w*ifelse(is.na(walk),0,walk) + alpha_c*ifelse(is.na(cycle),0,cycle)))
 
 parameters.TA <- D %>% filter(TA > 0) %>% mutate(logTA = log(TA)) %>% group_by(GEND, AGECLASS) %>% summarise( meanLogTA = mean(logTA), sdLogTA = sd(logTA))
-ggplot(subset(D, TA > 0), aes(x = GEND, y = log(TA), fill = AGECLASS)) + geom_boxplot() + ylab("Travel Activity (MET-hrs./week) (log-scale)") + theme_bw() # + coord_cartesian(ylim = c(0, 150))
+ggplot(subset(D, TA > 0), aes(x = GEND, y = log(TA), fill = AGECLASS)) + geom_boxplot() + theme_bw() + labs(x = "Sex", y = "Travel Activity (MET-hrs./week) (log-scale)", fill = "Age")
 @
 \label{allCounties}
-\caption{Travel Activity ($T = \alpha_w t_w + \alpha_c t_c$) for Portland
+\caption{Travel Activity ($T = \alpha_w^\prime T_w + \alpha_c^\prime T_c$) for Portland
   Metro Area Active Travelers ($T > 0$) (OHAS)}
 \end{figure}
 
@@ -91,7 +91,7 @@ pAT <- within(pAT, AGECLASS <- factor(AGECLASS))
 pAT <- within(pAT, GEND <- factor(GEND))
 pAT %>% ggplot(aes(x = GEND, y = pAT, fill = AGECLASS)) + geom_bar(stat = "identity", position = "dodge") + theme_bw() + labs(x = "Sex", y = "Proportion of Active Travelers", fill = "Age")
 @
-\caption{Proportion of inactive travelers ($T = 0$) in Portland Metro area}
+\caption{Proportion of active travelers in Portland Metro area}
 \label{inactivePortland}
 \end{figure}
 

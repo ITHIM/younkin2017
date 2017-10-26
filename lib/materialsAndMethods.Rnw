@@ -37,7 +37,7 @@ independently for each of the 96 age-sex-disease classes.  Equation
 physical activity in baseline and alternative scenarios, $\mathbf{x}$
 and $\mathbf{x}^\prime$, respectively.
 
-\paragraph{Physical Activity}
+\subsection{Physical Activity}
 
 Physical activity may be decomposed into three components;
 occupational, leisure and travel.  The relative risk functions used
@@ -49,7 +49,7 @@ distribution for non-occupational physical activity is then computed
 for the comparative risk assessment.  Throughout this paper the term
 ``physical activity" implies non-occupational physical activity.
 
-\subparagraph{Travel-Related Physical Activity}
+\subsubsection{Travel-Related Physical Activity}
 
 We express travel activity, $T$, in terms of \METhrs{} and compute it
 by weighting the total active one-day walking and cycling times, $T_w$
@@ -63,7 +63,7 @@ for reasons discussed in section ?.
 T = \alpha_w^\prime T_w + \alpha_c^\prime T_c
 \end{equation}
 
-\subparagraph{Inactive Travelers}
+\subsubsection{Inactive Travelers}
 
 Investigation of the distributions of travel activity in
 U.S. metroplitan areas uncovered a signinficant numer of survey
@@ -100,7 +100,7 @@ ggplot(D.pAT, aes(x = factor(msaName, levels = D.pAT$msaName), y = prop, fill = 
 \end{figure}
 
 
-\subparagraph{Leisure Activity}
+\subsubsection{Leisure Activity}
 
 Within each age-sex class the leisure activity is modeled with a
 \logNormal{} distribution.  In this paper we estimate the age-sex
@@ -113,7 +113,7 @@ were calculated using activity times and energy equilance from the
 Ainsworth Compendium of Physical Actvitites \cite{}. For more
 discussion see Section \ref{ATUS}.
 
-\paragraph{Risk Functions}
+\subsection{Risk Functions}
 
 We estimate relative risk for each of the diseases included in the
 model using published dose-response relationships of the form
@@ -123,7 +123,7 @@ $\R(x) = \mathrm{e}^{-\alpha \tilde{x}}$, where $\tilde{x} = \sqrt{x}$
 
 Values for $\alpha$ may be found in the appendix.
 
-\paragraph{Health Benefits}
+\subsection{Health Benefits}
 
 The population attrubutable fraction represents the proportional
 change in disease burden, so we must first estimate the initial
