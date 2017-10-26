@@ -209,7 +209,7 @@ getRR <- function(x,alpha,k){
 
 $B_0$ is the overall burden at baseline. Estimates of the age-sex-cause-specific 
 number of deaths were obtained from the Oregon Health Authority's Oregon Public 
-Health Assessment Tool (OPHAT) averaged for the years 2011-2015 \cite{ORheat}.
+Health Assessment Tool (OPHAT) averaged for the years 2011-2015 \cite{OPHAT}.
 Burden estimates for Years-of-Life-Lost (YLL) were calculated using median age for 
 each range and the country-specific life expectancy according the World Health Organization (WHO) 
 Guidelines \cite{WHOburden}. Estimates for Years-Lost-to-Disability (YLD) were 
