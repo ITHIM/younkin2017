@@ -14,7 +14,7 @@ library("devtools")
 #install_github("ITHIM/ITHIM", ref="ithimus")
 install("~/ITHIM/")
 library("ITHIM")
-#NHTS.df <- readRDS(file = "~/GHI/R/data/NHTS.df.rds")
+NHTS.df <- readRDS(file = "~/GHI/R/data/NHTS.df.rds")
 #example("ITHIM")
 @
 \begin{center}
@@ -67,11 +67,11 @@ Cambridge University, Cambridge, UK
 \clearpage
 \section*{Discussion}
 \Sexpr{knit_child('lib/discussion.Rnw')}
+\singlespacing
+\nolinenumbers
+\bibliography{./lib/ITHIM}
 \section*{Appendix}
 \Sexpr{knit_child('lib/appendix.Rnw')}
 % \section*{Conclusion}
 % \Sexpr{knit_child('lib/conclusion.Rnw')}
-\singlespacing
-\nolinenumbers
-\bibliography{./lib/ITHIM}
 \end{document}

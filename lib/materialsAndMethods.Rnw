@@ -1,128 +1,112 @@
 % !Rnw root = ../ITHIM-manuscript.Rnw
 % !TeX root = ../ITHIM-manuscript.Rnw
 
-The health impacts that result from population level increases in active
-transportation can be quantified by the population
-attributable fraction, $\af$.  The population attributable fraction
+To estimate the health benefits associated with an increase in active
+transportation we perfrom a comparitive risk assesment in which the
+health impacts of a change of exposure to some health factor in the
+population is quantified in terms of the population attributable
+fraction, $\af$.  In our case, the population attributable fraction
 represents the proportional change in disease burden that results from
-the new transportation behavior.  To address the dependency in
+an alternative transportation behavior.  To address the dependency in
 transportation behavior on cohorts within the whole population, we
 stratify by sex and age using eight age classes (0-4 yrs.\ old, 5-14,
-15-29, 30-44, 45-59, 60-69, 70-79, 80+).  Age-sex-disease specific
-burdens are calculated using detailed mortality data from the CDC
-Wide-ranging ONline Data for Epidemiologic Research (WONDER) database
-and the 2010 Global Burden of Disease \cite{WHOGBD}. For a given
-disease the population attributable fraction is then computed for each
-of these classes.  ITHIM physical activity component includes Breast
-Cancer (C50), Colon Cancers (C18-C21), Dementia (G30), Diabetes
-(E10-E14) and Cardiovascular diseases (I10, I12, I15, I20-I25,
-I30-I31, I33, I40).  We also include the disability impacts of
-depression, though it is not listed as a cause of death in the CDC
-data.
+15-29, 30-44, 45-59, 60-69, 70-79, 80+).  The population attributable fraction is computed for each
+age-sex-disease class.
 
 \begin{eqnarray}
 \af_{ijk} &=& \frac{\int \! R_{ijk}(x)P_{ij}(x) \, \mathrm{d}x - \int \! R_{ijk}(x)Q_{ij}(x)
-  \, \mathrm{d}x}{\int \! R_{ijk}(x)P_{ij}(x) \, \mathrm{d}x}\\
+  \, \mathrm{d}x}{\int \! R_{ijk}(x)P_{ij}(x) \, \mathrm{d}x}\label{paf1}\\
   &\approx& 1 -
 \frac{{\displaystyle \sum_{l=1}^n} R_{ijk}(x_{ijl}^\prime)}{{\displaystyle
     \sum_{l=1}^n} R_{ijk}(x_{ijl})} = 1 - \delta_{ijk}
-  \label{paf}
+  \label{paf2}
 \end{eqnarray}
 
-We see in Equation \ref{paf} ??? paf equation includes two but references in the text only refer to the the second equation??? the population attributable fraction
-given in terms of the distribution of physical activity in the
-baseline and alternative scenarios, $P_{ij}(x)$ and $Q_{ij}(x)$,
-respectively, and the risks, $R_{ijk}(x)$, given physical activity $x$
-(\mets) (relative to having no physical activity).  We use subscripts
-$i$, $j$ and $k$ to denote age class, sex and disease in Equation
-\ref{paf}.  For the sake of clarity we choose to neglect the subscripts
-in the rest of this paper, keeping in mind that the equations are
-specific to a given sex, age-class and disease combination.
-
-A numerical approximation to the integrals in Equation \ref{paf} can
-be expressed in terms of the quantiles of the distributions of
-physical activity levels.  The vectors $\mathbf{x}$ and
-$\mathbf{x}^\prime$ represent quantiles for the exposure distribution
-in baseline and alternative scenarios, respectively.  With this
-implementation in R we can now use any number of quantiles.  Originally
-five quantiles were used for this approximation, resulting in
-instability in the estimates of $\af{}$.
-
+We see in Equation \ref{paf1} an expression for the population
+attributable fraction.  In it the population attributable fraction is
+computed in terms of the distribution of physical activity in baseline
+and alternative scenarios, $P_{ij}(x)$ and $Q_{ij}(x)$, respectively,
+and the relative risks, $R_{ijk}(x)$, given physical activity $x$.  We
+use subscripts $i$, $j$ and $k$ to denote age class, sex and disease
+in Equations \ref{paf1} and \ref{paf2}, but for the sake of
+readability we neglect the subscripts in much of rest of the paper,
+keeping in mind that the comparative risk assessment is performed
+independently for each of the 96 age-sex-disease classes.  Equation
+\ref{paf2} uses approximations for the integrals in Equation
+\ref{paf1} expressed in terms of the quantiles of the distribution of
+physical activity in baseline and alternative scenarios, $\mathbf{x}$
+and $\mathbf{x}^\prime$, respectively.
 
 \paragraph{Physical Activity}
 
-The exposure variable, $X$, physical activity, is decomposed into two
-parts, travel and non-travel-related physical activity.  These
-components are treated as two independent random variables.
+Physical activity may be decomposed into three components;
+occupational, leisure and travel.  The relative risk functions used
+here exclude the occupational component and so we are concerned only
+with non-occupational physical activity.  Thus our exposure variable
+is the sum of travel and leisure activity.  These components are
+treated as two independent random variables.  With these an empirical
+distribution for non-occupational physical activity is then computed
+for the comparative risk assessment.  Throughout this paper the term
+``physical activity" implies non-occupational physical activity.
 
 \subparagraph{Travel-Related Physical Activity}
 
-Let $T$ be the travel activity in \METhrs{}.  We compute it by
-weighting the total active one-day travel times in hours, $T_w$ and
-$T_c$, walking and cycling, respectively, by $\alpha_w$ and $\alpha_c$
-the average workload of walking and cycling in METs.  Note that we
-assume this is a typical day and multiply by seven to obtain the
-weekly estimate.
+We express travel activity, $T$, in terms of \METhrs{} and compute it
+by weighting the total active one-day walking and cycling times, $T_w$
+and $T_c$ (hours), by $\alpha_w^\prime = 7\fAT\alpha_w$ and
+$\alpha_c^\prime = 7\fAT\alpha_c$, respectively. The average workload
+of walking and cycling in METs, $\alpha_w$ and $\alpha_c$ must be
+scaled up to represent a full week of travel, but attenuated by $\fAT$
+for reasons discussed in section ?.
 
 \begin{equation}
-T = 7 \times \left(\alpha_w T_w + \alpha_c T_c\right)
+T = \alpha_w^\prime T_w + \alpha_c^\prime T_c
 \end{equation}
 
 \subparagraph{Inactive Travelers}
 
-Data from the National Household Transportation Survey (NHTS) sample
-were used to examine active transportation behaviors.  This analysis
-was limited to individuals residing in the Portland, OR metropolitan
-area within the survey ???(NHTS.MSA = XXXX)???. We model the
+Investigation of the distributions of travel activity in
+U.S. metroplitan areas uncovered a signinficant numer of survey
+respondants who report no active travel.  To determine the proportion
+of adults in each age-sex cohort who do not use active transportation
+at all, we used questions $x$ and $y$ of the 200?  national household
+transportation survey which asked how many walking or cycling trips
+were made in the previous week.  We see in figure \ref{inactiveMSA}
+that much of the U.S. metropolitan population does not walk or cycle
+at all as a means of transportation.  Due to the large numbers of
+inactive travelers in U.S. metropolitan areas we model the
 distribution of travel activity as a mixture of a point-mass at zero
-with a log-normal distribution. To determine the proportion of adults in
-each age-sex cohort making any active travel trip in a given week,
-we used questions ???x and y???. To describe the active travel behaviors
-of those making such trips we use the trip information for the single
-day of travelin the NHTS.
+with probabilty ($\pi_0 = 1 - \pAT$) and a log-normal distribution for
+active travelers.
 
-Simply counting the proportion of individuals with no active travel
-reported in the survey data results in a biased estimator, for even
-active travelers sometimes have days with no active travel and we
-would therefore over-count the number of inactive travelers.  Let
-$\pi_0$ be the proportion of inactive travelers (drivers) and $\fAT =
-P\{T>0|\mathrm{active}\}$ be the proportion of active travelers who
-reported active travel on the day of the survey.  We estimate $\fAT$
-with the average weekly rate of active travel among active travelers
-(days with active travel per week).  We correct for the potential bias
-by dividing the proportion of individuals with nonzero active travel
-by $\fAT$.  (Currently $\fAThat=1$ has been removed from the code.)
+\begin{figure}
+<<pATbyMSA, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 9, dev = c("pdf","png")>>=
+D.pAT <- NHTS.df %>% filter(!(location %in% c("-1", NA))) %>% group_by(id, location) %>% summarise(AT = first(nwalktrp)+first(nbiketrp)) %>% ungroup() %>% mutate( AT.level = ifelse(AT == 0, "0 trips", ifelse(AT < 5, "< 5 trips", "> 5 trips"))) %>% group_by(location, AT.level) %>% summarise( count = n()) %>% ungroup()
+D.pAT <- within(D.pAT, AT.level <- factor(AT.level, levels = rev(c("0 trips", "< 5 trips", "> 5 trips"))))
+D.total <- D.pAT %>% group_by(location) %>% summarise(total = sum(count))
+D.pAT <- full_join(D.pAT,D.total,by="location") %>% mutate(prop = count/total) %>% arrange(desc(AT.level),count)
+msaIDFile <- read.csv(system.file("join2.csv", package = "ITHIM"), stringsAsFactors = FALSE)
+msaIDFile %>% select(msaName, msaNHTS) %>% filter(!is.na(msaNHTS)) %>% distinct(msaName, msaNHTS)
+bar <- msaIDFile %>% select(msaName, msaNHTS) %>% filter(!is.na(msaNHTS)) %>% group_by(msaNHTS) %>% summarise(msaName = first(msaName))
+bar <- within(bar, msaNHTS <- factor(msaNHTS))
+D.pAT <- full_join(D.pAT, bar, by = c("location" = "msaNHTS"))
+D.pAT <- subset(D.pAT, !is.na(AT.level))
+ggplot(D.pAT, aes(x = factor(msaName, levels = D.pAT$msaName), y = prop, fill = AT.level)) + geom_bar(stat = "identity") + theme_bw() + ylab("Proportion") + xlab("Metropolitan Statistical Area (MSA)") + coord_flip()
+@
+\caption{Proportion of survey respondants with exactly 0, 1-5 or
+  greater than 5 walking or cycling trips across U.S. metropolitan
+  areas.  Data from the 200? National Household Travel Survey}
+\label{inactiveMSA}
+\end{figure}
 
-\begin{equation}
-%P\{T>0\} &=& P\{T>0|\mathrm{active}\}P\{\mathrm{active}\} + P\{T>0|\mathrm{inactive}\}P\{\mathrm{inactive}\}\\
-%P\{\mathrm{active}\} &=& \frac{P\{T>0\}}{P\{T>0|\mathrm{active}\}} = \frac{1}{\fAT}P\{T>0\}\\
-\pi_0 = 1 - \frac{1}{\fAT}P\{T>0\}
-\end{equation}
+% \subparagraph{Active Travelers}
 
-% \begin{figure}\label{InactiveNational}
-% <<mandm21, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
-% #fAT <- 4/7
-
-% n.ind <- NHTS.df  %>% filter(!(location %in% c("-1","XXXX"))) %>% group_by(sex,age) %>% summarise(n.ind = n_distinct(id))
-
-% n.AT <- NHTS.df %>% filter(!(location %in% c("-1","XXXX"))) %>% group_by(sex,age,id, mode) %>% summarise(durationTotal = sum(duration)) %>% ungroup() %>% group_by(sex,age) %>% filter(mode %in% c("walk","cycle")) %>% filter(durationTotal > 0) %>% summarise(n.AT = n_distinct(id))
-
-% D <- inner_join(n.ind, n.AT, by = c("sex","age")) %>% mutate(p0 = 1-n.AT/n.ind)
-% ggplot(D, aes(x=age,y=p0, fill = sex)) + geom_bar(stat = "identity", position = "dodge") + theme_bw() + ylab("Proportion of Inactive Travelers") + xlab("") + coord_cartesian(ylim = c(0.5, 1))
-% @
-% \caption{The proportion of inactive travelers in the combined U.S. metropolitan area. (Note
-% that this is an over-estimate of the true proportion of inactive
-% travelers.)}
-% \end{figure}
-
-\subparagraph{Active Travelers}
-
-Among active travelers we assume log-normal distribution of
-travel-related physical activity.  In Figure \ref{activeTravelers} we
-see the distribution of travel activity among American men, age 45-59,
-living in a metropolitan area, and having nonzero travel activity in
-the NHTS data.  Figure \ref{activeTravelers} displays an empirical
-distribution function along with a fitted log-normal distribution.
+% Among active travelers we assume log-normal distribution of
+% travel-related physical activity.  In Figure \ref{activeTravelers} we
+% see the distribution of travel activity among American men, age 45-59,
+% living in a metropolitan area, and having nonzero travel activity in
+% the NHTS data.  Figure \ref{activeTravelers} displays an empirical
+% distribution function along with a fitted log-normal distribution.
 
 %% \begin{figure}
 %% <<mandm22, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
@@ -155,24 +139,24 @@ distribution function along with a fitted log-normal distribution.
 
 \subparagraph{Leisure Activity}
 
-Within each age-sex class the non-travel-related exposure is also modeled
-with a \logNormal{} distribution.  The age-sex specific mean ratios,
-$r_{ij} = \frac{\mu_{ij}}{\mu_0}$ and the coefficient of variation,
-$\gamma$, are estimated from the American Time Use Survey (ATUS) data
-\cite{ATUS}. We use geographic indentfiers within the ATUS' summary file
-to limit our analysis to the sample of respondents residing within metropolitan
-areas in the state of Oregon. Leisure-time Metabolic Equivalents (METs)
-for each respondent were calculated using activity times and energy equilance
-from the Ainsworth Compendium of Physical Actvitites \cite{}. To grow the sample size,
-we pooled ATUS responses for the years 2011-2015.
+Within each age-sex class the leisure activity is modeled with a
+\logNormal{} distribution.  In this paper we estimate the age-sex
+specific means and standard deviations using the American Time Use
+Survey (ATUS) data \cite{ATUS}. We use geographic indentfiers within
+the ATUS summary file to limit our analysis to the sample of
+respondents residing within metropolitan areas in the state of
+Oregon. Leisure-time Metabolic Equivalents (METs) for each respondent
+were calculated using activity times and energy equilance from the
+Ainsworth Compendium of Physical Actvitites \cite{}. For more
+discussion see Section \ref{ATUS}.
 
-\begin{equation}
-X_{ij}^{\mathrm{non-travel}} \sim \logNormalMath\left(\mu_{ij}, \gamma \mu_{ij}\right)
-\end{equation}
+% \begin{equation}
+% X_{ij}^{\mathrm{lei}} \sim \logNormalMath\left(\mu_{ij}, \gamma \mu_{ij}\right)
+% \end{equation}
 
-With a simulated distribution for total physical activity in hand we
-compute the empirical percentiles in the baseline and alternate
-scenarios, $\mathbf{x}$ and $\mathbf{x}^\prime$ and use Equation \ref{paf}.
+% With a simulated distribution for total physical activity in hand we
+% compute the empirical percentiles in the baseline and alternate
+% scenarios, $\mathbf{x}$ and $\mathbf{x}^\prime$ and use Equation \ref{paf}.
 
 \paragraph{Risk Functions}
 
@@ -197,32 +181,32 @@ Values for $\alpha$ may be found in the appendix.
 % Colon Cancer,F,0.97288384
 % \end{verbatim}
 
-<<RR21, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
-foo <- read.csv(file=system.file("dose-response-parameters.csv", package = "ITHIM"))
-alpha.cvd <- log(foo[foo$disease == "CVD",c("RR_1MET")])
-getRR <- function(x,alpha,k){
-    return(exp(alpha*(x^k)))
-}
-@
+% <<RR21, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
+% foo <- read.csv(file=system.file("dose-response-parameters.csv", package = "ITHIM"))
+% alpha.cvd <- log(foo[foo$disease == "CVD",c("RR_1MET")])
+% getRR <- function(x,alpha,k){
+%     return(exp(alpha*(x^k)))
+% }
+% @
 
-\paragraph{Estimation of Baseline Disease Burden}
+%\paragraph{Estimation of Baseline Disease Burden}
 
-$B_0$ is the overall burden at baseline. Estimates of the age-sex-cause-specific number of deaths
-were obtained from the Oregon Health Authorites Vital Statistics Records for the year 2015 \cite{}.
-Burden estimates for Years-of-Life-Lost (YLL) and Years-Lost-to-Diability (YLD) were calculated
-using median age for each range and the country-specific life expectancy according the World Health Organization
-Guidelines. ???verify with Eric??? The final metric of disease burden,
-Disability Adjusted Life Years (DALYs) is the sum of YLL and YLD.
 
 \paragraph{Health Benefits}
 
-We scale the baseline burden with the attributable fraction to
-estimate the resulting disease burden, $B = \delta B_0$. The total
-percent burden reduction, $\beta$, is computed by summing across age
-sex and disease as in Equation \ref{beta}.
+The population attrubutable fraction represents the proportional
+change in disease burden, so we must first estimate the initial
+disease burden, $B_0$. Here, we consider four burden types
+and six diseases for each of the 16 age-sex classes.  An example
+estimate for $B_0$ can be seen in section \ref{burden}.
+
+To estimate the resulting disease burden we simply scale $B_0$ by
+$\delta=1-\af$, Equation \ref{paf2}.  The total disease-specific
+burden reduction, $\delta_B$, is computed by summing across age and sex
+as in Equation \ref{delta}.
 
 \begin{eqnarray}
-  \beta &=& 1-\frac{\displaystyle \sum_{i,j,k} \delta_{ijk}{B_0}_{ijk}} {\displaystyle \sum_{i,j,k}  {B_0}_{ijk}}
+  \delta_B &=& \displaystyle \sum_{i,j} \delta_{ij}{B_0}_{ij}
   \label{beta}
 \end{eqnarray}
 

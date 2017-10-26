@@ -20,6 +20,7 @@ age of 15 and 29 with over 700 combined minutes of travel per week
 confidence intervals on these estimates.)
 
 \paragraph{Travel Activity}
+
 We see in Figure \ref{portland9} the extent of the proportion of
 inactive travel.  More than $x$ percent of people in the Portland
 Metropolitan area are inactive travelers. (Note that this is an
@@ -38,6 +39,24 @@ also over-estimate weekly travel-activity among active travelers.
 These estimates are dependant on a scaling coefficient that is a function
 of the true weekly frequency of active travel.)
 
+Simply counting the proportion of individuals with no active travel
+reported in the survey data results in a biased estimator, for even
+active travelers sometimes have days with no active travel and we
+would therefore over-count the number of inactive travelers.  Let
+$\pi_0$ be the proportion of inactive travelers (drivers) and $\fAT =
+P\{T>0|\mathrm{active}\}$ be the proportion of active travelers who
+reported active travel on the day of the survey.  We estimate $\fAT$
+with the average weekly rate of active travel among active travelers
+(days with active travel per week).  We correct for the potential bias
+by dividing the proportion of individuals with nonzero active travel
+by $\fAT$.  (Currently $\fAThat=1$ has been removed from the code.)
+
+\begin{equation}
+%P\{T>0\} &=& P\{T>0|\mathrm{active}\}P\{\mathrm{active}\} + P\{T>0|\mathrm{inactive}\}P\{\mathrm{inactive}\}\\
+%P\{\mathrm{active}\} &=& \frac{P\{T>0\}}{P\{T>0|\mathrm{active}\}} = \frac{1}{\fAT}P\{T>0\}\\
+\pi_0 = 1 - \frac{1}{\fAT}P\{T>0\}
+\end{equation}
+
 <<ohas1, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
 OHAS.df <- readRDS(file = "~/Bullitt/data/OHAS/OHAS.df.rds")
 countyList <- c("Benton","Clackamas","Deschutes","Jackson","Josephine","Lane","Linn","Marion","Multnomah","Polk","Washington")
@@ -49,13 +68,13 @@ We include the following counties in the following analysis: \Sexpr{countyList}.
 
 \begin{figure}
 <<allCounties, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = TRUE, fig.height = 6>>=
-alpha_w <- 3; alpha_c <- 6;
+alpha_w <- 3; alpha_c <- 6; fAT <- 5/7;
 
 OHAS.df <- OHAS.df %>% mutate(ID = paste0(SAMPN, "-", PERNO)) %>% mutate(AGECLASS = ITHIM:::convertToAgeClass(AGE))
 trip.df <-  OHAS.df %>% filter( !(TPURP %in% c("20", "96")) & TRPDUR <= 1e9) %>% complete(ID,MODE) %>% filter(MODE %in% c("walk","cycle")) %>% select(ID, MODE, TPURP, TRPDUR)
 subject.df <- OHAS.df %>% select(ID, GEND, AGECLASS) %>% distinct()
 
-D <- full_join(trip.df, subject.df, by = "ID", suffix = c(".trip",".subject")) %>% group_by(ID, MODE, GEND, AGECLASS) %>% summarise(TOTDUR = sum(TRPDUR)) %>% ungroup() %>% spread(MODE,TOTDUR) %>% mutate(TA = 7/60*(alpha_w*ifelse(is.na(walk),0,walk) + alpha_c*ifelse(is.na(cycle),0,cycle)))
+D <- full_join(trip.df, subject.df, by = "ID", suffix = c(".trip",".subject")) %>% group_by(ID, MODE, GEND, AGECLASS) %>% summarise(TOTDUR = sum(TRPDUR)) %>% ungroup() %>% spread(MODE,TOTDUR) %>% mutate(TA = 7/60*fAT*(alpha_w*ifelse(is.na(walk),0,walk) + alpha_c*ifelse(is.na(cycle),0,cycle)))
 
 parameters.TA <- D %>% filter(TA > 0) %>% mutate(logTA = log(TA)) %>% group_by(GEND, AGECLASS) %>% summarise( meanLogTA = mean(logTA), sdLogTA = sd(logTA))
 ggplot(subset(D, TA > 0), aes(x = GEND, y = log(TA), fill = AGECLASS)) + geom_boxplot() + ylab("Travel Activity (MET-hrs./week) (log-scale)") + theme_bw() # + coord_cartesian(ylim = c(0, 150))
@@ -67,7 +86,7 @@ ggplot(subset(D, TA > 0), aes(x = GEND, y = log(TA), fill = AGECLASS)) + geom_bo
 
 \begin{figure}
 <<inactivePortland, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = TRUE, fig.height = 3>>=
-pAT <- D %>% group_by(GEND, AGECLASS) %>% summarise( pAT = sum(TA > 0, na.rm = TRUE)/length(TA))
+pAT <- D %>% group_by(GEND, AGECLASS) %>% summarise( pAT = 1/fAT*sum(TA > 0, na.rm = TRUE)/length(TA))
 pAT <- within(pAT, AGECLASS <- factor(AGECLASS))
 pAT <- within(pAT, GEND <- factor(GEND))
 pAT %>% ggplot(aes(x = GEND, y = pAT, fill = AGECLASS)) + geom_bar(stat = "identity", position = "dodge") + theme_bw()
@@ -76,10 +95,10 @@ pAT %>% ggplot(aes(x = GEND, y = pAT, fill = AGECLASS)) + geom_bar(stat = "ident
 \label{inactivePortland}
 \end{figure}
 
-\paragraph{Leisure Activity}
+\paragraph{Leisure Activity}\label{ATUS}
 \Sexpr{knit_child('./ATUS.Rnw')}
 
-\paragraph{Disease Burden}
+\paragraph{Disease Burden}\label{burden}
 \Sexpr{knit_child('./burden.Rnw')}
 
 \paragraph{Health Outcomes}
