@@ -1,6 +1,7 @@
 To increase the sample size, we pooled ATUS responses for the years
 2011-2015.
 
+
 \begin{figure}
 <<atus1, echo = FALSE, eval = TRUE, warning = FALSE, message = FALSE, fig.height = 6>>=
 newMETsFile <-'https://raw.githubusercontent.com/vargovargo/ACS_ITHIM/master/ATUS_to_METS_key.csv'
@@ -138,7 +139,7 @@ fiveYear <- bind_rows(readATUS1yr(year = 2011, stateFIPS = 41, metroCode = 1, me
 
 ggplot(fiveYear, aes(x = SEX, y = log(METs), fill = AGECAT)) + geom_boxplot() + ylab("Leisure Activity (log-scale) (MET-hrs./week)") + theme_bw()
 
-parameters.LA <- fiveYear %>% mutate(logLA = log(METs)) %>% group_by(SEX, AGECAT) %>% summarise( meanLogLA = mean(logLA), sdLogLA = sd(logLA))
+parameters.LA <- fiveYear %>% mutate(logLA = ifelse(METs == 0, log(min(METs[METs!=0])), log(METs))) %>% group_by(SEX, AGECAT) %>% summarise( meanLogLA = mean(logLA,na.rm = TRUE), sdLogLA = sd(logLA, na.rm = TRUE))
 
 parameters.LA <- with(parameters.LA, data.frame(GEND = ifelse(SEX == "female","F", ifelse(SEX == "male", "M", NA)), AGECLASS = AGECAT, meanLogLA, sdLogLA))
 
