@@ -14,7 +14,7 @@ library("devtools")
 #install_github("ITHIM/ITHIM", ref="ithimus")
 install("~/ITHIM/")
 library("ITHIM")
-#NHTS.df <- readRDS(file = "~/GHI/R/data/NHTS.df.rds")
+NHTS.df <- readRDS(file = "~/GHI/R/data/NHTS.df.rds")
 #example("ITHIM")
 @
 \begin{center}
@@ -50,13 +50,13 @@ Cambridge University, Cambridge, UK
 \doublespacing
 \linenumbers
 
-\section*{Introduction}
+\section{Introduction}
 \Sexpr{knit_child('lib/introduction.Rnw')}
 
-\section*{Materials \& Methods}
+\section{Materials \& Methods}
 \Sexpr{knit_child('lib/materialsAndMethods.Rnw')}
 
-\section*{Portland, Oregon}
+\section{Portland, Oregon}
 \Sexpr{knit_child('lib/portland.Rnw')}
 
 % \subsection*{Value of Information}
@@ -65,13 +65,13 @@ Cambridge University, Cambridge, UK
 % \section*{Results}
 % \Sexpr{knit_child('lib/results.Rnw')}
 \clearpage
-\section*{Discussion}
+\section{Discussion}
 \Sexpr{knit_child('lib/discussion.Rnw')}
-\section*{Appendix}
-\Sexpr{knit_child('lib/appendix.Rnw')}
-% \section*{Conclusion}
-% \Sexpr{knit_child('lib/conclusion.Rnw')}
 \singlespacing
 \nolinenumbers
 \bibliography{./lib/ITHIM}
+\section{Appendix}
+\Sexpr{knit_child('lib/appendix.Rnw')}
+% \section*{Conclusion}
+% \Sexpr{knit_child('lib/conclusion.Rnw')}
 \end{document}

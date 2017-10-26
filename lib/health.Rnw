@@ -13,7 +13,7 @@ two of these distributions we can compute the attributable fraction
 associates with an increase in proportion of active travelers.
 
 <<parameters, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
-
+parameters.LA <- readRDS(file = "./../data/parameters.LA.rds")
 doseResponse <- read.csv(file = "./../data/dose-response.csv", header = TRUE)
 doseResponse <- within(doseResponse, GEND <- factor(GEND, levels = c("M","F")))
 parameters <- inner_join(burden, inner_join(inner_join(pAT, inner_join(parameters.TA, parameters.LA)), doseResponse))
@@ -43,8 +43,53 @@ for( i in 1:nrow(parameters) ){
   })
 }
 
-portlandITHIM <- new("ITHIM", pSetList)
+portlandITHIM.baseline <- new("ITHIM", pSetList)
 @
+
+
+Create a scenario in which the proportion of active travleres
+increases by 25\%.
+
+<<parameters2, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
+pSetList <- list()
+
+for( i in 1:nrow(parameters) ){
+
+  pSetList[[i]] <- with(parameters,{
+      new("ParameterSet",
+          pAT = pAT[i]*1.25,
+          meanLogTA = meanLogTA[i],
+          meanLogLA = meanLogLA[i],
+          sdLogTA = sdLogTA[i],
+          sdLogLA = sdLogLA[i],
+          metWalk = 3,
+          metCycle = 6,
+          alpha = log(RR1MET)[i],
+          k = k[i],
+          quantiles = 1:99/100,
+          label = as.character(i),
+          disease = disease[i],
+          sex = GEND[i],
+          age = AGECLASS[i],
+          burdenType = burdenType[i],
+          burdenValue = value)
+  })
+}
+
+portlandITHIM.scenario <- new("ITHIM", pSetList)
+@
+
+\begin{figure}
+<<parameters3, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
+
+PAF <- mapply(computeAF, portlandITHIM.baseline, portlandITHIM.scenario)
+healthOutcomes <- parameters %>% mutate(deltaBurden = PAF*value) %>% group_by(disease, burdenType) %>% summarise(diseaseDeltaBurden = sum(deltaBurden))
+ggplot(healthOutcomes, aes(x = disease, y = diseaseDeltaBurden, fill = burdenType)) + geom_bar(stat = "identity", position = "dodge") + theme_bw()  + labs(x = "Disease", y = "Disease Burden Averted", fill = "Burden Type")
+@
+\caption{Health outcomes given a 25\% increase in proportion of active
+travelers.}
+\label{health}
+\end{figure}
 
 In Figure \ref{mandm235} we see the results of the comparitive risk
 assesment.  For the sake of example we show the results for males age

@@ -1,6 +1,27 @@
 Text from Eric goes here.  How did we arrive at the disease burden
 estimates?  Can we cite WHO methodology?
 
+Estimates of the age-sex-disease-specific number
+of deaths were obtained from the Oregon Health Authorites Vital
+Statistics Records for the year 2015 \cite{}.  Burden estimates for
+Years-of-Life-Lost (YLL) and Years-Lost-to-Diability (YLD) were
+calculated using median age for each range and the country-specific
+life expectancy according the World Health Organization
+Guidelines. ???verify with Eric??? The final metric of disease burden,
+Disability Adjusted Life Years (DALYs) is the sum of YLL and YLD.
+
+Age-sex-disease specific disease burdens, namely DALY, YLL, YLD
+and deaths, are estimated using detailed mortality data from the
+CDC Wide-ranging ONline Data for Epidemiologic Research (WONDER)
+database and the 2010 Global Burden of Disease \cite{WHOGBD}.
+See \ref{burden} for a more detailed discussion.
+
+ITHIM physical activity component includes breast cancer (C50), colon
+cancer (C18-C21), dementia (G30), diabetes (E10-E14) and
+cardiovascular disease (I10, I12, I15, I20-I25, I30-I31, I33, I40).
+We also include the disability impacts of depression, though it is not
+listed as a cause of death in the CDC data.
+
 <<burden, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = TRUE, fig.height = 6>>=
 burden <- read.csv(file = "./../data/gbd_20170925.csv")
 ageBins <- c("00-04", "05-14", "15-29", "30-44", "45-59", "60-69", "70-79", "80+")
@@ -10,6 +31,7 @@ burden <- within(burden, {
     AGECLASS <- factor(as.character(ageBins[ageClass]))
     GEND <- factor(sex, levels = c("M","F"))
     disease <- factor(disease, levels = c("BreastCancer","ColonCancer","CVD","Dementia","Depression","Diabetes"))
+    burdenType <- factor(burdenType, levels = c("daly","yll","yld","deaths"))
 })
 
 @
