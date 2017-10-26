@@ -19,7 +19,7 @@ age of 15 and 29 with over 700 combined minutes of travel per week
 (1.6 hours a day!).  (Seems like an over-estimate.  We really need
 confidence intervals on these estimates.)
 
-\paragraph{Travel Activity}
+\subsection{Travel Activity}
 
 We see in Figure \ref{portland9} the extent of the proportion of
 inactive travel.  More than $x$ percent of people in the Portland
@@ -95,13 +95,13 @@ pAT %>% ggplot(aes(x = GEND, y = pAT, fill = AGECLASS)) + geom_bar(stat = "ident
 \label{inactivePortland}
 \end{figure}
 
-\paragraph{Leisure Activity}\label{ATUS}
+\subsubsection{Leisure Activity}\label{ATUS}
 \Sexpr{knit_child('./ATUS.Rnw')}
 
-\paragraph{Disease Burden}\label{burden}
+\subsection{Disease Burden}\label{burden}
 \Sexpr{knit_child('./burden.Rnw')}
 
-\paragraph{Health Outcomes}
+\subsection{Health Outcomes}
 \Sexpr{knit_child('./health.Rnw')}
 
 
