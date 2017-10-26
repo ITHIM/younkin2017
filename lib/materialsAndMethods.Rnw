@@ -91,7 +91,7 @@ bar <- msaIDFile %>% select(msaName, msaNHTS) %>% filter(!is.na(msaNHTS)) %>% gr
 bar <- within(bar, msaNHTS <- factor(msaNHTS))
 D.pAT <- full_join(D.pAT, bar, by = c("location" = "msaNHTS"))
 D.pAT <- subset(D.pAT, !is.na(AT.level))
-ggplot(D.pAT, aes(x = factor(msaName, levels = D.pAT$msaName), y = prop, fill = AT.level)) + geom_bar(stat = "identity") + theme_bw() + ylab("Proportion") + xlab("Metropolitan Statistical Area (MSA)") + coord_flip()
+ggplot(D.pAT, aes(x = factor(msaName, levels = D.pAT$msaName), y = prop, fill = AT.level)) + geom_bar(stat = "identity") + theme_bw() + labs(x = "Metropolitan Statistical Area (MSA)", y = "Proportion", fill = "Weekly Walk/Cycle Trips") + coord_flip()
 @
 \caption{Proportion of survey respondants with exactly 0, 1-5 or
   greater than 5 walking or cycling trips across U.S. metropolitan

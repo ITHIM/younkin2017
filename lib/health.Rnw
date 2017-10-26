@@ -84,7 +84,7 @@ portlandITHIM.scenario <- new("ITHIM", pSetList)
 
 PAF <- mapply(computeAF, portlandITHIM.baseline, portlandITHIM.scenario)
 healthOutcomes <- parameters %>% mutate(deltaBurden = PAF*value) %>% group_by(disease, burdenType) %>% summarise(diseaseDeltaBurden = sum(deltaBurden))
-ggplot(healthOutcomes, aes(x = disease, y = diseaseDeltaBurden, fill = burdenType)) + geom_bar(stat = "identity", position = "dodge") + theme_bw()
+ggplot(healthOutcomes, aes(x = disease, y = diseaseDeltaBurden, fill = burdenType)) + geom_bar(stat = "identity", position = "dodge") + theme_bw()  + labs(x = "Disease", y = "Disease Burden Averted", fill = "Burden Type")
 @
 \caption{Health outcomes given a 25\% increase in proportion of active
 travelers.}
