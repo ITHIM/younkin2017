@@ -203,11 +203,6 @@ as in Equation \ref{delta}.
 %% \end{figure}
 
 
-
-% \begin{equation}
-% X_{ij}^{\mathrm{lei}} \sim \logNormalMath\left(\mu_{ij}, \gamma \mu_{ij}\right)
-% \end{equation}
-
 % With a simulated distribution for total physical activity in hand we
 % compute the empirical percentiles in the baseline and alternate
 % scenarios, $\mathbf{x}$ and $\mathbf{x}^\prime$ and use Equation \ref{paf}.
