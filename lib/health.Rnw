@@ -15,7 +15,12 @@ associates with an increase in proportion of active travelers.
 <<parameters, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
 parameters.LA <- readRDS(file = "./../data/parameters.LA.rds")
 doseResponse <- read.csv(file = "./../data/dose-response.csv", header = TRUE)
-doseResponse <- within(doseResponse, GEND <- factor(GEND, levels = c("M","F")))
+doseResponse <- filter(doseResponse, !(AGECLASS %in% c("00-04", "05-14")))
+doseResponse <- within(doseResponse, {
+    GEND <- factor(GEND, levels = c("M","F"))
+    AGECLASS <- factor(AGECLASS, levels = c("15-29", "30-44", "45-59", "60-69", "70-79", "80+"))
+})
+
 parameters <- inner_join(burden, inner_join(inner_join(pAT, inner_join(parameters.TA, parameters.LA)), doseResponse))
 
 pSetList <- list()
