@@ -1,9 +1,13 @@
-To increase the sample size, we pooled ATUS responses for the years
-2011-2015.
-
+We use geographic indentfiers within the ATUS summary file to limit
+our analysis to the sample of respondents residing within metropolitan
+areas in the state of Oregon. Leisure-time Metabolic Equivalents
+(METs) for each respondent were calculated using activity times and
+energy equilance from the Ainsworth Compendium of Physical Actvitites
+\cite{}.  To increase the sample size, we pooled ATUS responses for
+the years 2011-2015.
 
 \begin{figure}
-<<atus1, echo = FALSE, eval = TRUE, warning = FALSE, message = FALSE, fig.height = 6>>=
+<<atus1, echo = FALSE, eval = FALSE, warning = FALSE, message = FALSE, fig.height = 6>>=
 newMETsFile <-'https://raw.githubusercontent.com/vargovargo/ACS_ITHIM/master/ATUS_to_METS_key.csv'
 
 newMETs <- read.csv(file = newMETsFile, stringsAsFactors = FALSE, colClasses = c("character","character","character","character","numeric","character","character","character"))  %>%
