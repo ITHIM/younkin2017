@@ -1,7 +1,15 @@
 To demonstrate the potential health benefits associated with an
 increase in travel activity that can result from a small change in
 transportation behavior we present here a brief case study of the
-Portland Oregon, U.S.A., Metropolitan Area.  In Figure \ref{portland8}
+Portland Oregon, U.S.A., Metropolitan Area.
+
+
+In Figure \ref{inactiveMSA} that although Portland has a great deal of
+travel activity compared to other U.S. metropolitan areas, there is
+still roughly 20\% of the Portland population rarely walks or cycles.
+When we estimate the proportion of
+
+
 we see that in Portland the majority of travel is done by modes other
 than walking or cycling.  In fact, among several of the age-sex
 classes we see no observed cycling trips at all.  Women over the age
