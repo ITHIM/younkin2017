@@ -10,35 +10,31 @@ benefit to be gained through an increase in active travel in Portland.
 
 \subsection{Travel Activity}
 
-We see in Figure \ref{inactivePortland} the extent of the proportion of
-inactive travel.  More than $x$ percent of people in the Portland
-Metropolitan area are inactive travelers. (Note that this is an
-over-estimate of the true value.  We need to adjust this estimate by a
-factor that is a function of the mean frequency of active travel.)
-???is this current???
+We see in Figure \ref{inactivePortland} the extent of the proportion
+of inactive travelers.  Unlike with the National Household
+Transportation Survey we did not have information on weekly walking or
+biking, so we used the one-day travel data to estimate the proportion
+of individuals who do not use walking or biking for transportation at
+all.  Simply counting the number of respondants with zero travel
+activity will over-estimate $\pi_0$, the proportion of inactive
+travelers, since not all active travelers are active every day.  We
+assume that active travelers are active three out of five days,
+$\fAT = \frac{3}{5}$, and scale accordingly,
+$\pi_0 = 1 - \frac{1}{\fAT}\pi_{T>0}\}$.  All inactive travelers have
+zero active travel and are therefore non-random, but among the active
+travelers we fit a \logNormal{} distibution and use estimates for
+within-class means and standard deviations in the comparitive risk
+assesment.
 
-All inactive travelers have zero active travel and are therefore
-non-random, but among the active travelers we fit a log-normal
-distibution and use estimates for within-class means and standard
-deviations in the comparitive risk assesment.  In Figure
-\ref{mandm223} we display the fitted and empirical distributions for
-travel activity among men in Portland age 45-59. (Note that for the
-same reason we over-estimate the proportion of inactive travelers, we
-also over-estimate weekly travel-activity among active travelers.
-These estimates are dependant on a scaling coefficient that is a function
-of the true weekly frequency of active travel.)
 
-Simply counting the proportion of individuals with no active travel
-reported in the survey data results in a biased estimator, for even
-active travelers sometimes have days with no active travel and we
-would therefore over-count the number of inactive travelers.  Let
-$\pi_0$ be the proportion of inactive travelers (drivers) and $\fAT =
-P\{T>0|\mathrm{active}\}$ be the proportion of active travelers who
-reported active travel on the day of the survey.  We estimate $\fAT$
-with the average weekly rate of active travel among active travelers
-(days with active travel per week).  We correct for the potential bias
-by dividing the proportion of individuals with nonzero active travel
-by $\fAT$.  (Currently $\fAThat=1$ has been removed from the code.)
+% In Figure
+% \ref{mandm223} we display the fitted and empirical distributions for
+% travel activity among men in Portland age 45-59. (Note that for the
+% same reason we over-estimate the proportion of inactive travelers, we
+% also over-estimate weekly travel-activity among active travelers.
+% These estimates are dependant on a scaling coefficient that is a function
+% of the true weekly frequency of active travel.)
+
 
 \begin{equation}
 %P\{T>0\} &=& P\{T>0|\mathrm{active}\}P\{\mathrm{active}\} + P\{T>0|\mathrm{inactive}\}P\{\mathrm{inactive}\}\\
