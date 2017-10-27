@@ -111,7 +111,7 @@ ggplot(D.pAT, aes(x = factor(msaName, levels = D.pAT$msaName), y = prop, fill = 
 Within each age-sex class the leisure activity is modeled with a
 \logNormal{} distribution.  In this paper we estimate the age-sex
 specific means and standard deviations using the American Time Use
-Survey (ATUS) data \cite{ATUS}.  For more discussion see Section \ref{ATUS}.
+Survey (ATUS) data \cite{ATUS}.  For more discussion see Section \ref{LA}.
 
 
 \subsection{Health Outcomes}

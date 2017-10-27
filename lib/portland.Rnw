@@ -24,15 +24,17 @@ Transportation Survey we did not have information on weekly walking or
 biking, so we used the one-day travel data to estimate the proportion
 of individuals who do not use walking or biking for transportation at
 all.  Simply counting the number of respondants with zero travel
-activity will over-estimate $\pi_0$, the proportion of inactive
+activity will under-estimate $\pAT$, the proportion of active
 travelers, since not all active travelers are active every day.  We
 assume that active travelers are active three out of five days,
 $\fAT = \frac{3}{5}$, and scale accordingly,
-$\pi_0 = 1 - \frac{1}{\fAT}\pi_{\{T>0\}}$.  All inactive travelers
-have zero active travel and are therefore non-random, but among the
-active travelers we fit a \logNormal{} distibution and estimate
-within-class means and standard deviations with the travel survey
-data.
+$\hat{\pAT} = \frac{1}{\fAT}\hat{\pi}_{\{T>0\}}$, where
+$\hat{\pi}_{\{T>0\}}$ is the proportion of survey respondants who
+reported nonzero active travel.  All inactive travelers have zero
+active travel and are therefore non-random, but among the active
+travelers we fit a \logNormal{} distibution and estimate within-class
+means and standard deviations with the travel survey data, see Figure
+\ref{TA}.
 
 <<allCounties, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = TRUE, fig.height = 6>>=
 alpha_w <- 3; alpha_c <- 4.5; fAT <- 3/5;
@@ -63,13 +65,13 @@ pAT %>% ggplot(aes(x = GEND, y = pAT, fill = AGECLASS)) + geom_bar(stat = "ident
 <<allCountiesPlot, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = TRUE, fig.height = 6>>=
 ggplot(subset(D, TA > 0), aes(x = GEND, y = log(TA), fill = AGECLASS)) + geom_boxplot() + theme_bw() + labs(x = "Sex", y = "Travel Activity (natural log scale) (MET-hrs./week)", fill = "Age")
 @
-\label{allCounties}
+\label{TA}
 \caption{Travel Activity ($T = \alpha_w^\prime T_w + \alpha_c^\prime T_c$) for Portland
   Metro Area Active Travelers ($T > 0$) (OHAS)}
 \end{figure}
 
 
-\subsection{Leisure Activity (Vargo)}\label{ATUS}
+\subsection{Leisure Activity (Vargo)}\label{LA}
 \Sexpr{knit_child('./ATUS.Rnw')}
 
 \subsection{Disease Burden (Vargo \& Main)}\label{burden}
