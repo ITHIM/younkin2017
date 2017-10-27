@@ -1,17 +1,3 @@
-An increase in physical activity decreases risk for each of the
-diseases inlcuded here in the ITHIM model.  Physical activity may be
-decomposed into a travel-related and a non-travel-related components.
-The travel-related activity is a mixture of two distributions; one for
-active travelers and one for inactive travelers.  We focus on males
-age 45-59 and display in Figure \ref{mandm23} the cumulative
-distribution function for physical activity among men age 45-59 in the
-Portland area.  The distribution of physical activity depends on the
-proportion of active travelers in the population.  We demonstrate how
-this affects the distribution by including distributins for
-$p_{\mathrm{AT}}=0.7,0.8,0.9,1$.  By applying Equation \ref{paf} to
-two of these distributions we can compute the attributable fraction
-associates with an increase in proportion of active travelers.
-
 <<parameters, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
 parameters.LA <- readRDS(file = "./../data/parameters.LA.rds")
 doseResponse <- read.csv(file = "./../data/dose-response.csv", header = TRUE)
@@ -51,10 +37,6 @@ for( i in 1:nrow(parameters) ){
 portlandITHIM.baseline <- new("ITHIM", pSetList)
 @
 
-
-Create a scenario in which the proportion of active travleres
-increases by 25\%.
-
 <<parameters2, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
 pSetList <- list()
 
@@ -86,7 +68,6 @@ portlandITHIM.scenario <- new("ITHIM", pSetList)
 
 \begin{figure}
 <<parameters3, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
-
 PAF <- mapply(computeAF, portlandITHIM.baseline, portlandITHIM.scenario)
 healthOutcomes <- parameters %>% mutate(deltaBurden = PAF*value) %>% group_by(disease, burdenType) %>% summarise(diseaseDeltaBurden = sum(deltaBurden))
 ggplot(healthOutcomes, aes(x = disease, y = diseaseDeltaBurden, fill = burdenType)) + geom_bar(stat = "identity", position = "dodge") + theme_bw()  + labs(x = "Disease", y = "Disease Burden Averted", fill = "Burden Type")
@@ -157,3 +138,16 @@ the results.
 %     return(AF)
 % }
 % @
+% An increase in physical activity decreases risk for each of the
+% diseases inlcuded here in the ITHIM model.  Physical activity may be
+% decomposed into a travel-related and a non-travel-related components.
+% The travel-related activity is a mixture of two distributions; one for
+% active travelers and one for inactive travelers.  We focus on males
+% age 45-59 and display in Figure \ref{mandm23} the cumulative
+% distribution function for physical activity among men age 45-59 in the
+% Portland area.  The distribution of physical activity depends on the
+% proportion of active travelers in the population.  We demonstrate how
+% this affects the distribution by including distributins for
+% $p_{\mathrm{AT}}=0.7,0.8,0.9,1$.  By applying Equation \ref{paf} to
+% two of these distributions we can compute the attributable fraction
+% associates with an increase in proportion of active travelers.

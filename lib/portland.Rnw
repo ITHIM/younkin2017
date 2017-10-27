@@ -1,7 +1,15 @@
+<<ohas1, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
+OHAS.df <- readRDS(file = "~/Bullitt/data/OHAS/OHAS.df.rds")
+countyList <- c("Benton","Clackamas","Deschutes","Jackson","Josephine","Lane","Linn","Marion","Multnomah","Polk","Washington")
+OHAS.df <- OHAS.df %>% filter(COUNTYNAME %in% countyList)
+OHAS.df <- within(OHAS.df, COUNTYNAME <- factor(COUNTYNAME, levels = countyList))
+@
+
 To demonstrate the potential health benefits associated with an
 increase in travel activity that can result from a small change in
 transportation behavior we present here a brief case study of the
-Portland Oregon, U.S.A., Metropolitan Area.  In Figure
+Portland Oregon, U.S.A., Metropolitan Area.  We include the following
+counties in the analysis: \Sexpr{countyList}. In Figure
 \ref{inactiveMSA} that although Portland has a great deal of travel
 activity compared to other U.S. metropolitan areas, there is still
 roughly 50\% of the Portland population makes less than five trips,
@@ -20,38 +28,12 @@ activity will over-estimate $\pi_0$, the proportion of inactive
 travelers, since not all active travelers are active every day.  We
 assume that active travelers are active three out of five days,
 $\fAT = \frac{3}{5}$, and scale accordingly,
-$\pi_0 = 1 - \frac{1}{\fAT}\pi_{T>0}\}$.  All inactive travelers have
-zero active travel and are therefore non-random, but among the active
-travelers we fit a \logNormal{} distibution and use estimates for
-within-class means and standard deviations in the comparitive risk
-assesment.
+$\pi_0 = 1 - \frac{1}{\fAT}\pi_{\{T>0\}}$.  All inactive travelers
+have zero active travel and are therefore non-random, but among the
+active travelers we fit a \logNormal{} distibution and estimate
+within-class means and standard deviations with the travel survey
+data.
 
-
-% In Figure
-% \ref{mandm223} we display the fitted and empirical distributions for
-% travel activity among men in Portland age 45-59. (Note that for the
-% same reason we over-estimate the proportion of inactive travelers, we
-% also over-estimate weekly travel-activity among active travelers.
-% These estimates are dependant on a scaling coefficient that is a function
-% of the true weekly frequency of active travel.)
-
-
-\begin{equation}
-%P\{T>0\} &=& P\{T>0|\mathrm{active}\}P\{\mathrm{active}\} + P\{T>0|\mathrm{inactive}\}P\{\mathrm{inactive}\}\\
-%P\{\mathrm{active}\} &=& \frac{P\{T>0\}}{P\{T>0|\mathrm{active}\}} = \frac{1}{\fAT}P\{T>0\}\\
-\pi_0 = 1 - \frac{1}{\fAT}P\{T>0\}
-\end{equation}
-
-<<ohas1, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
-OHAS.df <- readRDS(file = "~/Bullitt/data/OHAS/OHAS.df.rds")
-countyList <- c("Benton","Clackamas","Deschutes","Jackson","Josephine","Lane","Linn","Marion","Multnomah","Polk","Washington")
-OHAS.df <- OHAS.df %>% filter(COUNTYNAME %in% countyList)
-OHAS.df <- within(OHAS.df, COUNTYNAME <- factor(COUNTYNAME, levels = countyList))
-@
-
-We include the following counties in the following analysis: \Sexpr{countyList}.
-
-\begin{figure}
 <<allCounties, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = TRUE, fig.height = 6>>=
 alpha_w <- 3; alpha_c <- 4.5; fAT <- 3/5;
 
@@ -64,12 +46,7 @@ D <- full_join(trip.df, subject.df, by = "ID", suffix = c(".trip",".subject")) %
 D <- filter(D, !(AGECLASS %in% c("00-04","05-14")))
 D <- within(D, AGECLASS <- factor(AGECLASS, levels = c("15-29", "30-44", "45-59", "60-69", "70-79", "80+")))
 parameters.TA <- D %>% filter(TA > 0) %>% mutate(logTA = log(TA)) %>% group_by(GEND, AGECLASS) %>% summarise( meanLogTA = mean(logTA), sdLogTA = sd(logTA))
-ggplot(subset(D, TA > 0), aes(x = GEND, y = log(TA), fill = AGECLASS)) + geom_boxplot() + theme_bw() + labs(x = "Sex", y = "Travel Activity (natural log scale) (MET-hrs./week)", fill = "Age")
 @
-\label{allCounties}
-\caption{Travel Activity ($T = \alpha_w^\prime T_w + \alpha_c^\prime T_c$) for Portland
-  Metro Area Active Travelers ($T > 0$) (OHAS)}
-\end{figure}
 
 \begin{figure}
 <<inactivePortland, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = TRUE, fig.height = 3>>=
@@ -82,10 +59,20 @@ pAT %>% ggplot(aes(x = GEND, y = pAT, fill = AGECLASS)) + geom_bar(stat = "ident
 \label{inactivePortland}
 \end{figure}
 
-\subsection{Leisure Activity}\label{ATUS}
+\begin{figure}
+<<allCountiesPlot, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = TRUE, fig.height = 6>>=
+ggplot(subset(D, TA > 0), aes(x = GEND, y = log(TA), fill = AGECLASS)) + geom_boxplot() + theme_bw() + labs(x = "Sex", y = "Travel Activity (natural log scale) (MET-hrs./week)", fill = "Age")
+@
+\label{allCounties}
+\caption{Travel Activity ($T = \alpha_w^\prime T_w + \alpha_c^\prime T_c$) for Portland
+  Metro Area Active Travelers ($T > 0$) (OHAS)}
+\end{figure}
+
+
+\subsection{Leisure Activity (Vargo)}\label{ATUS}
 \Sexpr{knit_child('./ATUS.Rnw')}
 
-\subsection{Disease Burden}\label{burden}
+\subsection{Disease Burden (Vargo \& Main)}\label{burden}
 \Sexpr{knit_child('./burden.Rnw')}
 
 \subsection{Health Outcomes}\label{health}
@@ -359,3 +346,18 @@ pAT %>% ggplot(aes(x = GEND, y = pAT, fill = AGECLASS)) + geom_bar(stat = "ident
 % age of 15 and 29 with over 700 combined minutes of travel per week
 % (1.6 hours a day!).  (Seems like an over-estimate.  We really need
 % confidence intervals on these estimates.)
+
+% In Figure
+% \ref{mandm223} we display the fitted and empirical distributions for
+% travel activity among men in Portland age 45-59. (Note that for the
+% same reason we over-estimate the proportion of inactive travelers, we
+% also over-estimate weekly travel-activity among active travelers.
+% These estimates are dependant on a scaling coefficient that is a function
+% of the true weekly frequency of active travel.)
+
+
+% \begin{equation}
+% %P\{T>0\} &=& P\{T>0|\mathrm{active}\}P\{\mathrm{active}\} + P\{T>0|\mathrm{inactive}\}P\{\mathrm{inactive}\}\\
+% %P\{\mathrm{active}\} &=& \frac{P\{T>0\}}{P\{T>0|\mathrm{active}\}} = \frac{1}{\fAT}P\{T>0\}\\
+% \pi_0 = 1 - \frac{1}{\fAT}P\{T>0\}
+% \end{equation}
