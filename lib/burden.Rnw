@@ -10,6 +10,19 @@ life expectancy according the World Health Organization
 Guidelines. ???verify with Eric??? The final metric of disease burden,
 Disability Adjusted Life Years (DALYs) is the sum of YLL and YLD.
 
+$B_0$ is the overall burden at baseline. Estimates of the
+age-sex-cause-specific number of deaths were obtained from the Oregon
+Health Authority's Oregon Public Health Assessment Tool (OPHAT)
+averaged for the years 2011-2015 \cite{OPHAT}.  Burden estimates for
+Years-of-Life-Lost (YLL) were calculated using median age for each
+range and the country-specific life expectancy according the World
+Health Organization (WHO) Guidelines \cite{WHOburden}. Estimates for
+Years-Lost-to-Disability (YLD) were imputed from WHO 2010 Global
+Burden of Disease for the U.S. population and adjusted to the regional
+population using Oregon county death rates. The final metric of
+disease burden, Disability Adjusted Life Years (DALYs) is the sum of
+YLL and YLD.
+
 Age-sex-disease specific disease burdens, namely DALY, YLL, YLD
 and deaths, are estimated using detailed mortality data from the
 CDC Wide-ranging ONline Data for Epidemiologic Research (WONDER)
