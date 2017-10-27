@@ -1,55 +1,40 @@
 To demonstrate the potential health benefits associated with an
 increase in travel activity that can result from a small change in
 transportation behavior we present here a brief case study of the
-Portland Oregon, U.S.A., Metropolitan Area.  In Figure \ref{portland8}
-we see that in Portland the majority of travel is done by modes other
-than walking or cycling.  In fact, among several of the age-sex
-classes we see no observed cycling trips at all.  Women over the age
-of 60 and men over the age of 70 reported no cycling trips.  Men
-between 30 and 44 years of age, strangely also reported no cycling
-trips.  The sample size is not very large after stratification by age
-and sex, it ranges from 5 to 55 sampled indivudual per age-sex class
-(See Appendix.)  Due to sparseness of cycling data, particularly in the
-U.S., the model was reparameterized to operate in terms of
-combined travel actvity, avoiding the diffuculty of estimating mean
-cycle time from too few cycling trips in the data.
-
-The age-sex class with the largest trip duration is women between the
-age of 15 and 29 with over 700 combined minutes of travel per week
-(1.6 hours a day!).  (Seems like an over-estimate.  We really need
-confidence intervals on these estimates.)
+Portland Oregon, U.S.A., Metropolitan Area.  In Figure
+\ref{inactiveMSA} that although Portland has a great deal of travel
+activity compared to other U.S. metropolitan areas, there is still
+roughly 50\% of the Portland population makes less than five trips,
+recreational or travel, a week.  There is still much public health
+benefit to be gained through an increase in active travel in Portland.
 
 \subsection{Travel Activity}
 
-We see in Figure \ref{portland9} the extent of the proportion of
-inactive travel.  More than $x$ percent of people in the Portland
-Metropolitan area are inactive travelers. (Note that this is an
-over-estimate of the true value.  We need to adjust this estimate by a
-factor that is a function of the mean frequency of active travel.)
-???is this current???
+We see in Figure \ref{inactivePortland} the extent of the proportion
+of inactive travelers.  Unlike with the National Household
+Transportation Survey we did not have information on weekly walking or
+biking, so we used the one-day travel data to estimate the proportion
+of individuals who do not use walking or biking for transportation at
+all.  Simply counting the number of respondants with zero travel
+activity will over-estimate $\pi_0$, the proportion of inactive
+travelers, since not all active travelers are active every day.  We
+assume that active travelers are active three out of five days,
+$\fAT = \frac{3}{5}$, and scale accordingly,
+$\pi_0 = 1 - \frac{1}{\fAT}\pi_{T>0}\}$.  All inactive travelers have
+zero active travel and are therefore non-random, but among the active
+travelers we fit a \logNormal{} distibution and use estimates for
+within-class means and standard deviations in the comparitive risk
+assesment.
 
-All inactive travelers have zero active travel and are therefore
-non-random, but among the active travelers we fit a log-normal
-distibution and use estimates for within-class means and standard
-deviations in the comparitive risk assesment.  In Figure
-\ref{mandm223} we display the fitted and empirical distributions for
-travel activity among men in Portland age 45-59. (Note that for the
-same reason we over-estimate the proportion of inactive travelers, we
-also over-estimate weekly travel-activity among active travelers.
-These estimates are dependant on a scaling coefficient that is a function
-of the true weekly frequency of active travel.)
 
-Simply counting the proportion of individuals with no active travel
-reported in the survey data results in a biased estimator, for even
-active travelers sometimes have days with no active travel and we
-would therefore over-count the number of inactive travelers.  Let
-$\pi_0$ be the proportion of inactive travelers (drivers) and $\fAT =
-P\{T>0|\mathrm{active}\}$ be the proportion of active travelers who
-reported active travel on the day of the survey.  We estimate $\fAT$
-with the average weekly rate of active travel among active travelers
-(days with active travel per week).  We correct for the potential bias
-by dividing the proportion of individuals with nonzero active travel
-by $\fAT$.  (Currently $\fAThat=1$ has been removed from the code.)
+% In Figure
+% \ref{mandm223} we display the fitted and empirical distributions for
+% travel activity among men in Portland age 45-59. (Note that for the
+% same reason we over-estimate the proportion of inactive travelers, we
+% also over-estimate weekly travel-activity among active travelers.
+% These estimates are dependant on a scaling coefficient that is a function
+% of the true weekly frequency of active travel.)
+
 
 \begin{equation}
 %P\{T>0\} &=& P\{T>0|\mathrm{active}\}P\{\mathrm{active}\} + P\{T>0|\mathrm{inactive}\}P\{\mathrm{inactive}\}\\
@@ -76,8 +61,10 @@ subject.df <- OHAS.df %>% select(ID, GEND, AGECLASS) %>% distinct()
 
 D <- full_join(trip.df, subject.df, by = "ID", suffix = c(".trip",".subject")) %>% group_by(ID, MODE, GEND, AGECLASS) %>% summarise(TOTDUR = sum(TRPDUR)) %>% ungroup() %>% spread(MODE,TOTDUR) %>% mutate(TA = 7/60*(alpha_w*ifelse(is.na(walk),0,walk) + alpha_c*ifelse(is.na(cycle),0,cycle)))
 
+D <- filter(D, !(AGECLASS %in% c("00-04","05-14")))
+D <- within(D, AGECLASS <- factor(AGECLASS, levels = c("15-29", "30-44", "45-59", "60-69", "70-79", "80+")))
 parameters.TA <- D %>% filter(TA > 0) %>% mutate(logTA = log(TA)) %>% group_by(GEND, AGECLASS) %>% summarise( meanLogTA = mean(logTA), sdLogTA = sd(logTA))
-ggplot(subset(D, TA > 0), aes(x = GEND, y = log(TA), fill = AGECLASS)) + geom_boxplot() + theme_bw() + labs(x = "Sex", y = "Travel Activity (MET-hrs./week) (log-scale)", fill = "Age")
+ggplot(subset(D, TA > 0), aes(x = GEND, y = log(TA), fill = AGECLASS)) + geom_boxplot() + theme_bw() + labs(x = "Sex", y = "Travel Activity (natural log scale) (MET-hrs./week)", fill = "Age")
 @
 \label{allCounties}
 \caption{Travel Activity ($T = \alpha_w^\prime T_w + \alpha_c^\prime T_c$) for Portland
@@ -95,13 +82,13 @@ pAT %>% ggplot(aes(x = GEND, y = pAT, fill = AGECLASS)) + geom_bar(stat = "ident
 \label{inactivePortland}
 \end{figure}
 
-\subsubsection{Leisure Activity}\label{ATUS}
+\subsection{Leisure Activity}\label{ATUS}
 \Sexpr{knit_child('./ATUS.Rnw')}
 
 \subsection{Disease Burden}\label{burden}
 \Sexpr{knit_child('./burden.Rnw')}
 
-\subsection{Health Outcomes}
+\subsection{Health Outcomes}\label{health}
 \Sexpr{knit_child('./health.Rnw')}
 
 
@@ -355,3 +342,20 @@ pAT %>% ggplot(aes(x = GEND, y = pAT, fill = AGECLASS)) + geom_bar(stat = "ident
 %%   at 1.}
 %% \label{mandm2356}
 %% \end{figure}
+
+% we see that in Portland the majority of travel is done by modes other
+% than walking or cycling.  In fact, among several of the age-sex
+% classes we see no observed cycling trips at all.  Women over the age
+% of 60 and men over the age of 70 reported no cycling trips.  Men
+% between 30 and 44 years of age, strangely also reported no cycling
+% trips.  The sample size is not very large after stratification by age
+% and sex, it ranges from 5 to 55 sampled indivudual per age-sex class
+% (See Appendix.)  Due to sparseness of cycling data, particularly in the
+% U.S., the model was reparameterized to operate in terms of
+% combined travel actvity, avoiding the diffuculty of estimating mean
+% cycle time from too few cycling trips in the data.
+
+% The age-sex class with the largest trip duration is women between the
+% age of 15 and 29 with over 700 combined minutes of travel per week
+% (1.6 hours a day!).  (Seems like an over-estimate.  We really need
+% confidence intervals on these estimates.)

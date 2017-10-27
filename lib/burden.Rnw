@@ -40,6 +40,7 @@ burden <- read.csv(file = "./../data/gbd_20170925.csv")
 ageBins <- c("00-04", "05-14", "15-29", "30-44", "45-59", "60-69", "70-79", "80+")
 names(ageBins) <- paste0("ageClass",1:8)
 burden <- burden %>% filter(disease != "RTIs")
+
 burden <- within(burden, {
     AGECLASS <- factor(as.character(ageBins[ageClass]))
     GEND <- factor(sex, levels = c("M","F"))
@@ -47,4 +48,6 @@ burden <- within(burden, {
     burdenType <- factor(burdenType, levels = c("daly","yll","yld","deaths"))
 })
 
+burden <- filter(burden, !(AGECLASS %in% c("00-04", "05-14")))
+burden <- within(burden, AGECLASS <- factor(AGECLASS, levels = c("15-29", "30-44", "45-59", "60-69", "70-79", "80+")))
 @
