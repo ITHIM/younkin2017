@@ -1,17 +1,3 @@
-An increase in physical activity decreases risk for each of the
-diseases inlcuded here in the ITHIM model.  Physical activity may be
-decomposed into a travel-related and a non-travel-related components.
-The travel-related activity is a mixture of two distributions; one for
-active travelers and one for inactive travelers.  We focus on males
-age 45-59 and display in Figure \ref{mandm23} the cumulative
-distribution function for physical activity among men age 45-59 in the
-Portland area.  The distribution of physical activity depends on the
-proportion of active travelers in the population.  We demonstrate how
-this affects the distribution by including distributins for
-$p_{\mathrm{AT}}=0.7,0.8,0.9,1$.  By applying Equation \ref{paf} to
-two of these distributions we can compute the attributable fraction
-associates with an increase in proportion of active travelers.
-
 <<parameters, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
 parameters.LA <- readRDS(file = "./../data/parameters.LA.rds")
 doseResponse <- read.csv(file = "./../data/dose-response.csv", header = TRUE)
@@ -22,7 +8,8 @@ doseResponse <- within(doseResponse, {
 })
 
 parameters <- inner_join(burden, inner_join(inner_join(pAT, inner_join(parameters.TA, parameters.LA)), doseResponse))
-
+@
+<<baseline, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
 pSetList <- list()
 
 for( i in 1:nrow(parameters) ){
@@ -50,19 +37,14 @@ for( i in 1:nrow(parameters) ){
 
 portlandITHIM.baseline <- new("ITHIM", pSetList)
 @
-
-
-Create a scenario in which the proportion of active travleres
-increases by 25\%.
-
-<<parameters2, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
+<<scenario, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
 pSetList <- list()
 
 for( i in 1:nrow(parameters) ){
 
   pSetList[[i]] <- with(parameters,{
       new("ParameterSet",
-          pAT = pAT[i]*1.25,
+          pAT = 1,
           meanLogTA = meanLogTA[i],
           meanLogLA = meanLogLA[i],
           sdLogTA = sdLogTA[i],
@@ -85,35 +67,33 @@ portlandITHIM.scenario <- new("ITHIM", pSetList)
 @
 
 \begin{figure}
-<<parameters3, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
-
+<<healthOutcomes, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
 PAF <- mapply(computeAF, portlandITHIM.baseline, portlandITHIM.scenario)
 healthOutcomes <- parameters %>% mutate(deltaBurden = PAF*value) %>% group_by(disease, burdenType) %>% summarise(diseaseDeltaBurden = sum(deltaBurden))
 ggplot(healthOutcomes, aes(x = disease, y = diseaseDeltaBurden, fill = burdenType)) + geom_bar(stat = "identity", position = "dodge") + theme_bw()  + labs(x = "Disease", y = "Disease Burden Averted", fill = "Burden Type")
 @
-\caption{Health outcomes given a 25\% increase in proportion of active
-travelers.}
+\caption{Health outcomes given a population of all active travelers.}
 \label{health}
 \end{figure}
 
-In Figure \ref{mandm235} we see the results of the comparitive risk
-assesment.  For the sake of example we show the results for males age
-45-50.  As the proportion of active travelers increases, deaths due
-to, in this case cardiovascular disease, are averted.  The extent to
-which deaths are reduced depends on the amount of non-travel-related
-activity the cohort experiences.  An increase in the level of
-``background'' physical activity diminishes the helath-benefits due to
-travel.  It is difficult to estimate precisely the level of
-``background'' physical activity yet we see that for any reasonable
-``background'' level, i.e., 1-50 \METhrs, an increase in the
-proportion of active travelers from 0.62 to 0.8 would result in 9-15
-deaths averted.  Note that this is for one disease and one age-sex
-class.  To compute the overall reduction in deaths we need to iterate
-this process over all age-sex classes and diseases.  See Table ? for
-the results.
+In Figure \ref{health} we see the results of the comparitive risk
+assesment.
 
 
-
+% For the sake of example we show the results for males age
+% 45-50.  As the proportion of active travelers increases, deaths due
+% to, in this case cardiovascular disease, are averted.  The extent to
+% which deaths are reduced depends on the amount of non-travel-related
+% activity the cohort experiences.  An increase in the level of
+% ``background'' physical activity diminishes the helath-benefits due to
+% travel.  It is difficult to estimate precisely the level of
+% ``background'' physical activity yet we see that for any reasonable
+% ``background'' level, i.e., 1-50 \METhrs, an increase in the
+% proportion of active travelers from 0.62 to 0.8 would result in 9-15
+% deaths averted.  Note that this is for one disease and one age-sex
+% class.  To compute the overall reduction in deaths we need to iterate
+% this process over all age-sex classes and diseases.  See Table ? for
+% the results.
 
 % <<functions, echo = FALSE, eval = FALSE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
 % getQuantilesMixture <- function(p.AT, mean.AT, sd.AT, mean.NT, sd.NT){
@@ -157,3 +137,16 @@ the results.
 %     return(AF)
 % }
 % @
+% An increase in physical activity decreases risk for each of the
+% diseases inlcuded here in the ITHIM model.  Physical activity may be
+% decomposed into a travel-related and a non-travel-related components.
+% The travel-related activity is a mixture of two distributions; one for
+% active travelers and one for inactive travelers.  We focus on males
+% age 45-59 and display in Figure \ref{mandm23} the cumulative
+% distribution function for physical activity among men age 45-59 in the
+% Portland area.  The distribution of physical activity depends on the
+% proportion of active travelers in the population.  We demonstrate how
+% this affects the distribution by including distributins for
+% $p_{\mathrm{AT}}=0.7,0.8,0.9,1$.  By applying Equation \ref{paf} to
+% two of these distributions we can compute the attributable fraction
+% associates with an increase in proportion of active travelers.

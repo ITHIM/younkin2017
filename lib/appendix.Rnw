@@ -11,44 +11,44 @@ $\R(x) = \mathrm{e}^{-\alpha \tilde{x}}$, where $\tilde{x} = \sqrt{x}$
 
 <<appendix, echo = FALSE, eval = TRUE, results = "asis", collapse = TRUE, warning = FALSE, message = FALSE, fig.height = 3>>=
 doseResponseTable <- doseResponse %>% mutate(alpha = -log(RR1MET)) %>% select(disease,GEND,AGECLASS,alpha) %>% distinct %>% arrange(disease, GEND, AGECLASS)
-as.data.frame(doseResponseTable)
+xtable(doseResponseTable)
 @
 
-\paragraph{Old Outline}
-\bi
-\item Abstract and Introduction
-  \bi
-  \item History of ITHIM
-    \bi
-    \item Origin in UK
-    \item Application in US
-      \bi
-      \item Bay Area
-      \item Nashville
-      \ei
-    \ei
-  \item Motivations
-    \bi
-    \item Expanding the application of ITHIM for US beyond the most dedicated metros - using national datasets
-    \item Improving the performance and documentation of the model by moving to R
-    \item Mirroring improvements made in the UK with Analytica
-    \item Easing the connections of ITHIM to existing scenario planning tools
-    \ei
-  \item Purpose
-    \bi
-    \item Documentation of the method in math notation
-    \item Presentation of the R implementation with a US metro area example
-    \ei
-  \ei
-\item Description of Method
-\item Demonstration of R package via an analysis of the Portland MSA
-  \bi
-  \item data from Eric Main
-    \bi
-    \item burden estimated using technique from WHO
-    \item Travel times estimated from NHTS
-    \ei
-  \ei
-\item Sensitivity Analysis/Value of Information
-\item
-\ei
+% \paragraph{Old Outline}
+% \bi
+% \item Abstract and Introduction
+%   \bi
+%   \item History of ITHIM
+%     \bi
+%     \item Origin in UK
+%     \item Application in US
+%       \bi
+%       \item Bay Area
+%       \item Nashville
+%       \ei
+%     \ei
+%   \item Motivations
+%     \bi
+%     \item Expanding the application of ITHIM for US beyond the most dedicated metros - using national datasets
+%     \item Improving the performance and documentation of the model by moving to R
+%     \item Mirroring improvements made in the UK with Analytica
+%     \item Easing the connections of ITHIM to existing scenario planning tools
+%     \ei
+%   \item Purpose
+%     \bi
+%     \item Documentation of the method in math notation
+%     \item Presentation of the R implementation with a US metro area example
+%     \ei
+%   \ei
+% \item Description of Method
+% \item Demonstration of R package via an analysis of the Portland MSA
+%   \bi
+%   \item data from Eric Main
+%     \bi
+%     \item burden estimated using technique from WHO
+%     \item Travel times estimated from NHTS
+%     \ei
+%   \ei
+% \item Sensitivity Analysis/Value of Information
+% \item
+% \ei

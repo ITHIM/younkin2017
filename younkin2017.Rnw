@@ -11,6 +11,7 @@
 rm(list=ls())
 opts_knit$set(self.contained=FALSE)
 library("devtools")
+library("xtable")
 #install_github("ITHIM/ITHIM", ref="ithimus")
 install("~/ITHIM/")
 library("ITHIM")
