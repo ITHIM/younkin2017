@@ -53,8 +53,8 @@ for the comparative risk assessment.  Throughout this paper the term
 
 We express travel activity, $T$, in terms of \METhrs{} and compute it
 by weighting the total active one-day walking and cycling times, $T_w$
-and $T_c$ (hours), by $\alpha_w^\prime = 7\fAT\alpha_w$ and
-$\alpha_c^\prime = 7\fAT\alpha_c$, respectively. The average workload
+and $T_c$ (hours), by $\alpha_w^\prime = 7\alpha_w$ and
+$\alpha_c^\prime = 7\alpha_c$, respectively. The average workload
 of walking and cycling in METs, $\alpha_w$ and $\alpha_c$ must be
 scaled up to represent a full week of travel, but attenuated by $\fAT$
 for reasons discussed in section ?.
