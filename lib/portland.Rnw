@@ -82,7 +82,7 @@ pAT %>% ggplot(aes(x = GEND, y = pAT, fill = AGECLASS)) + geom_bar(stat = "ident
 \label{inactivePortland}
 \end{figure}
 
-\subsubsection{Leisure Activity}\label{ATUS}
+\subsection{Leisure Activity}\label{ATUS}
 \Sexpr{knit_child('./ATUS.Rnw')}
 
 \subsection{Disease Burden}\label{burden}
