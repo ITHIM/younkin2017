@@ -38,13 +38,15 @@ for( i in 1:nrow(parameters) ){
 portlandITHIM.baseline <- new("ITHIM", pSetList)
 @
 <<scenario, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
+pAT.scenario <- 0.5
+
 pSetList <- list()
 
 for( i in 1:nrow(parameters) ){
 
   pSetList[[i]] <- with(parameters,{
       new("ParameterSet",
-          pAT = 1,
+          pAT = ifelse(pAT[i] < pAT.scenario, pAT.scenario, pAT[i]),
           meanLogTA = meanLogTA[i],
           meanLogLA = meanLogLA[i],
           sdLogTA = sdLogTA[i],
@@ -70,7 +72,7 @@ portlandITHIM.scenario <- new("ITHIM", pSetList)
 <<healthOutcomes, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
 PAF <- mapply(computeAF, portlandITHIM.baseline, portlandITHIM.scenario)
 healthOutcomes <- parameters %>% mutate(deltaBurden = PAF*value) %>% group_by(disease, burdenType) %>% summarise(diseaseDeltaBurden = sum(deltaBurden))
-ggplot(healthOutcomes, aes(x = disease, y = diseaseDeltaBurden, fill = burdenType)) + geom_bar(stat = "identity", position = "dodge") + theme_bw()  + labs(x = "Disease", y = "Disease Burden Averted", fill = "Burden Type")
+ggplot(healthOutcomes, aes(x = "", y = diseaseDeltaBurden, fill = burdenType)) + geom_bar(stat = "identity", position = "dodge")  + facet_grid(. ~ disease) + theme_bw()  + labs(x = "", y = "Disease Burden Averted", fill = "Burden Type")
 @
 \caption{Health outcomes given a population of all active travelers.}
 \label{health}
@@ -78,7 +80,7 @@ ggplot(healthOutcomes, aes(x = disease, y = diseaseDeltaBurden, fill = burdenTyp
 
 In Figure \ref{health} we see the results of the comparitive risk
 assesment.
-
+Foo!
 
 % For the sake of example we show the results for males age
 % 45-50.  As the proportion of active travelers increases, deaths due
