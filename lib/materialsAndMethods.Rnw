@@ -28,13 +28,12 @@ in Equations \ref{paf1} and \ref{paf2}, but for the sake of
 readability we neglect the subscripts in much of rest of the paper,
 keeping in mind that the comparative risk assessment is performed
 independently for each of the 96 age-sex-disease classes.  Equation
-\ref{paf2} uses approximations for the integrals in Equation
-\ref{paf1} expressed in terms of the quantiles of the distribution of
-physical activity in baseline and alternative scenarios, $\mathbf{x}$
-and $\mathbf{x}^\prime$, respectively.
+\ref{paf2} gives an estimate for $\af{}$ expressed in terms of the quantiles
+of the distribution of physical activity in baseline and alternative
+scenarios, $\mathbf{x}$ and $\mathbf{x}^\prime$, respectively.
 
 \begin{equation}
-\af_{ijk} \approx 1 -
+\hat{\af}_{ijk} = 1 -
 \frac{{\displaystyle \sum_{l=1}^n} R_{ijk}(x_{ijl}^\prime)}{{\displaystyle
     \sum_{l=1}^n} R_{ijk}(x_{ijl})} = 1 - \delta_{ijk}
   \label{paf2}
