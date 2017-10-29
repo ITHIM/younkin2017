@@ -28,13 +28,12 @@ in Equations \ref{paf1} and \ref{paf2}, but for the sake of
 readability we neglect the subscripts in much of rest of the paper,
 keeping in mind that the comparative risk assessment is performed
 independently for each of the 96 age-sex-disease classes.  Equation
-\ref{paf2} uses approximations for the integrals in Equation
-\ref{paf1} expressed in terms of the quantiles of the distribution of
-physical activity in baseline and alternative scenarios, $\mathbf{x}$
-and $\mathbf{x}^\prime$, respectively.
+\ref{paf2} gives an estimate for $\af{}$ expressed in terms of the quantiles
+of the distribution of physical activity in baseline and alternative
+scenarios, $\mathbf{x}$ and $\mathbf{x}^\prime$, respectively.
 
 \begin{equation}
-\af_{ijk} \approx 1 -
+\hat{\af}_{ijk} = 1 -
 \frac{{\displaystyle \sum_{l=1}^n} R_{ijk}(x_{ijl}^\prime)}{{\displaystyle
     \sum_{l=1}^n} R_{ijk}(x_{ijl})} = 1 - \delta_{ijk}
   \label{paf2}
@@ -71,21 +70,23 @@ T = \alpha_w^\prime T_w + \alpha_c^\prime T_c
 \end{equation}
 
 \subsubsection{Inactive Travelers}
+The comparative risk assessmnent in the original ITHIM implementation
+assumed a \logNormal{} distribution for active travel time.  In our
+investigation of the U.S. National Household Transportation Survey we
+discovered that the vast majority of respondants in metropolitan areas
+reported zero active travel time.  In Figure \ref{inactiveMSA} we show
+esimates for the proportion of people who have taken zero, less than
+five, or more than five walk or bike trips in the last week.
 
-Investigation of the distributions of travel activity in
-U.S. metroplitan areas uncovered a signinficant numer of survey
-respondants who report no active travel.  To determine the proportion
-of adults in each age-sex cohort who do not walk or bike at all, we
-used questions L3 and L4 of Table 1 of the 2009 National Household
+We used questions L3 and L4 of Table 1 of the 2009 National Household
 Transportation Survey which asked how many walking or cycling trips
-were made in the previous week, and computed the proportion of nonzero
-responses.  We see in figure \ref{inactiveMSA} that much of the
-U.S. metropolitan population does not walk or cycle at all.  Due to
-the large numbers of inactive travelers in U.S. metropolitan areas we
-model the distribution of travel activity as a mixture of a point-mass
-at zero with probabilty ($\pi_0 = 1 - \pAT$) and a \logNormal{}
-distribution for active travelers.  Note that the survey question does
-not address if the trip is for recreation or travel.
+were made in the previous week.  We see in figure \ref{inactiveMSA}
+that much of the U.S. metropolitan population does not walk or cycle
+at all, for travel or otherwise.  Due to the large proportion of
+inactive travelers in U.S. metropolitan areas we model the
+distribution of travel activity in terms of \METhrs{} as a mixture of
+a point-mass at zero with probabilty ($\pNAT = 1 - \pAT$) and a
+\logNormal{} distribution.
 
 \begin{figure}
 <<pATbyMSA, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 6>>=

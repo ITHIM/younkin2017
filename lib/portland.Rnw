@@ -5,42 +5,38 @@ OHAS.df <- OHAS.df %>% filter(COUNTYNAME %in% countyList)
 OHAS.df <- within(OHAS.df, COUNTYNAME <- factor(COUNTYNAME, levels = countyList))
 @
 
-To demonstrate the potential health benefits associated with an
-increase in travel activity that can result from a small change in
-transportation behavior we present here a brief case study of the
-Portland Oregon, U.S.A., Metropolitan Area.  We include the following
-counties in the analysis: \Sexpr{countyList}. In Figure
-\ref{inactiveMSA} that although Portland has a great deal of travel
-activity compared to other U.S. metropolitan areas, there is still
-roughly 50\% of the Portland population makes less than five trips,
-recreational or travel, a week.  There is still much public health
-benefit to be gained through an increase in active travel in Portland.
+To demonstrate the method for estimating health outcomes given two
+travel scenarios we present here a brief case study of the
+Portland Oregon, U.S.A., Metropolitan Area.
 
-\subsection{Travel Activity}
+In Figure \ref{inactiveMSA} that although Portland has a great deal of
+travel activity compared to other U.S. metropolitan areas, there is
+still roughly 50\% of the Portland population that takes less than five
+trips, recreational or travel, a week.
 
-We see in Figure \ref{inactivePortland} the extent of the proportion
-of inactive travelers.  Unlike with the National Household
-Transportation Survey we did not have information on weekly walking or
-biking, so we used the one-day travel data to estimate the proportion
-of individuals who do not use walking or biking for transportation at
-all.  Simply counting the number of respondants with zero travel
-activity will under-estimate $\pAT$, the proportion of active
-travelers, since not all active travelers are active every day.  We
-assume that active travelers are active three out of five days,
-$\fAT = \frac{3}{5}$, and scale accordingly,
-$\hat{\pAT} = \frac{1}{\fAT}\hat{\pi}_{\{T>0\}}$, where
-$\hat{\pi}_{\{T>0\}}$ is the proportion of survey respondants who
-reported nonzero active travel.  All inactive travelers have zero
-active travel and are therefore non-random, but among the active
-travelers we fit a \logNormal{} distibution and estimate within-class
-means and standard deviations with the travel survey data, see Figure
-\ref{TA}.
+To perform the comparative risk assessment given here we need the
+following parameters for both the baseline and scenario for each of
+the $8 \times 2 \times 6 = 96$ age-sex-disease classes; proportion of
+active travelers, mean log travel activity, standard deviation of log
+travel activity, mean leisure activity, standard deviation of leisure
+activity and dose-response shape parameter.  We use three data sources
+to estimate these parameters, 2009 U.S. National Household
+Transportation Survey (NHTS), 200?-200? American Time Use Survey
+(ATUS) and 200? Oregon Household Activity Survey (OHAS).  Estimates
+for the dose-response shape parameter, $\alpha$, are taken from the
+original ITHIM implementation.
+
+\subsection{Data Description}
+\paragraph{National Household Transportation Survey}
+\paragraph{American Time Use Survey}
+\paragraph{Oregon Household Activity Survey (Eric or Brendan?)}
+We include the following counties in the analysis: \Sexpr{countyList}.
 
 <<allCounties, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = TRUE, fig.height = 6>>=
-alpha_w <- 3; alpha_c <- 4.5; fAT <- 3/5;
+alpha_w <- 3; alpha_c <- 4.5; nAT <- 3; fAT <- 1/nAT;
 
 OHAS.df <- OHAS.df %>% mutate(ID = paste0(SAMPN, "-", PERNO)) %>% mutate(AGECLASS = ITHIM:::convertToAgeClass(AGE))
-trip.df <-  OHAS.df %>% filter( !(TPURP %in% c("20", "96")) & TRPDUR <= 1e9) %>% complete(ID,MODE) %>% filter(MODE %in% c("walk","cycle")) %>% select(ID, MODE, TPURP, TRPDUR)
+trip.df <-  OHAS.df %>% filter( !(TPURP %in% c("20", "96"))) %>% complete(ID,MODE) %>% filter(MODE %in% c("walk","cycle")) %>% select(ID, MODE, TPURP, TRPDUR)
 subject.df <- OHAS.df %>% select(ID, GEND, AGECLASS) %>% distinct()
 
 D <- full_join(trip.df, subject.df, by = "ID", suffix = c(".trip",".subject")) %>% group_by(ID, MODE, GEND, AGECLASS) %>% summarise(TOTDUR = sum(TRPDUR)) %>% ungroup() %>% spread(MODE,TOTDUR) %>% mutate(TA = 7/60*(alpha_w*ifelse(is.na(walk),0,walk) + alpha_c*ifelse(is.na(cycle),0,cycle)))
@@ -49,6 +45,33 @@ D <- filter(D, !(AGECLASS %in% c("00-04","05-14")))
 D <- within(D, AGECLASS <- factor(AGECLASS, levels = c("15-29", "30-44", "45-59", "60-69", "70-79", "80+")))
 parameters.TA <- D %>% filter(TA > 0) %>% mutate(logTA = log(TA)) %>% group_by(GEND, AGECLASS) %>% summarise( meanLogTA = mean(logTA), sdLogTA = sd(logTA))
 @
+
+\subsection{Travel Activity}
+
+Unlike with the National Household Transportation Survey, the Oregon
+Household Activity Survey did not contain information about walking or
+biking over an entire week.  Simply counting the number of respondants
+with zero travel activity in a one-day travel survey will
+under-estimate $\pAT$, the proportion of active travelers, since not
+all active travelers are active every day.  We assume that active
+travelers are active once every \Sexpr{nAT} days,
+$\fAT = \Sexpr{round(fAT,2)}$, and scale accordingly,
+$\hatpAT = \frac{1}{\fAT}p_{\{T>0\}}$, where $p_{\{T>0\}}$ is the
+proportion of survey respondants who reported nonzero active travel.
+In Figure \ref{inactivePortland} we see a clear decline in active
+travel across ages.  Comparing to Figure \ref{inactiveMSA} shows
+concordance!  Right?
+
+All inactive travelers have zero travel activity and therefore do not
+require a distribution.  Among the active travelers, however, we model
+using a \logNormal{} distibution and estimate within-class means and
+standard deviations with the Oregon Household Activity Survey, see
+Figure \ref{TAFig} for box plots of travel activity stratified by age and
+sex.  Note that the natural logarithm of travel activity is
+displayed.
+
+\paragraph{Estimates}
+We excluded trips for recreation and loop trips\ldots
 
 \begin{figure}
 <<inactivePortland, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = TRUE, fig.height = 3>>=
@@ -65,7 +88,7 @@ pAT %>% ggplot(aes(x = GEND, y = pAT, fill = AGECLASS)) + geom_bar(stat = "ident
 <<allCountiesPlot, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = TRUE, fig.height = 6>>=
 ggplot(subset(D, TA > 0), aes(x = GEND, y = log(TA), fill = AGECLASS)) + geom_boxplot() + theme_bw() + labs(x = "Sex", y = "Travel Activity (natural log scale) (MET-hrs./week)", fill = "Age")
 @
-\label{TA}
+\label{TAFig}
 \caption{Travel Activity ($T = \alpha_w^\prime T_w + \alpha_c^\prime T_c$) for Portland
   Metro Area Active Travelers ($T > 0$) (OHAS)}
 \end{figure}

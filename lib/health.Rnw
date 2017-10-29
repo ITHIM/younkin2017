@@ -38,13 +38,15 @@ for( i in 1:nrow(parameters) ){
 portlandITHIM.baseline <- new("ITHIM", pSetList)
 @
 <<scenario, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
+pAT.scenario <- 0.75
+
 pSetList <- list()
 
 for( i in 1:nrow(parameters) ){
 
   pSetList[[i]] <- with(parameters,{
       new("ParameterSet",
-          pAT = 1,
+          pAT = ifelse(pAT[i] < pAT.scenario, pAT.scenario, pAT[i]),
           meanLogTA = meanLogTA[i],
           meanLogLA = meanLogLA[i],
           sdLogTA = sdLogTA[i],
@@ -66,87 +68,25 @@ for( i in 1:nrow(parameters) ){
 portlandITHIM.scenario <- new("ITHIM", pSetList)
 @
 
+Now that we have the baseline parameters estimated we can create an
+alternative scenario with which to compare to baseline.  In this
+example we set $\pAT=\Sexpr{round(pAT.scenario,2)}$ in each age-sex
+class with $\pAT < \Sexpr{round(pAT.scenario,2)}$.  The mean travel
+activity per age-sex class remains unchanged we simply increase the
+proportion which are sampled from the \logNormal{} distribution,
+instead of being set to zero in the model.
+
 \begin{figure}
 <<healthOutcomes, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
 PAF <- mapply(computeAF, portlandITHIM.baseline, portlandITHIM.scenario)
 healthOutcomes <- parameters %>% mutate(deltaBurden = PAF*value) %>% group_by(disease, burdenType) %>% summarise(diseaseDeltaBurden = sum(deltaBurden))
-ggplot(healthOutcomes, aes(x = disease, y = diseaseDeltaBurden, fill = burdenType)) + geom_bar(stat = "identity", position = "dodge") + theme_bw()  + labs(x = "Disease", y = "Disease Burden Averted", fill = "Burden Type")
+ggplot(healthOutcomes, aes(x = "", y = diseaseDeltaBurden, fill = burdenType)) + geom_bar(stat = "identity", position = "dodge")  + facet_grid(. ~ disease) + theme_bw()  + labs(x = "", y = "Disease Burden Averted", fill = "Burden Type")
 @
-\caption{Health outcomes given a population of all active travelers.}
-\label{health}
+\caption{Health outcomes given a population with $\pAT > \Sexpr{round(pAT.scenario,2)}$.}
+\label{healthFig}
 \end{figure}
 
-In Figure \ref{health} we see the results of the comparitive risk
-assesment.
+The averted disease burden in terms of DALY, YLL, YLD and deaths is
+shown in Figure \ref{healthFig}.  In it we see that the greatest
+impact occurs in cardiovascular disease (CVD) and dementia.
 
-
-% For the sake of example we show the results for males age
-% 45-50.  As the proportion of active travelers increases, deaths due
-% to, in this case cardiovascular disease, are averted.  The extent to
-% which deaths are reduced depends on the amount of non-travel-related
-% activity the cohort experiences.  An increase in the level of
-% ``background'' physical activity diminishes the helath-benefits due to
-% travel.  It is difficult to estimate precisely the level of
-% ``background'' physical activity yet we see that for any reasonable
-% ``background'' level, i.e., 1-50 \METhrs, an increase in the
-% proportion of active travelers from 0.62 to 0.8 would result in 9-15
-% deaths averted.  Note that this is for one disease and one age-sex
-% class.  To compute the overall reduction in deaths we need to iterate
-% this process over all age-sex classes and diseases.  See Table ? for
-% the results.
-
-% <<functions, echo = FALSE, eval = FALSE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
-% getQuantilesMixture <- function(p.AT, mean.AT, sd.AT, mean.NT, sd.NT){
-
-% meanlog.AT <- log(mean.AT/sqrt(1+sd.AT^2/mean.AT^2))
-% sdlog.AT <- sqrt(log(1+sd.AT^2/mean.AT^2))
-
-% meanlog.NT <- log(mean.NT/sqrt(1+sd.NT^2/mean.NT^2))
-% sdlog.NT <- sqrt(log(1+sd.NT^2/mean.NT^2))
-
-% at.vec <- c()
-% nt.vec <- c()
-% t.vec <- c()
-
-% for( i in 1:1e4){
-%     if( runif(1) > p.AT ){
-%         at <- 0
-%         }else{
-%             at <- rlnorm(1,meanlog = meanlog.AT, sdlog = sdlog.AT)
-%             }
-%     at.vec <- c(at.vec,at)
-%     nt <- rlnorm(1,meanlog = meanlog.NT, sdlog = sdlog.NT)
-%     nt.vec <- c(nt.vec,nt)
-% }
-
-% t.vec <- at.vec + nt.vec
-
-% n <- 1e2
-% prob <- seq(0,1,length.out=n)
-% quantiles <- quantile(t.vec, prob = prob)
-% D <- data.frame(quantiles = quantiles, prob = prob)
-% return(D)
-
-% }
-% computeAF <- function(p.AT.baseline, p.AT.scenario, mean.AT.baseline, mean.AT.scenario, sd.AT.baseline, sd.AT.scenario, mean.NT.baseline, mean.NT.scenario, sd.NT.baseline, sd.NT.scenario, alpha, k){
-%     D.baseline <- getQuantilesMixture(p.AT = p.AT.baseline, mean.AT = mean.AT.baseline, sd.AT = sd.AT.baseline, mean.NT = mean.NT.baseline, sd.NT = sd.NT.baseline)
-%     RR.baseline <- getRR(D.baseline$quantiles, alpha = alpha, k = k)
-%     D.scenario <- getQuantilesMixture(p.AT = p.AT.scenario, mean.AT = mean.AT.scenario, sd.AT = sd.AT.scenario, mean.NT = mean.NT.scenario, sd.NT = sd.NT.scenario)
-%     RR.scenario <- getRR(D.scenario$quantiles, alpha = alpha, k = k)
-%     AF <- 1 - sum(RR.scenario)/sum(RR.baseline)
-%     return(AF)
-% }
-% @
-% An increase in physical activity decreases risk for each of the
-% diseases inlcuded here in the ITHIM model.  Physical activity may be
-% decomposed into a travel-related and a non-travel-related components.
-% The travel-related activity is a mixture of two distributions; one for
-% active travelers and one for inactive travelers.  We focus on males
-% age 45-59 and display in Figure \ref{mandm23} the cumulative
-% distribution function for physical activity among men age 45-59 in the
-% Portland area.  The distribution of physical activity depends on the
-% proportion of active travelers in the population.  We demonstrate how
-% this affects the distribution by including distributins for
-% $p_{\mathrm{AT}}=0.7,0.8,0.9,1$.  By applying Equation \ref{paf} to
-% two of these distributions we can compute the attributable fraction
-% associates with an increase in proportion of active travelers.

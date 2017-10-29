@@ -19,7 +19,8 @@ NHTS.df <- readRDS(file = "~/GHI/R/data/NHTS.df.rds")
 #example("ITHIM")
 @
 \begin{center}
-{\Large \textbf\newline{Working Title}}
+{\Large \textbf\newline{Estimating Health Outcomes from Active Travel
+    Behavior in Portland, Oregon}}
 \newline
 \\
 Samuel Younkin\textsuperscript{1},\
