@@ -7,10 +7,11 @@ We estimate relative risk for each of the diseases included in the
 model using published dose-response relationships of the form
 $\R(x) = \mathrm{e}^{-\alpha \tilde{x}}$, where $\tilde{x} = \sqrt{x}$
 \cite{woodcock2009, monninkhof2007, harriss2009, hamer2009, jeon2007,
-  hamer2007}.  See the following output for values of $\alpha$,
+  hamer2007}.
 
 <<appendix, echo = FALSE, eval = TRUE, results = "asis", collapse = TRUE, warning = FALSE, message = FALSE, fig.height = 3>>=
-doseResponseTable <- doseResponse %>% mutate(alpha = -log(RR1MET)) %>% select(disease,GEND,AGECLASS,alpha) %>% distinct %>% arrange(disease, GEND, AGECLASS)
+doseResponseTable <- doseResponse %>% mutate(alpha = round(-log(RR1MET),4)) %>% select(disease,GEND,AGECLASS,alpha) %>% distinct %>% arrange(disease, GEND, AGECLASS)
+doseResponseTable <- doseResponseTable %>% spread(AGECLASS, alpha)
 xtable(doseResponseTable)
 @
 
