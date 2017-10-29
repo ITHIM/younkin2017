@@ -38,7 +38,7 @@ for( i in 1:nrow(parameters) ){
 portlandITHIM.baseline <- new("ITHIM", pSetList)
 @
 <<scenario, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
-pAT.scenario <- 0.5
+pAT.scenario <- 0.75
 
 pSetList <- list()
 
@@ -68,15 +68,25 @@ for( i in 1:nrow(parameters) ){
 portlandITHIM.scenario <- new("ITHIM", pSetList)
 @
 
+Now that we have the baseline parameters estimated we can create an
+alternative scenario with which to compare to baseline.  In this
+example we set $\pAT=\Sexpr{round(pAT.scenario,2)}$ in each age-sex
+class with $\pAT < \Sexpr{round(pAT.scenario,2)}$.  The mean travel
+activity per age-sex class remains unchanged we simply increase the
+proportion which are sampled from the \logNormal{} distribution,
+instead of being set to zero in the model.
+
 \begin{figure}
 <<healthOutcomes, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
 PAF <- mapply(computeAF, portlandITHIM.baseline, portlandITHIM.scenario)
 healthOutcomes <- parameters %>% mutate(deltaBurden = PAF*value) %>% group_by(disease, burdenType) %>% summarise(diseaseDeltaBurden = sum(deltaBurden))
 ggplot(healthOutcomes, aes(x = "", y = diseaseDeltaBurden, fill = burdenType)) + geom_bar(stat = "identity", position = "dodge")  + facet_grid(. ~ disease) + theme_bw()  + labs(x = "", y = "Disease Burden Averted", fill = "Burden Type")
 @
-\caption{Health outcomes given a population of all active travelers.}
-\label{health}
+\caption{Health outcomes given a population with $\pAT > \Sexpr{round(pAT.scenario,2)}$.}
+\label{healthFig}
 \end{figure}
 
-In Figure \ref{health} we see the results of the comparitive risk
-assesment.
+The averted disease burden in terms of DALY, YLL, YLD and deaths is
+shown in Figure \ref{healthFig}.  In it we see that the greatest
+impact occurs in cardiovascular disease (CVD) and dementia.
+
