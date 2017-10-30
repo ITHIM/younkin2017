@@ -34,6 +34,26 @@ D <- within(D, AGECLASS <- factor(AGECLASS, levels = c("15-29", "30-44", "45-59"
 parameters.TA <- D %>% filter(TA > 0) %>% mutate(logTA = log(TA)) %>% group_by(GEND, AGECLASS) %>% summarise( meanLogTA = mean(logTA), sdLogTA = sd(logTA))
 @
 
+\begin{figure}
+<<inactivePortland, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = TRUE, fig.height = 3>>=
+pAT <- D %>% group_by(GEND, AGECLASS) %>% summarise( pAT = 1/fAT*sum(TA > 0, na.rm = TRUE)/length(TA))
+pAT <- within(pAT, AGECLASS <- factor(AGECLASS))
+pAT <- within(pAT, GEND <- factor(GEND))
+pAT %>% ggplot(aes(x = GEND, y = pAT, fill = AGECLASS)) + geom_bar(stat = "identity", position = "dodge") + theme_bw() + labs(x = "Sex", y = "Proportion of Active Travelers", fill = "Age")
+@
+\caption{Proportion of active travelers in Portland Metro area}
+\label{inactivePortland}
+\end{figure}
+
+\begin{figure}
+<<allCountiesPlot, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = TRUE, fig.height = 6>>=
+ggplot(subset(D, TA > 0), aes(x = GEND, y = log(TA), fill = AGECLASS)) + geom_boxplot() + theme_bw() + labs(x = "Sex", y = "Travel Activity (natural log scale) (MET-hrs./week)", fill = "Age")
+@
+\label{samuel}
+\caption{Travel Activity ($T = \alpha_w^\prime T_w + \alpha_c^\prime T_c$) for Portland
+  Metro Area Active Travelers ($T > 0$) (OHAS)}
+\end{figure}
+
 \subsection{Travel Activity}
 
 Unlike with the National Household Transportation Survey, the Oregon
@@ -56,26 +76,6 @@ standard deviations with the Oregon Household Activity Survey, see
 Figure \ref{samuel} for box plots of travel activity stratified by age and
 sex.  Note that the natural logarithm of travel activity is
 displayed.
-
-\begin{figure}
-<<inactivePortland, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = TRUE, fig.height = 3>>=
-pAT <- D %>% group_by(GEND, AGECLASS) %>% summarise( pAT = 1/fAT*sum(TA > 0, na.rm = TRUE)/length(TA))
-pAT <- within(pAT, AGECLASS <- factor(AGECLASS))
-pAT <- within(pAT, GEND <- factor(GEND))
-pAT %>% ggplot(aes(x = GEND, y = pAT, fill = AGECLASS)) + geom_bar(stat = "identity", position = "dodge") + theme_bw() + labs(x = "Sex", y = "Proportion of Active Travelers", fill = "Age")
-@
-\caption{Proportion of active travelers in Portland Metro area}
-\label{inactivePortland}
-\end{figure}
-
-\begin{figure}
-<<allCountiesPlot, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = TRUE, fig.height = 6>>=
-ggplot(subset(D, TA > 0), aes(x = GEND, y = log(TA), fill = AGECLASS)) + geom_boxplot() + theme_bw() + labs(x = "Sex", y = "Travel Activity (natural log scale) (MET-hrs./week)", fill = "Age")
-@
-\label{samuel}
-\caption{Travel Activity ($T = \alpha_w^\prime T_w + \alpha_c^\prime T_c$) for Portland
-  Metro Area Active Travelers ($T > 0$) (OHAS)}
-\end{figure}
 
 
 \subsection{Leisure Activity (Vargo)}\label{LA}

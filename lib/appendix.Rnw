@@ -3,12 +3,10 @@
 
 \paragraph{Parameter Set}
 
-The physically activity distribution for each vision (baeline and
-scenario) is defined in terms of five parameters per age-sex-disease
-class.
-
 \begin{table}
-    \begin{tabular}{cc}
+    \begin{tabular}{cl}
+      Parameter & Description \\
+      \hline \\
       $\pNAT$ & proportion of inactive travelers \\
       $\muTA$ & mean of log travel activity (among active travelers) \\
       $\sdTA$ & standard deviation of log of travel activity (among active travelers) \\
@@ -19,6 +17,11 @@ class.
     scenario physical activity distribution}
   \label{pSet}
   \end{table}
+
+  The physically activity distribution for each vision (baeline and
+  scenario) is defined in terms of five parameters per age-sex-disease
+  class given in Table \ref{pSet}.
+
 
 \paragraph{Dose-Respone Curves}
 
