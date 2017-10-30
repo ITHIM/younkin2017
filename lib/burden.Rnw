@@ -1,13 +1,12 @@
-Text from Eric goes here.  How did we arrive at the disease burden
-estimates?  Can we cite WHO methodology?
-
-Estimates of the age-sex-disease-specific number
+Similar to previous implementations of ITHIM, baseline disease burden 
+were procured from state vital records data. Estimates 
+of the age-sex-disease-specific number
 of deaths were obtained from the Oregon Health Authorites Vital
 Statistics Records for the year 2015 \cite{}.  Burden estimates for
 Years-of-Life-Lost (YLL) and Years-Lost-to-Diability (YLD) were
 calculated using median age for each range and the country-specific
 life expectancy according the World Health Organization
-Guidelines. ???verify with Eric??? The final metric of disease burden,
+Guidelines. The final metric of disease burden,
 Disability Adjusted Life Years (DALYs) is the sum of YLL and YLD.
 
 $B_0$ is the overall burden at baseline. Estimates of the
@@ -23,15 +22,10 @@ population using Oregon county death rates. The final metric of
 disease burden, Disability Adjusted Life Years (DALYs) is the sum of
 YLL and YLD.
 
-Age-sex-disease specific disease burdens, namely DALY, YLL, YLD
-and deaths, are estimated using detailed mortality data from the
-CDC Wide-ranging ONline Data for Epidemiologic Research (WONDER)
-database and the 2010 Global Burden of Disease \cite{WHOGBD}.
-See \ref{burden} for a more detailed discussion.
-
-ITHIM physical activity component includes breast cancer (C50), colon
-cancer (C18-C21), dementia (G30), diabetes (E10-E14) and
-cardiovascular disease (I10, I12, I15, I20-I25, I30-I31, I33, I40).
+ITHIM physical activity component includes death and disease related to the following causes (ICD-10): 
+breast cancer (C50), colon
+cancer (C18-C21), dementia (F01, F03, G30-G31), diabetes (E10-E14) and
+cardiovascular disease (I10-I13, I20-I25, I30-I33, I38, I40, I42).
 We also include the disability impacts of depression, though it is not
 listed as a cause of death in the CDC data.
 
