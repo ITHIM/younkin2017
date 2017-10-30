@@ -1,55 +1,37 @@
 % !Rnw root = ../ITHIM-manuscript.Rnw
 % !TeX root = ../ITHIM-manuscript.Rnw
 
+\paragraph{Parameter Set}
+
+The physically activity distribution for each vision (baeline and
+scenario) is defined in terms of five parameters per age-sex-disease
+class.
+
+\begin{table}
+    \begin{tabular}{cc}
+      $\pNAT$ & proportion of inactive travelers \\
+      $\muTA$ & mean of log travel activity (among active travelers) \\
+      $\sdTA$ & standard deviation of log of travel activity (among active travelers) \\
+      $\muLA$ & mean of log of leisure activity \\
+      $\muLA$ & standard deviation of log of leisure activity\\
+  \end{tabular}
+  \caption{Table of parameters used to define the baseline and
+    scenario physical activity distribution}
+  \label{pSet}
+  \end{table}
+
 \paragraph{Dose-Respone Curves}
 
-We estimate relative risk for each of the diseases included in the
-model using published dose-response relationships of the form
+Estimates for the dose-response shape parameter, $\alpha$, are taken
+from the original ITHIM implementation.  We estimate relative risk for
+each of the diseases included in the model using published
+dose-response relationships of the form
 $\R(x) = \mathrm{e}^{-\alpha \tilde{x}}$, where $\tilde{x} = \sqrt{x}$
 \cite{woodcock2009, monninkhof2007, harriss2009, hamer2009, jeon2007,
-  hamer2007}.
+  hamer2007}.  See below for a table of $\alpha$ values.
 
 <<appendix, echo = FALSE, eval = TRUE, results = "asis", collapse = TRUE, warning = FALSE, message = FALSE, fig.height = 3>>=
 doseResponseTable <- doseResponse %>% mutate(alpha = round(-log(RR1MET),4)) %>% select(disease,GEND,AGECLASS,alpha) %>% distinct %>% arrange(disease, GEND, AGECLASS)
 doseResponseTable <- doseResponseTable %>% spread(AGECLASS, alpha)
 xtable(doseResponseTable)
 @
-
-% \paragraph{Old Outline}
-% \bi
-% \item Abstract and Introduction
-%   \bi
-%   \item History of ITHIM
-%     \bi
-%     \item Origin in UK
-%     \item Application in US
-%       \bi
-%       \item Bay Area
-%       \item Nashville
-%       \ei
-%     \ei
-%   \item Motivations
-%     \bi
-%     \item Expanding the application of ITHIM for US beyond the most dedicated metros - using national datasets
-%     \item Improving the performance and documentation of the model by moving to R
-%     \item Mirroring improvements made in the UK with Analytica
-%     \item Easing the connections of ITHIM to existing scenario planning tools
-%     \ei
-%   \item Purpose
-%     \bi
-%     \item Documentation of the method in math notation
-%     \item Presentation of the R implementation with a US metro area example
-%     \ei
-%   \ei
-% \item Description of Method
-% \item Demonstration of R package via an analysis of the Portland MSA
-%   \bi
-%   \item data from Eric Main
-%     \bi
-%     \item burden estimated using technique from WHO
-%     \item Travel times estimated from NHTS
-%     \ei
-%   \ei
-% \item Sensitivity Analysis/Value of Information
-% \item
-% \ei

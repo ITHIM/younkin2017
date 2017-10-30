@@ -71,18 +71,14 @@ sex as in Equation \ref{delta}.
   \label{delta}
 \end{eqnarray}
 
-
 \subsection{Travel-Related Physical Activity}
-
 We express travel-related physical activity, or travel activity, $T$,
 in terms of \METhrs{} and compute it by weighting the total active
 one-day walking and cycling times, $T_w$ and $T_c$ (hours), by
 $\alpha_w^\prime = 7\alpha_w$ and $\alpha_c^\prime = 7\alpha_c$,
 respectively. The average workload of walking and cycling in METs,
 $\alpha_w = 3$ and $\alpha_c = 4.5$ must be scaled up to represent a
-full week of travel.  Note that we assume that sampled day is a
-typical day.  (This assumption breaks down because we know the sampled
-day is a work day.)
+full week of travel.
 
 \begin{equation}
 T = \alpha_w^\prime T_w + \alpha_c^\prime T_c
@@ -97,21 +93,23 @@ reported zero active travel time.  The spike in the data at zero made
 fitting a \logNormal{} distribution difficult.  Due to the large
 proportion of inactive travelers in U.S. metropolitan areas we model
 the distribution of travel activity as a mixture of two distributions;
-a point-mass at zero with probabilty ($\pNAT = 1 - \pAT$) and a
-\logNormal{} distribution.  Estimating the proportion of inactive
-travelers with one-day survey data is challenging so we instead used
-questions L3 and L4 of Table 1 of the 2009 National Household
-Transportation Survey which asked how many walking or cycling trips
-were made in the previous week.  This will provide a more unbiased
-estimate than with one-day data, but it is not clear if this value
-includes recreational trips, and we also assume the estimate is
-subject to inflation due to self-reporting bias.  Figure
-\ref{inactiveMSA} shows the proportion of people who take zero walking
-or biking trips to range frome approximately 40\% in Oklahoma City to
-around 20\% in the Portland metropolitan area.
+a point-mass at zero with probabilty $\pNAT = 1 - \pAT$ for inactive
+travelers, and a \logNormal{} distribution for active travelers.
+Estimating the proportion of inactive travelers with one-day survey
+data results in over-estimates, as active travelers are not active
+every day.  So we used questions L3 and L4 of Table 1 of the 2009
+National Household Transportation Survey which asked how many walking
+or cycling trips were made in the previous week to estimate the
+proportion.  The weekly data provide a less biased estimate than
+one-day data, as active travelers are likely to travel actively at
+least once a week. It is not clear if this value includes recreational
+trips.  Figure \ref{inactiveMSA} shows the proportion of people who
+take zero walking or biking trips ranges from approximately 40\% in
+the Oklahoma City metropolitan to around 20\% in the Portland
+metropolitan area.
 
 \begin{figure}
-<<pATbyMSA, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 6>>=
+<<pATbyMSA, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 6.5>>=
 D.pAT <- NHTS.df %>% filter(!(location %in% c("-1", NA))) %>% group_by(id, location) %>% summarise(AT = first(nwalktrp)+first(nbiketrp)) %>% ungroup() %>% mutate( AT.level = ifelse(AT == 0, "0 trips", ifelse(AT < 5, "< 5 trips", "> 5 trips"))) %>% group_by(location, AT.level) %>% summarise( count = n()) %>% ungroup()
 D.pAT <- within(D.pAT, AT.level <- factor(AT.level, levels = rev(c("0 trips", "< 5 trips", "> 5 trips"))))
 D.total <- D.pAT %>% group_by(location) %>% summarise(total = sum(count))
