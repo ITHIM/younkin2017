@@ -1,0 +1,5 @@
+% !Rnw root = ../ITHIM-manuscript.Rnw
+% !TeX root = ../ITHIM-manuscript.Rnw
+
+We include the following counties in the analysis: \Sexpr{countyList}.
+
