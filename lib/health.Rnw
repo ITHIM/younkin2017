@@ -85,7 +85,7 @@ ggplot(healthOutcomes, aes(x = "", y = diseaseDeltaBurden, fill = burdenType)) +
 \begin{figure}
 <<healthOutcomes2, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
 results <- c()
-for(pAT.scenario in seq(0.2, 1, length.out = 25)){
+for(pAT.scenario in seq(0.2, 1, length.out = 10)){
 
     pSetList <- list()
 
@@ -126,19 +126,74 @@ ggplot(results, aes(x = pAT.scenario, y = diseaseDeltaBurden, color = burdenType
 
 @
 \caption{Absolute change in all-cause disease burden across minimum
-  active travel participation, $\pAT^\textrm{min}$.}
+  active travel participation, $\pATmin{}$}
 \label{healthFig2}
 \end{figure}
 
+\paragraph{Increased Participation in Active Travel}
 
-Now that we have the baseline parameters estimated we can create
-alternative scenarios with which to compare to baseline by chnaging $\pAT$.
+A simple and straight-forward way of generating scenarios with
+increased active transportation is to increase the proportion of
+active travelers in the baseline to some minimum value, $\pATmin{}$.
+We do so in each age-sex class, and if $\pAT$ already exceeds this
+minimum value it is left unchanged from baseline to scenario.  We
+first inspect the averted disease burden given a scenario in which
+$\pATmin = 0.75$.  In this scenario all age-sex classes, except ages
+15-29, have the value of $\pAT$ increased to 0.75.  This does not
+effect the mean values for travel activity, only the proportion of
+people who are active.  Estimates for disease burden averted are given
+in terms of DALY, YLL, YLD and deaths (annually) and are shown in Figure
+\ref{healthFig}.  The health benefits of active transportation are
+manifest primarily through a significant decrease in disability
+adjusted life years (DALY) due to cardiovascular disease (CVD) and
+Dementia.  In Figure \ref{healthFig2} we vary $\pAT^\textrm{min}$ from
+the minimum value seen across all age-sex classes to one, and sum
+disease burden across all diseases.  Increasing oparticipation in
+active transportation to 50\% across all age-sex classes would result
+in approximately 1,000 DALYs averted in the Portland metropolitan
+area.
 
-The averted disease burden in terms of DALY, YLL, YLD and deaths is
-shown in Figure \ref{healthFig} in which we set
-$\pAT$ to $\max\{ \pAT, \pAT^\textrm{min} \}$ in each age-sex class  In Figure \ref{healthFig2}
-we vary $\pAT^\textrm{min}$ and sum disease burden across all diseases.  In
-Figure \ref{healthFig} we see that the greatest impact occurs in
-cardiovascular disease (CVD) and dementia.
+\paragraph{Increased Travel Activity among Active Travelers}
 
+\begin{figure}
+<<healthOutcomes3, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
+results <- c()
+for(gamma in seq(1, 10, length.out = 10)){
 
+    pSetList <- list()
+
+for( i in 1:nrow(parameters) ){
+
+  pSetList[[i]] <- with(parameters,{
+      new("ParameterSet",
+          pAT = pAT[i],
+          meanLogTA = log(gamma) + meanLogTA[i],
+          meanLogLA = meanLogLA[i],
+          sdLogTA = sdLogTA[i],
+          sdLogLA = sdLogLA[i],
+          metWalk = alpha_w,
+          metCycle = alpha_c,
+          alpha = log(RR1MET)[i],
+          k = k[i],
+          quantiles = 1:99/100,
+          label = as.character(i),
+          disease = disease[i],
+          sex = GEND[i],
+          age = AGECLASS[i],
+          burdenType = burdenType[i],
+          burdenValue = value)
+  })
+}
+portlandITHIM.scenario <- new("ITHIM", pSetList)
+PAF <- mapply(computeAF, portlandITHIM.baseline, portlandITHIM.scenario)
+healthOutcomes <- parameters %>% mutate(deltaBurden = PAF*value) %>% group_by(burdenType) %>% summarise(diseaseDeltaBurden = sum(deltaBurden))
+results <- rbind(results,cbind(gamma, healthOutcomes))
+}
+
+ggplot(results, aes(x = gamma, y = diseaseDeltaBurden, color = burdenType)) + geom_line() + theme_bw()  + labs(x = "Proportional increase in travel activity", y = "Disease Burden Averted", color = "Burden Type")
+@
+\caption{Absolute change in all disease burden across proportional increase in log travel activity.}
+\label{healthFig3}
+\end{figure}
+
+$T_{\textrm{scenario}} = \gamma T_{\textrm{baseline}}$
