@@ -1,6 +1,8 @@
 % !Rnw root = ../ITHIM-manuscript.Rnw
 % !TeX root = ../ITHIM-manuscript.Rnw
 
+
+
 % \bi
 % \item An increase in the proportion of active travelers results in
 %   positive health benefits

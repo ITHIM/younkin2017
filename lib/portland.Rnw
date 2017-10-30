@@ -5,32 +5,20 @@ OHAS.df <- OHAS.df %>% filter(COUNTYNAME %in% countyList)
 OHAS.df <- within(OHAS.df, COUNTYNAME <- factor(COUNTYNAME, levels = countyList))
 @
 
-To demonstrate the method for estimating health outcomes given two
-travel scenarios we present here a brief case study of the
-Portland Oregon, U.S.A., Metropolitan Area.
-
-In Figure \ref{inactiveMSA} that although Portland has a great deal of
+To demonstrate the method developed here for estimating health
+outcomes given two travel scenarios we present here a brief case study
+of the Portland Oregon, U.S.A., Metropolitan Area.  In Figure
+\ref{inactiveMSA} we see that although Portland has a great deal of
 travel activity compared to other U.S. metropolitan areas, there is
-still roughly 50\% of the Portland population that takes less than five
-trips, recreational or travel, a week.
+still roughly 50\% of the Portland population that takes less than
+five active trips, recreational or travel, a week.  We define the
+baseline model for the Portland metropolitan area using five
+parameters, see Table \ref{pSet}, which are estimated using the Oregon
+Household Activity Survey (OHAS).
 
-To perform the comparative risk assessment given here we need the
-following parameters for both the baseline and scenario for each of
-the $8 \times 2 \times 6 = 96$ age-sex-disease classes; proportion of
-active travelers, mean log travel activity, standard deviation of log
-travel activity, mean leisure activity, standard deviation of leisure
-activity and dose-response shape parameter.  We use three data sources
-to estimate these parameters, 2009 U.S. National Household
-Transportation Survey (NHTS), 200?-200? American Time Use Survey
-(ATUS) and 200? Oregon Household Activity Survey (OHAS).  Estimates
-for the dose-response shape parameter, $\alpha$, are taken from the
-original ITHIM implementation.
+\paragraph{Oregon Household Activity Survey (Eric or Brendan)}
 
-\subsection{Data Description}
-\paragraph{National Household Transportation Survey}
-\paragraph{American Time Use Survey}
-\paragraph{Oregon Household Activity Survey (Eric or Brendan?)}
-We include the following counties in the analysis: \Sexpr{countyList}.
+\Sexpr{knit_child('./ohas.Rnw')}
 
 <<allCounties, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = TRUE, fig.height = 6>>=
 alpha_w <- 3; alpha_c <- 4.5; nAT <- 3; fAT <- 1/nAT;
@@ -45,33 +33,6 @@ D <- filter(D, !(AGECLASS %in% c("00-04","05-14")))
 D <- within(D, AGECLASS <- factor(AGECLASS, levels = c("15-29", "30-44", "45-59", "60-69", "70-79", "80+")))
 parameters.TA <- D %>% filter(TA > 0) %>% mutate(logTA = log(TA)) %>% group_by(GEND, AGECLASS) %>% summarise( meanLogTA = mean(logTA), sdLogTA = sd(logTA))
 @
-
-\subsection{Travel Activity}
-
-Unlike with the National Household Transportation Survey, the Oregon
-Household Activity Survey did not contain information about walking or
-biking over an entire week.  Simply counting the number of respondants
-with zero travel activity in a one-day travel survey will
-under-estimate $\pAT$, the proportion of active travelers, since not
-all active travelers are active every day.  We assume that active
-travelers are active once every \Sexpr{nAT} days,
-$\fAT = \Sexpr{round(fAT,2)}$, and scale accordingly,
-$\hatpAT = \frac{1}{\fAT}p_{\{T>0\}}$, where $p_{\{T>0\}}$ is the
-proportion of survey respondants who reported nonzero active travel.
-In Figure \ref{inactivePortland} we see a clear decline in active
-travel across ages.  Comparing to Figure \ref{inactiveMSA} shows
-concordance!  Right?
-
-All inactive travelers have zero travel activity and therefore do not
-require a distribution.  Among the active travelers, however, we model
-using a \logNormal{} distibution and estimate within-class means and
-standard deviations with the Oregon Household Activity Survey, see
-Figure \ref{TAFig} for box plots of travel activity stratified by age and
-sex.  Note that the natural logarithm of travel activity is
-displayed.
-
-\paragraph{Estimates}
-We excluded trips for recreation and loop trips\ldots
 
 \begin{figure}
 <<inactivePortland, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = TRUE, fig.height = 3>>=
@@ -88,10 +49,33 @@ pAT %>% ggplot(aes(x = GEND, y = pAT, fill = AGECLASS)) + geom_bar(stat = "ident
 <<allCountiesPlot, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = TRUE, fig.height = 6>>=
 ggplot(subset(D, TA > 0), aes(x = GEND, y = log(TA), fill = AGECLASS)) + geom_boxplot() + theme_bw() + labs(x = "Sex", y = "Travel Activity (natural log scale) (MET-hrs./week)", fill = "Age")
 @
-\label{TAFig}
+\label{samuel}
 \caption{Travel Activity ($T = \alpha_w^\prime T_w + \alpha_c^\prime T_c$) for Portland
   Metro Area Active Travelers ($T > 0$) (OHAS)}
 \end{figure}
+
+\subsection{Travel Activity}
+
+Unlike with the National Household Transportation Survey, the Oregon
+Household Activity Survey did not contain information about walking or
+biking over an entire week.  Simply counting the number of respondants
+with zero travel activity in a one-day travel survey will
+under-estimate $\pAT$, the proportion of active travelers, since not
+all active travelers are active every day.  We assume that active
+travelers are active once every $\nAT = \Sexpr{nAT}$ days, and scale
+accordingly, $\hatpAT = \nAT p_{\{T>0\}}$, where $p_{\{T>0\}}$ is the
+proportion of survey respondants who reported nonzero active travel.
+In Figure \ref{inactivePortland} we see a clear decline in active
+travel across ages.  Comparing to Figure \ref{inactiveMSA} shows
+concordance!  Right?
+
+All inactive travelers have zero travel activity and therefore do not
+require a distribution.  Among the active travelers, however, we model
+using a \logNormal{} distibution and estimate within-class means and
+standard deviations with the Oregon Household Activity Survey, see
+Figure \ref{samuel} for box plots of travel activity stratified by age and
+sex.  Note that the natural logarithm of travel activity is
+displayed.
 
 
 \subsection{Leisure Activity (Vargo)}\label{LA}
@@ -102,287 +86,3 @@ ggplot(subset(D, TA > 0), aes(x = GEND, y = log(TA), fill = AGECLASS)) + geom_bo
 
 \subsection{Health Outcomes}\label{health}
 \Sexpr{knit_child('./health.Rnw')}
-
-
-%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-% \subsection*{Proportion of Active Travelers by MSA}
-
-% \begin{figure}
-% <<pATbyMSA, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 9, dev = c("pdf","png")>>=
-% D.pAT <- NHTS.df %>% filter(!(location %in% c("-1", NA))) %>% group_by(id, location) %>% summarise(AT = first(nwalktrp)+first(nbiketrp)) %>% ungroup() %>% mutate( AT.level = ifelse(AT == 0, "0 trips", ifelse(AT < 5, "< 5 trips", "> 5 trips"))) %>% group_by(location, AT.level) %>% summarise( count = n()) %>% ungroup()
-
-% D.pAT <- within(D.pAT, AT.level <- factor(AT.level, levels = rev(c("0 trips", "< 5 trips", "> 5 trips"))))
-
-% D.total <- D.pAT %>% group_by(location) %>% summarise(total = sum(count))
-
-% D.pAT <- full_join(D.pAT,D.total,by="location") %>% mutate(prop = count/total) %>% arrange(desc(AT.level),count)
-
-
-% msaIDFile <- read.csv(system.file("join2.csv", package = "ITHIM"), stringsAsFactors = FALSE)
-% msaIDFile %>% select(msaName, msaNHTS) %>% filter(!is.na(msaNHTS)) %>% distinct(msaName, msaNHTS)
-% bar <- msaIDFile %>% select(msaName, msaNHTS) %>% filter(!is.na(msaNHTS)) %>% group_by(msaNHTS) %>% summarise(msaName = first(msaName))
-% bar <- within(bar, msaNHTS <- factor(msaNHTS))
-
-% D.pAT <- full_join(D.pAT, bar, by = c("location" = "msaNHTS"))
-
-% D.pAT <- subset(D.pAT, !is.na(AT.level))
-
-% ggplot(D.pAT, aes(x = factor(msaName, levels = D.pAT$msaName), y = prop, fill = AT.level)) + geom_bar(stat = "identity") + theme_bw() + ylab("Proportion") + xlab("Metropolitan Statistical Area (MSA)") + coord_flip()
-
-% @
-% \caption{}
-% \label{equity1}
-% \end{figure}
-
-% \paragraph{Per person mean walk and bike times by county.}
-% <<totaldur, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = TRUE>>=
-% D <- OHAS.df %>% filter(MODE %in% c("walk","cycle")) %>% group_by(MODE,COUNTYNAME) %>% summarise(TOTDUR = sum(TRPDUR)) %>% arrange(COUNTYNAME,MODE)
-% D2 <- OHAS.df %>% group_by(COUNTYNAME) %>% summarise(n = n_distinct(paste0(SAMPN,PERNO)))
-% full_join(D,D2,by="COUNTYNAME") %>% mutate(mean = TOTDUR/n) %>% arrange(MODE,desc(mean)) %>% as.data.frame()
-% @
-
-% \paragraph{AgeClass by Sex by Five Counties}
-% <<pertable, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = TRUE>>=
-% AGECLASS <- ITHIM:::convertToAgeClass(OHAS.df$AGE)
-% @
-
-% \begin{figure}
-% <<sampSize, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = TRUE, fig.height = 9>>=
-% D <- data.frame(GEND = OHAS.df$GEND, AGECLASS = AGECLASS, COUNTYNAME = OHAS.df$COUNTYNAME, INCOME = OHAS.df$INCOME, RACE = OHAS.df$RACE)
-% ggplot(D, aes(x = AGECLASS, fill = GEND)) + geom_bar(position = "dodge") + facet_grid(COUNTYNAME ~ .)
-% #ggplot(D, aes(x = INCOME, fill = COUNTYNAME)) + geom_bar(position = "dodge")
-% @
-% \label{sampSize}
-% \caption{Sample size by age, sex and county (OHAS)}
-% \end{figure}
-
-% \paragraph{Household Table (HH)}
-% COUNTYNAME, INCOME \& RACE
-% <<hhtable, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = TRUE>>=
-% with(OHAS.df,table(INCOME,RACE,COUNTYNAME))
-% @
-
-%% #+ theme(axis.text.x = element_text(angle = 60, hjust = 1))
-%% \begin{figure}
-%% <<portland8, echo = FALSE, eval = TRUE, warning = FALSE, message = FALSE, fig.height = 3>>=
-%% sampleSize <- NHTS.df %>% filter(location == 6442) %>% group_by(sex,age) %>% summarise(n=n_distinct(id))
-%% tripDuration <- NHTS.df %>% filter(location == 6442) %>% group_by(mode,sex,age) %>% summarise(total=sum(duration))
-%% foo <- right_join(sampleSize,tripDuration, by = c("sex","age")) %>% ungroup() %>% mutate(mean = total/n*7) %>% select(mode,sex,age,mean) %>% complete(mode,sex,age)
-%% meanByMode <- split(foo,foo$mode)
-
-%% D <- melt(meanByMode) %>% select(mode,sex,age,value)
-%% p <- ggplot(D, aes(x = age, y = value, fill = mode))
-%% p + geom_bar(stat = "identity", postion = "dodge") + facet_grid( . ~ sex ) + ylab("Mean Weekly Travel Time (minutes)") + theme_bw() + theme(axis.text.x = element_text(angle = 90, hjust = 1))
-%% @
-%% \caption{The mean weekly travel time (minutes) in the Portland Metropolitan Area
-%%   stratified by age-class, sex and mode. (NHTS)}
-%% \label{portland8}
-%% \end{figure}
-
-% \begin{figure}
-% <<mandm222, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
-% n.ind <- NHTS.df  %>% filter(location == 6442) %>% group_by(sex,age) %>% summarise(n.ind = n_distinct(id))
-
-% n.AT <- NHTS.df %>% filter(location == 6442) %>% group_by(sex,age,id, mode) %>% summarise(durationTotal = sum(duration)) %>% ungroup() %>% group_by(sex,age) %>% filter(mode %in% c("walk","cycle")) %>% filter(durationTotal > 0) %>% summarise(n.AT = n_distinct(id))
-
-% D <- inner_join(n.ind, n.AT, by = c("sex","age")) %>% mutate(pAT = n.AT/n.ind)
-% ggplot(D, aes(x=age,y=pAT, fill = sex)) + geom_bar(stat = "identity", position = "dodge") + theme_bw()+ ylab("Proportion of Inactive Travelers") + xlab("") + coord_cartesian(ylim = c(0, 1))
-
-% #p0.portland <- D %>% ungroup() %>% filter(age == "45-59" & sex == "M") %>% select(p0) %>% as.numeric()
-% #p.AT.portland <- 1 - p0.portland
-
-% #p0.portland.F <- D %>% ungroup() %>% filter(age == "45-59" & sex == "F") %>% select(p0) %>% as.numeric()
-% #p.AT.portland.F <- 1 - p0.portland.F
-
-% @
-% \caption{The proportion of active travelers in the Portland
-%   metropolitan area. (NHTS)}
-% \label{portland9}
-% \end{figure}
-
-
-%% \begin{figure}
-%% <<mandm2223, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
-%% D <- NHTS.df %>% filter(id %in% AT.id.vec) %>% group_by(id, sex, age) %>% summarise(totalDuration = alpha.AT*sum(duration)*7/60) %>% ungroup() %>% group_by(age,sex) %>% summarise(mean = mean(totalDuration), sd=sd(totalDuration))
-%% ggplot(D, aes(x=age,y=mean, fill = sex)) + geom_bar(stat = "identity", position = "dodge") + theme_bw()+ ylab("Mean Travel Actvity among Active Travelers") + xlab("Age") #+ coord_cartesian(ylim = c(0.5, 1))
-%% @
-%% \label{mandm2223}
-%% \caption{Mean travel activity (\METhrs{}) among active travelers in
-%%   the Portland Metropolitan area. (NHTS)}
-%% \end{figure}
-
-
-%% \begin{figure}
-%% <<mandm223, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
-%% AT.id.vec <- NHTS.df %>% filter(location == 6442 ) %>% group_by(sex, age, id, mode) %>% summarise(durationTotal = sum(duration)) %>% ungroup() %>% filter(mode %in% c("walk","cycle")) %>% filter(durationTotal > 0) %>% select(id) %>% unlist()
-%% DAll <- NHTS.df %>% filter(id %in% AT.id.vec) %>% group_by(sex, age, id) %>% summarise(totalDuration = alpha.AT*sum(duration)*7/60)
-
-%% summaryStatsAll <- DAll %>% summarise(mean = mean(totalDuration), sd=sd(totalDuration))
-
-%% D <- DAll %>% filter(age == "45-59" && sex == "M")
-%% summaryStats <- summaryStatsAll %>% filter(age == "45-59" & sex == "M")
-
-%% ggplot(D,aes(totalDuration)) + geom_histogram(aes(y=..density..), bins = 10, alpha = 0.2 ) +
-%%     geom_line(aes(y = ..density.., color = "Empirical"), stat = 'density') +
-%%     theme_bw() + xlab("Travel Activity Met-hrs./week") + xlim(c(0,240)) +
-%%     stat_function(aes(color="Fitted"), fun = dlnorm,
-%%                   args = list(meanlog = with(summaryStats,log(mean/sqrt(1+sd^2/mean^2))),
-%%                               sdlog = with(summaryStats,sqrt(log(1+sd^2/mean^2)))))
-
-%% @
-%% \caption{Histogram of travel activity among male active travelers
-%%   between the age of 45 and 59 living in the Portland metropolitan area.
-%%   Overlayed are both the empirical and fitted densities.  We assume
-%%   that within age and sex class, and among active travelers, travel
-%%   activity has a log-normal distribution.}
-%% \label{mandm223}
-%% \end{figure}
-
-%% \begin{figure}
-%% <<mandm23, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
-%% mean.NT <- 5; cv <- 1; sd.NT <- cv*mean.NT;
-
-%% D.baseline <- getQuantilesMixture(p.AT = p.AT.portland, mean.AT = summaryStats$mean, sd.AT = summaryStats$sd, mean.NT = mean.NT, sd.NT = sd.NT)
-
-%% D.scenario.1 <- getQuantilesMixture(p.AT = 0.4, mean.AT = summaryStats$mean, sd.AT = summaryStats$sd, mean.NT = mean.NT, sd.NT = sd.NT)
-%% D.scenario.2 <- getQuantilesMixture(p.AT = 0.6, mean.AT = summaryStats$mean, sd.AT = summaryStats$sd, mean.NT = mean.NT, sd.NT = sd.NT)
-%% D.scenario.3 <- getQuantilesMixture(p.AT = 0.8, mean.AT = summaryStats$mean, sd.AT = summaryStats$sd, mean.NT = mean.NT, sd.NT = sd.NT)
-%% D.scenario.4 <- getQuantilesMixture(p.AT = 1, mean.AT = summaryStats$mean, sd.AT = summaryStats$sd, mean.NT = mean.NT, sd.NT = sd.NT)
-
-
-%% D <- rbind(data.frame(D.baseline,pAT = as.character(round(p.AT.portland,2))),data.frame(D.scenario.1,pAT = "0.4"),data.frame(D.scenario.2,pAT = "0.6"),data.frame(D.scenario.3,pAT = "0.8"),data.frame(D.scenario.4,pAT = "1"))
-
-%% ggplot(D, aes(x = quantiles, y = prob, colour = pAT)) + geom_line(aes(x=quantiles,y=prob)) + coord_cartesian(xlim = c(0,100)) + theme_bw() + xlab("Physical Activity (MET-hrs./week)") + ylab("Cumulative Distribution")
-
-%% @
-%% \caption{Cumulative distribution function for men between the age of
-%%   45 and 59 living in the Portland metropolitan area at baseline
-%%   ($p_{\mathrm{AT}}=\Sexpr{round(p.AT.portland,2)}$) and four different
-%%   scenarios with $p_{\mathrm{AT}}=0.7,0.8,0.9,1$.  Mean
-%%   non-travel-related activity is \Sexpr{round(mean.NT,1)}.}
-%% \label{mandm23}
-%% \end{figure}
-
-%% \begin{figure}
-%% <<mandm235, echo = FALSE, eval = FALSE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
-%% deaths.CVD <- 242.8
-%% alpha.CVD <- log(0.93831942)
-%% mean.NT.vec <- c(1,10,100); cv <- 1;
-%% p.AT.scenario.vec <- seq(p.AT.portland,1,length.out = 5)
-
-%% results <- data.frame()
-
-%% for( mean.NT in mean.NT.vec ){
-%%     sd.NT <- cv*mean.NT;
-%%     for(p.AT.scenario in p.AT.scenario.vec ){
-%%         af <- computeAF(p.AT.baseline = p.AT.portland, p.AT.scenario = p.AT.scenario, mean.AT.baseline = summaryStats$mean, sd.AT.baseline = summaryStats$sd, mean.AT.scenario = summaryStats$mean, sd.AT.scenario = summaryStats$sd, mean.NT.baseline = mean.NT,sd.NT.baseline = sd.NT, mean.NT.scenario = mean.NT, sd.NT.scenario = sd.NT, alpha = alpha.CVD, k = 1/2)
-%%         results <-  rbind(results, data.frame(mean.NT, p.AT.scenario, af))
-%%     }
-%% }
-
-%% results <- within(results, mean.NT <- factor(mean.NT, levels = c("1","10","100"), labels = c("low","medium","high")))
-
-%% ggplot(results, aes(x = p.AT.scenario, y = deaths.CVD*af, color = mean.NT)) + geom_line(aes(x=p.AT.scenario,y=deaths.CVD*af)) + theme_bw() + xlab("Proportion with At Least One Trip\nPortland, OR, Male, 45-59") + ylab("Cardiovascular Disease\nDeaths Averted") + scale_colour_discrete(name="Physical Activity")# + coord_cartesian(xlim = c(p.AT.portland,1), ylim = c(0,20))
-
-%% @
-%% \caption{The number of deaths due to cardiovascular disease (CVD)
-%%   averted among males age 45-59 in the Portland area as a function of
-%%   proportion of active travelers and mean non-travel activity.  Note
-%%   that the coefficient of variation for non-travel activity is fixed
-%%   at 1.}
-%% \label{mandm235}
-%% \end{figure}
-
-%% \subsection*{Equity}
-
-%% We are interested in quantifying the degree of disparateness in the
-%% health benefits being achieved across subpopulations.  For the sake of
-%% demonstration we investigate the difference in health benefits
-%% observed in men age 45-59 and women age 45-59.  (Note that this is
-%% simply an example to facilitate discussion about the Bullitt
-%% Foundation proposal.)
-
-%% We see in Figure \ref{mandm235} that if the proportion of active
-%% travelers is set to zero, i.e., no active transport, that
-%% approximately 20-40 CVD deaths are averted.
-
-
-
-%% \begin{figure}
-%% <<mandm2355, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
-%% D <- DAll %>% filter(age == "45-59" && sex == "F")
-%% summaryStats <- summaryStatsAll %>% filter(age == "45-59" & sex == "F")
-
-%% ggplot(D,aes(totalDuration)) + geom_histogram(aes(y=..density..), bins = 10, alpha = 0.2 ) +
-%%     geom_line(aes(y = ..density.., color = "Empirical"), stat = 'density') +
-%%     theme_bw() + xlab("Travel Activity Met-hrs./week") + xlim(c(0,240)) +
-%%     stat_function(aes(color="Fitted"), fun = dlnorm,
-%%                   args = list(meanlog = with(summaryStats,log(mean/sqrt(1+sd^2/mean^2))),
-%%                               sdlog = with(summaryStats,sqrt(log(1+sd^2/mean^2)))))
-%% @
-%% \end{figure}
-
-%% \begin{figure}
-%% <<mandm2356, echo = FALSE, eval = FALSE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
-%% p.AT.portland <- p.AT.portland.F
-%% deaths.CVD <- 65.8 #ageClass5, F, deaths, CVD
-%% alpha.CVD <- log(0.93831942)
-%% mean.NT.vec <- c(1,5,10,25,50); cv <- 1;
-%% p.AT.scenario.vec <- c(p.AT.portland,seq(0,1,length.out = 5))
-
-%% results <- data.frame()
-
-%% for( mean.NT in mean.NT.vec ){
-%%     sd.NT <- cv*mean.NT;
-%%     for(p.AT.scenario in p.AT.scenario.vec ){
-%%         af <- computeAF(p.AT.baseline = p.AT.portland, p.AT.scenario = p.AT.scenario, mean.AT.baseline = summaryStats$mean, sd.AT.baseline = summaryStats$sd, mean.AT.scenario = summaryStats$mean, sd.AT.scenario = summaryStats$sd, mean.NT.baseline = mean.NT,sd.NT.baseline = sd.NT, mean.NT.scenario = mean.NT, sd.NT.scenario = sd.NT, alpha = alpha.CVD, k = 1/2)
-%%         results <-  rbind(results, data.frame(mean.NT, p.AT.scenario, af))
-%%     }
-%% }
-
-%% results <- within(results, mean.NT <- factor(mean.NT, levels = c("1","5","10","25","50")))
-
-%% ggplot(results, aes(x = p.AT.scenario, y = deaths.CVD*af, color = mean.NT)) + geom_line(aes(x=p.AT.scenario,y=deaths.CVD*af)) + theme_bw() + xlab("Proportion of Active Travelers") + ylab("CVD Deaths Averted") + scale_colour_discrete(name="Mean Non-\nTravel Activity\n(MET-hrs/week)") #+ coord_cartesian(xlim = c(0,150))
-%% #ggplot(results, aes(x = p.AT.scenario, y = deaths.CVD*af, color = mean.NT)) + geom_point(aes(x=p.AT.scenario,y=deaths.CVD*af)) + stat_smooth() + theme_bw() + xlab("Proportion of Active Travelers") + ylab("CVD Deaths Averted") + scale_colour_discrete(name="Mean Non-\nTravel Activity\n(MET-hrs/week)") #+ coord_cartesian(xlim = c(0,150))
-%% @
-%% \caption{The number of deaths due to cardiovascular disease (CVD)
-%%   averted among females age 45-59 in the Portland area as a function of
-%%   proportion of active travelers and mean non-travel activity.  Note
-%%   that the coefficient of variation for non-travel activity is fixed
-%%   at 1.}
-%% \label{mandm2356}
-%% \end{figure}
-
-% we see that in Portland the majority of travel is done by modes other
-% than walking or cycling.  In fact, among several of the age-sex
-% classes we see no observed cycling trips at all.  Women over the age
-% of 60 and men over the age of 70 reported no cycling trips.  Men
-% between 30 and 44 years of age, strangely also reported no cycling
-% trips.  The sample size is not very large after stratification by age
-% and sex, it ranges from 5 to 55 sampled indivudual per age-sex class
-% (See Appendix.)  Due to sparseness of cycling data, particularly in the
-% U.S., the model was reparameterized to operate in terms of
-% combined travel actvity, avoiding the diffuculty of estimating mean
-% cycle time from too few cycling trips in the data.
-
-% The age-sex class with the largest trip duration is women between the
-% age of 15 and 29 with over 700 combined minutes of travel per week
-% (1.6 hours a day!).  (Seems like an over-estimate.  We really need
-% confidence intervals on these estimates.)
-
-% In Figure
-% \ref{mandm223} we display the fitted and empirical distributions for
-% travel activity among men in Portland age 45-59. (Note that for the
-% same reason we over-estimate the proportion of inactive travelers, we
-% also over-estimate weekly travel-activity among active travelers.
-% These estimates are dependant on a scaling coefficient that is a function
-% of the true weekly frequency of active travel.)
-
-
-% \begin{equation}
-% %P\{T>0\} &=& P\{T>0|\mathrm{active}\}P\{\mathrm{active}\} + P\{T>0|\mathrm{inactive}\}P\{\mathrm{inactive}\}\\
-% %P\{\mathrm{active}\} &=& \frac{P\{T>0\}}{P\{T>0|\mathrm{active}\}} = \frac{1}{\fAT}P\{T>0\}\\
-% \pi_0 = 1 - \frac{1}{\fAT}P\{T>0\}
-% \end{equation}

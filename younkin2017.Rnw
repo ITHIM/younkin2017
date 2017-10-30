@@ -12,8 +12,8 @@ rm(list=ls())
 opts_knit$set(self.contained=FALSE)
 library("devtools")
 library("xtable")
-#install_github("ITHIM/ITHIM", ref="ithimus")
-install("~/ITHIM/")
+install_github("ITHIM/ITHIM", ref="ithimus")
+#install("~/ITHIM/")
 library("ITHIM")
 NHTS.df <- readRDS(file = "~/GHI/R/data/NHTS.df.rds")
 #example("ITHIM")
@@ -61,19 +61,13 @@ Cambridge University, Cambridge, UK
 \section{Portland, Oregon}
 \Sexpr{knit_child('lib/portland.Rnw')}
 
-% \subsection*{Value of Information}
-% \Sexpr{knit_child('lib/valueOfInformation.Rnw')}
 
-% \section*{Results}
-% \Sexpr{knit_child('lib/results.Rnw')}
-\clearpage
 \section{Discussion}
 \Sexpr{knit_child('lib/discussion.Rnw')}
+\section{Appendix}
+\Sexpr{knit_child('lib/appendix.Rnw')}
+\clearpage
 \singlespacing
 \nolinenumbers
 \bibliography{./lib/ITHIM}
-\section{Appendix}
-\Sexpr{knit_child('lib/appendix.Rnw')}
-% \section*{Conclusion}
-% \Sexpr{knit_child('lib/conclusion.Rnw')}
 \end{document}
