@@ -21,8 +21,8 @@ for( i in 1:nrow(parameters) ){
           meanLogLA = meanLogLA[i],
           sdLogTA = sdLogTA[i],
           sdLogLA = sdLogLA[i],
-          metWalk = 3,
-          metCycle = 6,
+          metWalk = alpha_w,
+          metCycle = alpha_c,
           alpha = log(RR1MET)[i],
           k = k[i],
           quantiles = 1:99/100,
@@ -51,8 +51,8 @@ for( i in 1:nrow(parameters) ){
           meanLogLA = meanLogLA[i],
           sdLogTA = sdLogTA[i],
           sdLogLA = sdLogLA[i],
-          metWalk = 3,
-          metCycle = 6,
+          metWalk = alpha_w,
+          metCycle = alpha_c,
           alpha = log(RR1MET)[i],
           k = k[i],
           quantiles = 1:99/100,
@@ -68,14 +68,6 @@ for( i in 1:nrow(parameters) ){
 portlandITHIM.scenario <- new("ITHIM", pSetList)
 @
 
-Now that we have the baseline parameters estimated we can create an
-alternative scenario with which to compare to baseline.  In this
-example we set $\pAT=\Sexpr{round(pAT.scenario,2)}$ in each age-sex
-class with $\pAT < \Sexpr{round(pAT.scenario,2)}$.  The mean travel
-activity per age-sex class remains unchanged we simply increase the
-proportion which are sampled from the \logNormal{} distribution,
-instead of being set to zero in the model.
-
 \begin{figure}
 <<healthOutcomes, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
 PAF <- mapply(computeAF, portlandITHIM.baseline, portlandITHIM.scenario)
@@ -86,7 +78,65 @@ ggplot(healthOutcomes, aes(x = "", y = diseaseDeltaBurden, fill = burdenType)) +
 \label{healthFig}
 \end{figure}
 
+
+\begin{figure}
+<<healthOutcomes2, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
+results <- c()
+for(pAT.scenario in seq(0.2, 1, length.out = 10)){
+
+    pSetList <- list()
+
+for( i in 1:nrow(parameters) ){
+
+  pSetList[[i]] <- with(parameters,{
+      new("ParameterSet",
+          pAT = ifelse(pAT[i] < pAT.scenario, pAT.scenario, pAT[i]),
+          meanLogTA = meanLogTA[i],
+          meanLogLA = meanLogLA[i],
+          sdLogTA = sdLogTA[i],
+          sdLogLA = sdLogLA[i],
+          metWalk = alpha_w,
+          metCycle = alpha_c,
+          alpha = log(RR1MET)[i],
+          k = k[i],
+          quantiles = 1:99/100,
+          label = as.character(i),
+          disease = disease[i],
+          sex = GEND[i],
+          age = AGECLASS[i],
+          burdenType = burdenType[i],
+          burdenValue = value)
+  })
+}
+
+portlandITHIM.scenario <- new("ITHIM", pSetList)
+
+PAF <- mapply(computeAF, portlandITHIM.baseline, portlandITHIM.scenario)
+healthOutcomes <- parameters %>% mutate(deltaBurden = PAF*value) %>% group_by(burdenType) %>% summarise(diseaseDeltaBurden = sum(deltaBurden))
+
+results <- rbind(results,cbind(pAT.scenario, healthOutcomes))
+
+
+}
+
+ggplot(results, aes(x = pAT.scenario, y = diseaseDeltaBurden, color = burdenType)) + geom_line() + theme_bw()  + labs(x = "Minimum Active Travel Participation", y = "Disease Burden Averted", color = "Burden Type")
+
+@
+\caption{Absolute change in all-cause disease burden across minimum
+  active travel participation, $\pAT^0$.}
+\label{healthFig2}
+\end{figure}
+
+
+Now that we have the baseline parameters estimated we can create
+alternative scenarios with which to compare to baseline by chnaging $\pAT$.
+
 The averted disease burden in terms of DALY, YLL, YLD and deaths is
-shown in Figure \ref{healthFig}.  In it we see that the greatest
-impact occurs in cardiovascular disease (CVD) and dementia.
+shown in Figure \ref{healthFig} in which we set
+$\pAT = \max\{ \pAT, \pAT^0 \}$ in each age-sex class with
+$\pAT^0 = \Sexpr{round(pAT.scenario,2)}$.  In Figure \ref{healthFig2}
+we vary $\pAT^0$ and sum disease burden across all diseases.  In
+Figure \ref{healthFig} we see that the greatest impact occurs in
+cardiovascular disease (CVD) and dementia.
+
 
