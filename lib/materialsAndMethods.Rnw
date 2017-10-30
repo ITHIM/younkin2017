@@ -72,16 +72,17 @@ sex as in Equation \ref{delta}.
 \end{eqnarray}
 
 
-\subsubsection{Travel-Related Physical Activity}
+\subsection{Travel-Related Physical Activity}
 
-We express travel activity, $T$, in terms of \METhrs{} and compute it
-by weighting the total active one-day walking and cycling times, $T_w$
-and $T_c$ (hours), by $\alpha_w^\prime = 7\alpha_w$ and
-$\alpha_c^\prime = 7\alpha_c$, respectively. The average workload of
-walking and cycling in METs, $\alpha_w = 3$ and $\alpha_c = 4.5$ must
-be scaled up to represent a full week of travel.  Note that we assume
-that sampled day is a typical day.  (This assumption breaks down
-because we know the sampled day is a work day.)
+We express travel-related physical activity, or travel activity, $T$,
+in terms of \METhrs{} and compute it by weighting the total active
+one-day walking and cycling times, $T_w$ and $T_c$ (hours), by
+$\alpha_w^\prime = 7\alpha_w$ and $\alpha_c^\prime = 7\alpha_c$,
+respectively. The average workload of walking and cycling in METs,
+$\alpha_w = 3$ and $\alpha_c = 4.5$ must be scaled up to represent a
+full week of travel.  Note that we assume that sampled day is a
+typical day.  (This assumption breaks down because we know the sampled
+day is a work day.)
 
 \begin{equation}
 T = \alpha_w^\prime T_w + \alpha_c^\prime T_c
