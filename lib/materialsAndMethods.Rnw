@@ -91,16 +91,6 @@ subject to inflation due to self-reporting bias.  Figure
 or biking trips to range frome approximately 40\% in Oklahoma City to
 around 20\% in the Portland metropolitan area.
 
-% The 2009 National
-% Household Transportation Survey contained two questions related to the
-% weekly frequency of walking and biking.  to estimate the proportion of
-% active travelers across metropolitan regions, see Figure
-% \ref{inactiveMSA}.
-
-
-% Much of the U.S. metropolitan population does not walk or cycle at
-% all, for travel or otherwise.
-
 \begin{figure}
 <<pATbyMSA, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 6>>=
 D.pAT <- NHTS.df %>% filter(!(location %in% c("-1", NA))) %>% group_by(id, location) %>% summarise(AT = first(nwalktrp)+first(nbiketrp)) %>% ungroup() %>% mutate( AT.level = ifelse(AT == 0, "0 trips", ifelse(AT < 5, "< 5 trips", "> 5 trips"))) %>% group_by(location, AT.level) %>% summarise( count = n()) %>% ungroup()
@@ -120,16 +110,6 @@ ggplot(D.pAT, aes(x = factor(msaName, levels = D.pAT$msaName), y = prop, fill = 
   areas.  Data from the 200? National Household Travel Survey}
 \label{inactiveMSA}
 \end{figure}
-
-% \subsubsection{Leisure Activity}
-
-
-
-% Within each age-sex class the leisure activity is modeled with a
-% \logNormal{} distribution.  In this paper we estimate the age-sex
-% specific means and standard deviations using the American Time Use
-% Survey (ATUS) data \cite{ATUS}.  For more discussion see Section \ref{LA}.
-
 
 \subsection{Health Outcomes}
 
@@ -154,3 +134,19 @@ as in Equation \ref{delta}.
   \delta_B &=& \displaystyle \sum_{i,j} \delta_{ij}{B_0}_{ij}
   \label{delta}
 \end{eqnarray}
+
+% The 2009 National
+% Household Transportation Survey contained two questions related to the
+% weekly frequency of walking and biking.  to estimate the proportion of
+% active travelers across metropolitan regions, see Figure
+% \ref{inactiveMSA}.
+% Much of the U.S. metropolitan population does not walk or cycle at
+% all, for travel or otherwise.
+% \subsubsection{Leisure Activity}
+
+
+
+% Within each age-sex class the leisure activity is modeled with a
+% \logNormal{} distribution.  In this paper we estimate the age-sex
+% specific means and standard deviations using the American Time Use
+% Survey (ATUS) data \cite{ATUS}.  For more discussion see Section \ref{LA}.
