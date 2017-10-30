@@ -39,20 +39,38 @@ scenarios, $\mathbf{x}$ and $\mathbf{x}^\prime$, respectively.
   \label{paf2}
 \end{equation}
 
-\subsection{Physical Activity}
+\subsection{Physical Activity \& Health}
+Positive health benefits including decreased risk for disease are
+well-know to be associated with recreational physical activity.  We
+may include in a collection of recreational activities walking and
+biking for transportation, for there is not a physiological difference
+between walking for transport and for recreation.  Dose-response
+curves of the form $\R(x) = \mathrm{e}^{-\alpha \tilde{x}}$, where
+$\tilde{x} = \sqrt{x}$ and $x$ is the sum of travel and leisure
+activity, are used to estimate disease risk for six diseases; beast
+cancer, colon cancer, cardiovascular disease, depression, dementia and
+diabetes \cite{woodcock2009, monninkhof2007, harriss2009, hamer2009,
+  jeon2007, hamer2007}.  Values for $\alpha$ may be found in the
+appendix.  Travel activity and leisure activity are treated as two
+independent random variables.  An empirical distribution for physical
+activity is then computed for the comparative risk assessment.
+Throughout this paper the term ``physical activity" implies the sum of
+leisure and travel activity.  The population attributable fraction
+represents the proportional change in disease burden and so if we want
+to estimate the absolute change in burden we must first estimate the
+initial disease burden, $B_0$. Here, we consider four burden types and
+six diseases for each of the 16 age-sex classes.  A discussion on
+estimating $B_0$ can be found in section \ref{burden}.  To estimate
+the absolute change in disease burden we simply scale $B_0$ by
+$\delta=1-\af$, Equation \ref{paf2}.  The total disease-specific
+burden reduction, $\delta_B$, is computed by summing across age and
+sex as in Equation \ref{delta}.
 
-We consider physical activity that is vigorous enough and sustained
-long enough to provide physoliogical benefit.  To that end we exclude
-maintenance activites such as brushing teeth or taking a shower.  We
-this in mind we decompose physical activity into three components;
-occupational, leisure and travel.  The relative risk functions, used
-here and in previous versions of ITHIM, exclude the occupational
-component of physical activity, e.g., construction, waiting tables.
-Thus, our exposure variable is the sum of travel and leisure activity.
-These components are treated as two independent random variables.  An
-empirical distribution for physical activity is then computed for the
-comparative risk assessment.  Throughout this paper the term
-``physical activity" implies non-occupational physical activity.
+\begin{eqnarray}
+  \delta_B &=& \displaystyle \sum_{i,j} \delta_{ij}{B_0}_{ij}
+  \label{delta}
+\end{eqnarray}
+
 
 \subsubsection{Travel-Related Physical Activity}
 
@@ -105,35 +123,13 @@ D.pAT <- full_join(D.pAT, bar, by = c("location" = "msaNHTS"))
 D.pAT <- subset(D.pAT, !is.na(AT.level))
 ggplot(D.pAT, aes(x = factor(msaName, levels = D.pAT$msaName), y = prop, fill = AT.level)) + geom_bar(stat = "identity") + theme_bw() + labs(x = "Metropolitan Statistical Area (MSA)", y = "Proportion", fill = "Weekly Walk/Cycle Trips") + coord_flip()
 @
-\caption{Proportion of survey respondants with exactly 0, 1-5 or
+\caption{Proportion of survey respondants with 0, 1-5 or
   greater than 5 walking or cycling trips across U.S. metropolitan
-  areas.  Data from the 200? National Household Travel Survey}
+  areas.  Data from the 2009 National Household Travel Survey.
+  (Includes recreational trips.)}
 \label{inactiveMSA}
 \end{figure}
 
-\subsection{Health Outcomes}
-
-We use relative risk functions for each of the diseases included in
-the model of the form $\R(x) = \mathrm{e}^{-\alpha \tilde{x}}$, where
-$\tilde{x} = \sqrt{x}$ and $x$ is in \METhrs{} \cite{woodcock2009,
-  monninkhof2007, harriss2009, hamer2009, jeon2007, hamer2007}.
-Values for $\alpha$ may be found in the appendix.
-
-The population attrubutable fraction represents the proportional
-change in disease burden, so we must first estimate the initial
-disease burden, $B_0$. Here, we consider four burden types
-and six diseases for each of the 16 age-sex classes.  An example
-estimate for $B_0$ can be seen in section \ref{burden}.
-
-To estimate the resulting disease burden we simply scale $B_0$ by
-$\delta=1-\af$, Equation \ref{paf2}.  The total disease-specific
-burden reduction, $\delta_B$, is computed by summing across age and sex
-as in Equation \ref{delta}.
-
-\begin{eqnarray}
-  \delta_B &=& \displaystyle \sum_{i,j} \delta_{ij}{B_0}_{ij}
-  \label{delta}
-\end{eqnarray}
 
 % The 2009 National
 % Household Transportation Survey contained two questions related to the
