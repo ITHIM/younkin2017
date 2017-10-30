@@ -130,20 +130,3 @@ ggplot(D.pAT, aes(x = factor(msaName, levels = D.pAT$msaName), y = prop, fill = 
   (Includes recreational trips.)}
 \label{inactiveMSA}
 \end{figure}
-
-
-% The 2009 National
-% Household Transportation Survey contained two questions related to the
-% weekly frequency of walking and biking.  to estimate the proportion of
-% active travelers across metropolitan regions, see Figure
-% \ref{inactiveMSA}.
-% Much of the U.S. metropolitan population does not walk or cycle at
-% all, for travel or otherwise.
-% \subsubsection{Leisure Activity}
-
-
-
-% Within each age-sex class the leisure activity is modeled with a
-% \logNormal{} distribution.  In this paper we estimate the age-sex
-% specific means and standard deviations using the American Time Use
-% Survey (ATUS) data \cite{ATUS}.  For more discussion see Section \ref{LA}.
