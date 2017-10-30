@@ -6,22 +6,21 @@
 \begin{table}
     \begin{tabular}{cl}
       Parameter & Description \\
-      \hline \\
+      \hline
       $\pNAT$ & proportion of inactive travelers \\
-      $\muTA$ & mean of log travel activity (among active travelers) \\
-      $\sdTA$ & standard deviation of log of travel activity (among active travelers) \\
-      $\muLA$ & mean of log of leisure activity \\
-      $\muLA$ & standard deviation of log of leisure activity\\
+      $\muTA$ & mean of natural log travel activity (among active travelers) \\
+      $\sdTA$ & standard deviation of natural log of travel activity (among active travelers) \\
+      $\muLA$ & mean of natural log of leisure activity \\
+      $\sdLA$ & standard deviation of natural log of leisure activity\\
   \end{tabular}
-  \caption{Table of parameters used to define the baseline and
-    scenario physical activity distribution}
   \label{pSet}
-  \end{table}
+  \caption{A table of parameters needed to define the physical
+    activity distrubutions for either the baseline and scenario.}
+\end{table}
 
-  The physically activity distribution for each vision (baeline and
-  scenario) is defined in terms of five parameters per age-sex-disease
-  class given in Table \ref{pSet}.
-
+The physically activity distribution for each vision (baeline and
+scenario) is defined in terms of five parameters per age-sex-disease
+class given in Table \ref{pSet}.
 
 \paragraph{Dose-Respone Curves}
 
@@ -36,5 +35,5 @@ $\R(x) = \mathrm{e}^{-\alpha \tilde{x}}$, where $\tilde{x} = \sqrt{x}$
 <<appendix, echo = FALSE, eval = TRUE, results = "asis", collapse = TRUE, warning = FALSE, message = FALSE, fig.height = 3>>=
 doseResponseTable <- doseResponse %>% mutate(alpha = round(-log(RR1MET),4)) %>% select(disease,GEND,AGECLASS,alpha) %>% distinct %>% arrange(disease, GEND, AGECLASS)
 doseResponseTable <- doseResponseTable %>% spread(AGECLASS, alpha)
-xtable(doseResponseTable)
+xtable(doseResponseTable, label = "alphaTable", caption = "A table of values for the dose-response shape parameter")
 @

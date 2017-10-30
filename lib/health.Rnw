@@ -74,7 +74,10 @@ PAF <- mapply(computeAF, portlandITHIM.baseline, portlandITHIM.scenario)
 healthOutcomes <- parameters %>% mutate(deltaBurden = PAF*value) %>% group_by(disease, burdenType) %>% summarise(diseaseDeltaBurden = sum(deltaBurden))
 ggplot(healthOutcomes, aes(x = "", y = diseaseDeltaBurden, fill = burdenType)) + geom_bar(stat = "identity", position = "dodge")  + facet_grid(. ~ disease) + theme_bw()  + labs(x = "", y = "Disease Burden Averted", fill = "Burden Type")
 @
-\caption{Health outcomes given a population with $\pAT > \Sexpr{round(pAT.scenario,2)}$.}
+\caption{Health outcomes given a scenario in which
+  $\pAT^\textrm{min} = \Sexpr{round(pAT.scenario,2)}$, i.e., all age-sex classes
+  have $\pAT$ increased to $\pAT^\textrm{min}$ if it is not already larger than
+  $\pAT^\textrm{min}$}
 \label{healthFig}
 \end{figure}
 
@@ -82,7 +85,7 @@ ggplot(healthOutcomes, aes(x = "", y = diseaseDeltaBurden, fill = burdenType)) +
 \begin{figure}
 <<healthOutcomes2, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
 results <- c()
-for(pAT.scenario in seq(0.2, 1, length.out = 10)){
+for(pAT.scenario in seq(0.2, 1, length.out = 2)){
 
     pSetList <- list()
 
@@ -123,7 +126,7 @@ ggplot(results, aes(x = pAT.scenario, y = diseaseDeltaBurden, color = burdenType
 
 @
 \caption{Absolute change in all-cause disease burden across minimum
-  active travel participation, $\pAT^0$.}
+  active travel participation, $\pAT^\textrm{min}$.}
 \label{healthFig2}
 \end{figure}
 
@@ -133,9 +136,8 @@ alternative scenarios with which to compare to baseline by chnaging $\pAT$.
 
 The averted disease burden in terms of DALY, YLL, YLD and deaths is
 shown in Figure \ref{healthFig} in which we set
-$\pAT = \max\{ \pAT, \pAT^0 \}$ in each age-sex class with
-$\pAT^0 = \Sexpr{round(pAT.scenario,2)}$.  In Figure \ref{healthFig2}
-we vary $\pAT^0$ and sum disease burden across all diseases.  In
+$\pAT$ to $\max\{ \pAT, \pAT^\textrm{min} \}$ in each age-sex class  In Figure \ref{healthFig2}
+we vary $\pAT^\textrm{min}$ and sum disease burden across all diseases.  In
 Figure \ref{healthFig} we see that the greatest impact occurs in
 cardiovascular disease (CVD) and dementia.
 

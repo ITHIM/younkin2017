@@ -67,6 +67,7 @@ Cambridge University, Cambridge, UK
 \clearpage
 \section{Appendix}
 \Sexpr{knit_child('lib/appendix.Rnw')}
+\clearpage
 \singlespacing
 \nolinenumbers
 \bibliography{./lib/ITHIM}

@@ -39,7 +39,7 @@ scenarios, $\mathbf{x}$ and $\mathbf{x}^\prime$, respectively.
   \label{paf2}
 \end{equation}
 
-\subsection{Physical Activity \& Health}
+\subsection{Physical Activity \& Health}\label{PAandHealth}
 Positive health benefits including decreased risk for disease are
 well-know to be associated with recreational physical activity.  We
 may include in a collection of recreational activities walking and
