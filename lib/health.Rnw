@@ -85,7 +85,7 @@ ggplot(healthOutcomes, aes(x = "", y = diseaseDeltaBurden, fill = burdenType)) +
 \begin{figure}
 <<healthOutcomes2, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
 results <- c()
-for(pAT.scenario in seq(0.2, 1, length.out = 2)){
+for(pAT.scenario in seq(0.2, 1, length.out = 25)){
 
     pSetList <- list()
 
