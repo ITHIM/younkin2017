@@ -7,7 +7,7 @@ energy equilance from the Ainsworth Compendium of Physical Actvitites
 the years 2011-2015.
 
 \begin{figure}
-<<atus1, echo = FALSE, eval = TRUE, warning = FALSE, message = FALSE, fig.height = 6>>=
+<<atus1, echo = FALSE, eval = FALSE, warning = FALSE, message = FALSE, fig.height = 6>>=
 newMETsFile <-'https://raw.githubusercontent.com/vargovargo/ACS_ITHIM/master/ATUS_to_METS_key.csv'
 
 newMETs <- read.csv(file = newMETsFile, stringsAsFactors = FALSE, colClasses = c("character","character","character","character","numeric","character","character","character"))  %>%
