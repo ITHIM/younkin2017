@@ -7,11 +7,11 @@
     \begin{tabular}{cl}
       Parameter & Description \\
       \hline
-      $\pNAT$ & proportion of inactive travelers \\
-      $\muTA$ & mean of natural log travel activity (among active travelers) \\
-      $\sdTA$ & standard deviation of natural log of travel activity (among active travelers) \\
-      $\muLA$ & mean of natural log of leisure activity \\
-      $\sdLA$ & standard deviation of natural log of leisure activity\\
+      $\pNAT = 1 - \pAT$ & the proportion of inactive travelers \\
+      $\muTA$ & the mean of the natural log of travel activity (among active travelers) \\
+      $\sdTA$ & the standard deviation of the natural log of travel activity (among active travelers) \\
+      $\muLA$ & the mean of the natural log of leisure activity \\
+      $\sdLA$ & the standard deviation of the natural log of leisure activity\\
   \end{tabular}
   \label{pSet}
   \caption{A table of parameters needed to define the physical
