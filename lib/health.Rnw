@@ -85,7 +85,7 @@ ggplot(healthOutcomes, aes(x = "", y = diseaseDeltaBurden, fill = burdenType)) +
 \begin{figure}
 <<healthOutcomes2, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
 results <- c()
-for(pAT.scenario in seq(0.2, 1, length.out = 20)){
+for(pAT.scenario in seq(0.2, 1, length.out = 2)){
 
     pSetList <- list()
 
@@ -156,7 +156,7 @@ area.
 \begin{figure}
 <<healthOutcomes3, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
 results <- c()
-for(gamma in seq(1, 10, length.out = 20)){
+for(gamma in seq(1, 10, length.out = 2)){
 
     pSetList <- list()
 
@@ -200,7 +200,7 @@ An alternative approach to defining the alternative scenario is to
 increase the amount of travel activty among active travelers, i.e.,
 $T_{\textrm{scenario}} = \gamma T_{\textrm{baseline}} = $ and $E \log T_{\textrm{scenario}} = E \log (\gamma T_{\textrm{baseline}})=
 \log\gamma + E \log T_{\textrm{baseline}}$ or $\mu_{\textrm{scenario}}
-= \log\gamma + \mu_{\textrm{baseline}}$.  In Figure \ref{helthFig3} we
+= \log\gamma + \mu_{\textrm{baseline}}$.  In Figure \ref{healthFig3} we
 vary $\gamma$ from 1 to 10.  Note that the increase in travel activity
 can be accomplished by increasing cycling or walking among active travelers.
 
