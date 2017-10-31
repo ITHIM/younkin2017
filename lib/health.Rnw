@@ -207,5 +207,5 @@ can be accomplished by increasing cycling or walking among active travelers.
 
 \paragraph{Increased Participation and Activity}
 
-Naturally we may also increase both $\pAT and $\gamma$.  No figure
+Naturally we may also increase both $\pAT$ and $\gamma$.  No figure
 yet.
