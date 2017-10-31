@@ -20,22 +20,24 @@ Household Activity Survey (OHAS).
 
 \Sexpr{knit_child('./ohas.Rnw')}
 
-<<allCounties, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = TRUE, fig.height = 6>>=
+
+<<allCounties, eval = TRUE, echo = FALSE, results = "hide", warning = FALSE, error = TRUE, message = TRUE, fig.height = 3>>=
 alpha_w <- 3; alpha_c <- 4.5; nAT <- 3; fAT <- 1/nAT;
 
 OHAS.df <- OHAS.df %>% mutate(ID = paste0(SAMPN, "-", PERNO)) %>% mutate(AGECLASS = ITHIM:::convertToAgeClass(AGE))
-trip.df <-  OHAS.df %>% filter( !(TPURP %in% c("20", "96"))) %>% complete(ID,MODE) %>% filter(MODE %in% c("walk","cycle")) %>% select(ID, MODE, TPURP, TRPDUR)
+trip.df <-  OHAS.df %>% filter( !(TPURP %in% c("20", "96"))) %>% complete(ID,MODE) %>% filter(MODE %in% c("walk","cycle") & !is.na(MODE)) %>% select(ID, MODE, TPURP, TRPDUR)
 subject.df <- OHAS.df %>% select(ID, GEND, AGECLASS) %>% distinct()
 
-D <- full_join(trip.df, subject.df, by = "ID", suffix = c(".trip",".subject")) %>% group_by(ID, MODE, GEND, AGECLASS) %>% summarise(TOTDUR = sum(TRPDUR)) %>% ungroup() %>% spread(MODE,TOTDUR) %>% mutate(TA = 7/60*(alpha_w*ifelse(is.na(walk),0,walk) + alpha_c*ifelse(is.na(cycle),0,cycle)))
+D <- full_join(trip.df, subject.df, by = "ID", suffix = c(".trip",".subject")) %>% filter(MODE %in% c("walk","cycle")) %>% group_by(ID, MODE, GEND, AGECLASS) %>% summarise(TOTDUR = sum(TRPDUR)) %>% ungroup() %>% spread(MODE,TOTDUR) %>% mutate(TA = 7/60*(alpha_w*ifelse(is.na(walk),0,walk) + alpha_c*ifelse(is.na(cycle),0,cycle)))
 
 D <- filter(D, !(AGECLASS %in% c("00-04","05-14")))
 D <- within(D, AGECLASS <- factor(AGECLASS, levels = c("15-29", "30-44", "45-59", "60-69", "70-79", "80+")))
-parameters.TA <- D %>% filter(TA > 0) %>% mutate(logTA = log(TA)) %>% group_by(GEND, AGECLASS) %>% summarise( meanLogTA = mean(logTA), sdLogTA = sd(logTA))
+
+parameters.TA <- D %>% filter(TA > 0 & !is.na(TA)) %>% mutate(logTA = log(TA)) %>% group_by(GEND, AGECLASS) %>% summarise( meanLogTA = mean(logTA), sdLogTA = sd(logTA))
 @
 
 \begin{figure}
-<<inactivePortland, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = TRUE, fig.height = 3>>=
+<<inactivePortland, eval = TRUE, echo = FALSE, results = "hide", warning = FALSE, error = TRUE, message = TRUE, fig.height = 3>>=
 pAT <- D %>% group_by(GEND, AGECLASS) %>% summarise( pAT = 1/fAT*sum(TA > 0, na.rm = TRUE)/length(TA))
 pAT <- within(pAT, AGECLASS <- factor(AGECLASS))
 pAT <- within(pAT, GEND <- factor(GEND))
@@ -44,10 +46,19 @@ pAT %>% ggplot(aes(x = GEND, y = pAT, fill = AGECLASS)) + geom_bar(stat = "ident
 \caption{Proportion of active travelers in Portland Metro area}
 \label{inactivePortland}
 \end{figure}
+\begin{figure}
+<<walkBike, eval = TRUE, echo = FALSE, results = "hide", warning = FALSE, error = TRUE, message = TRUE, fig.height = 3>>=
+D %>% filter(TA > 0 & !is.na(TA)) %>% gather("mode", "totDur",4:5) %>% mutate(totDur = ifelse(is.na(totDur),0,totDur)) %>% ggplot(., aes(x=GEND, y = totDur, fill = AGECLASS) ) + geom_boxplot()  + facet_grid(. ~ mode) + theme_bw()  + labs(x = "Sex", y = "Reported One-Day Travel Time", fill = "Age") + scale_y_continuous(trans = "log", breaks = breaks <- exp(seq(0,8, by = 1)), labels = round(breaks,0))
+@
+\caption{The reported one-day walking and cycling times in minutes in
+  the Portland metroplitan are.  Only Includes people with nonzero
+  walking or cycling times, respectively.}
+\label{travelTime}
+\end{figure}
 
 \begin{figure}
-<<allCountiesPlot, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = TRUE, fig.height = 6>>=
-ggplot(subset(D, TA > 0), aes(x = GEND, y = log(TA), fill = AGECLASS)) + geom_boxplot() + theme_bw() + labs(x = "Sex", y = "Travel Activity (natural log scale) (MET-hrs./week)", fill = "Age")
+<<allCountiesPlot, eval = TRUE, echo = FALSE, results = "hide", warning = FALSE, error = TRUE, message = TRUE, fig.height = 3>>=
+ggplot(subset(D, TA > 0 & !is.na(TA)), aes(x = GEND, y = TA, fill = AGECLASS)) + geom_boxplot() + theme_bw() + labs(x = "Sex", y = "Travel Activity (natural log scale) (MET-hrs./week)", fill = "Age")  + scale_y_continuous(trans = "log", breaks = breaks <- exp(seq(0,8, by = 1)), labels = round(breaks,0))
 @
 \label{samuel}
 \caption{Travel Activity ($T = \alpha_w^\prime T_w + \alpha_c^\prime T_c$) for Portland

@@ -85,7 +85,7 @@ ggplot(healthOutcomes, aes(x = "", y = diseaseDeltaBurden, fill = burdenType)) +
 \begin{figure}
 <<healthOutcomes2, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
 results <- c()
-for(pAT.scenario in seq(0.2, 1, length.out = 10)){
+for(pAT.scenario in seq(0.2, 1, length.out = 20)){
 
     pSetList <- list()
 
@@ -148,17 +148,15 @@ manifest primarily through a significant decrease in disability
 adjusted life years (DALY) due to cardiovascular disease (CVD) and
 Dementia.  In Figure \ref{healthFig2} we vary $\pAT^\textrm{min}$ from
 the minimum value seen across all age-sex classes to one, and sum
-disease burden across all diseases.  Increasing oparticipation in
+disease burden across all diseases.  Increasing participation in
 active transportation to 50\% across all age-sex classes would result
-in approximately 1,000 DALYs averted in the Portland metropolitan
+in approximately 1,500 DALYs averted in the Portland metropolitan
 area.
-
-\paragraph{Increased Travel Activity among Active Travelers}
 
 \begin{figure}
 <<healthOutcomes3, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
 results <- c()
-for(gamma in seq(1, 10, length.out = 10)){
+for(gamma in seq(1, 10, length.out = 20)){
 
     pSetList <- list()
 
@@ -196,4 +194,18 @@ ggplot(results, aes(x = gamma, y = diseaseDeltaBurden, color = burdenType)) + ge
 \label{healthFig3}
 \end{figure}
 
-$T_{\textrm{scenario}} = \gamma T_{\textrm{baseline}}$
+\paragraph{Increased Travel Activity among Active Travelers}
+
+An alternative approach to defining the alternative scenario is to
+increase the amount of travel activty among active travelers, i.e.,
+$T_{\textrm{scenario}} = \gamma T_{\textrm{baseline}} = $ and $E \log T_{\textrm{scenario}} = E \log (\gamma T_{\textrm{baseline}})=
+\log\gamma + E \log T_{\textrm{baseline}}$ or $\mu_{\textrm{scenario}}
+= \log\gamma + \mu_{\textrm{baseline}}$.  In Figure \ref{helthFig3} we
+vary $\gamma$ from 1 to 10.  Note that the increase in travel activity
+can be accomplished by increasing cycling or walking among active travelers.
+
+
+\paragraph{Increased Participation and Activity}
+
+Naturally we may also increase both $\pAT and $\gamma$.  No figure
+yet.

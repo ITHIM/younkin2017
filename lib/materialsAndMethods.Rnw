@@ -2,7 +2,8 @@
 % !TeX root = ../ITHIM-manuscript.Rnw
 
 To estimate the health benefits associated with an increase in active
-transportation we perfrom a comparitive risk assesment in which the
+transportation we perform a comparitive risk assesment of physical
+activity before and after an increase in active transportation.  The
 health impacts of a change of exposure to some health factor in the
 population is quantified in terms of the population attributable
 fraction, $\af$.  In our case, the population attributable fraction
@@ -64,12 +65,7 @@ estimating $B_0$ can be found in section \ref{burden}.  To estimate
 the absolute change in disease burden we simply scale $B_0$ by
 $\delta=1-\af$, Equation \ref{paf2}.  The total disease-specific
 burden reduction, $\delta_B$, is computed by summing across age and
-sex as in Equation \ref{delta}.
-
-\begin{eqnarray}
-  \delta_B &=& \displaystyle \sum_{i,j} \delta_{ij}{B_0}_{ij}
-  \label{delta}
-\end{eqnarray}
+sex, $\delta_B = \displaystyle \sum_{i,j} \delta_{ij}{B_0}_{ij}$.
 
 \subsection{Travel-Related Physical Activity}
 We express travel-related physical activity, or travel activity, $T$,
@@ -109,7 +105,7 @@ the Oklahoma City metropolitan to around 20\% in the Portland
 metropolitan area.
 
 \begin{figure}
-<<pATbyMSA, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 6.5>>=
+<<pATbyMSA, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 6>>=
 D.pAT <- NHTS.df %>% filter(!(location %in% c("-1", NA))) %>% group_by(id, location) %>% summarise(AT = first(nwalktrp)+first(nbiketrp)) %>% ungroup() %>% mutate( AT.level = ifelse(AT == 0, "0 trips", ifelse(AT < 5, "< 5 trips", "> 5 trips"))) %>% group_by(location, AT.level) %>% summarise( count = n()) %>% ungroup()
 D.pAT <- within(D.pAT, AT.level <- factor(AT.level, levels = rev(c("0 trips", "< 5 trips", "> 5 trips"))))
 D.total <- D.pAT %>% group_by(location) %>% summarise(total = sum(count))

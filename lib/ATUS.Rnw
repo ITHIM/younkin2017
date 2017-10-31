@@ -141,7 +141,7 @@ fiveYear <- bind_rows(readATUS1yr(year = 2011, stateFIPS = 41, metroCode = 1, me
 # fiveYear  %>% ggplot(aes(x = METs, ..density.., colour = AGECAT)) + geom_freqpoly(binwidth = 25) + facet_grid( SEX ~ .) + labs(x = "Non-Travel Marginal MET-hrs./week", colour = "Age") + coord_cartesian(xlim = c(0, 250))
 
 
-ggplot(fiveYear, aes(x = SEX, y = log(METs), fill = AGECAT)) + geom_boxplot() + theme_bw() + labs(x = "Sex", y = "Leisure Activity (natural log scale) (MET-hrs./week", fill = "Age")
+ggplot(fiveYear, aes(x = SEX, y = METs, fill = AGECAT)) + geom_boxplot() + theme_bw() + labs(x = "Sex", y = "Leisure Activity (natural log scale) (MET-hrs./week", fill = "Age")  + scale_y_continuous(trans = "log", breaks = breaks <- exp(seq(0,8, by = 1))) #, labels = comma(breaks, digits = 1))
 
 parameters.LA <- fiveYear %>% mutate(logLA = ifelse(METs == 0, log(min(METs[METs!=0])), log(METs))) %>% group_by(SEX, AGECAT) %>% summarise( meanLogLA = mean(logLA,na.rm = TRUE), sdLogLA = sd(logLA, na.rm = TRUE))
 
