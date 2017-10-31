@@ -3,7 +3,7 @@ our analysis to the sample of respondents residing within metropolitan
 areas in the state of Oregon. Leisure-time Metabolic Equivalents
 (METs) for each respondent were calculated using activity times and
 energy equilance from the Ainsworth Compendium of Physical Actvitites
-\cite{}.  To increase the sample size, we pooled ATUS responses for
+\cite{ainsworth}.  To increase the sample size, we pooled ATUS responses for
 the years 2011-2015.
 
 \begin{figure}
