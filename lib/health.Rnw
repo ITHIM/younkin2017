@@ -1,3 +1,15 @@
+A comparative risk assessment is a comparison between the risks
+associated with two different population distributions of an exposure
+variable.  Thus, we must define scenarios that are alternative to the
+baseline model.  To do so we change baseline parameter estimates in a
+systematic way.  Firstly, we increase the proportion of active
+travelers, $\pAT{}$, and create scenarios based on an increase in
+participation in active travel.  Secondly we create alternative
+scenarios by increasing how much activity the active travelers
+achieve, while leaving the inactive travelers unchanged.  And, of
+course, we consider combinations of the two scenarios in which both
+participation and travel activity are increased.
+
 <<parameters, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
 parameters.LA <- readRDS(file = "./../data/parameters.LA.rds")
 doseResponse <- read.csv(file = "./../data/dose-response.csv", header = TRUE)
@@ -85,7 +97,7 @@ ggplot(healthOutcomes, aes(x = "", y = diseaseDeltaBurden, fill = burdenType)) +
 \begin{figure}
 <<healthOutcomes2, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
 results <- c()
-for(pAT.scenario in seq(0.2, 1, length.out = 2)){
+for(pAT.scenario in seq(0.2, 1, length.out = 10)){
 
     pSetList <- list()
 
@@ -156,7 +168,7 @@ area.
 \begin{figure}
 <<healthOutcomes3, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
 results <- c()
-for(gamma in seq(1, 10, length.out = 2)){
+for(gamma in seq(1, 10, length.out = 10)){
 
     pSetList <- list()
 
