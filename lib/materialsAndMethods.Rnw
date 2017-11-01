@@ -132,7 +132,7 @@ D.pAT <- within(D.pAT, {
     msaName <- factor(msaName, levels = msaNameVec[msaOrder])
     })
 
-ggplot(D.pAT, aes(x = msaName, y = prop, fill = AT.level)) + geom_bar(stat = "identity") + theme_bw() + labs(x = "Metropolitan Statistical Area (MSA)", y = "Proportion", fill = "Weekly Walk/Cycle Trips") + coord_flip()
+ggplot(D.pAT, aes(x = msaName, y = prop, fill = AT.level)) + geom_bar(stat = "identity") + theme_bw() + labs(x = "Metropolitan Statistical Area (MSA)", y = "Proportion", fill = "Weekly Walk/Bike Trips") + coord_flip() + theme(legend.position = "bottom") #+ scale_fill_manual(labels = rev(c("0 trips", "< 5 trips", ">=5 trips")), values = rev(c("red", "yellow","green")))
 @
 \caption{Proportion of survey respondants with 0, 1-5 or
   greater than 5 walking or cycling trips across U.S. metropolitan
