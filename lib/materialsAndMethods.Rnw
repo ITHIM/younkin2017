@@ -106,17 +106,33 @@ metropolitan area.
 
 \begin{figure}
 <<pATbyMSA, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 6>>=
-D.pAT <- NHTS.df %>% filter(!(location %in% c("-1", NA))) %>% group_by(id, location) %>% summarise(AT = first(nwalktrp)+first(nbiketrp)) %>% ungroup() %>% mutate( AT.level = ifelse(AT == 0, "0 trips", ifelse(AT < 5, "< 5 trips", "> 5 trips"))) %>% group_by(location, AT.level) %>% summarise( count = n()) %>% ungroup()
+D.pAT <- NHTS.df %>% filter(!(location %in% c("-1", NA))) %>% group_by(id, location) %>% summarise(AT = first(nwalktrp)+first(nbiketrp)) %>% ungroup() %>% filter(!is.na(AT)) %>% mutate( AT.level = ifelse(AT == 0, "0 trips", ifelse(AT < 5, "< 5 trips", "> 5 trips"))) %>% group_by(location, AT.level) %>% summarise( count = n()) %>% ungroup()
+
 D.pAT <- within(D.pAT, AT.level <- factor(AT.level, levels = rev(c("0 trips", "< 5 trips", "> 5 trips"))))
+
 D.total <- D.pAT %>% group_by(location) %>% summarise(total = sum(count))
+
 D.pAT <- full_join(D.pAT,D.total,by="location") %>% mutate(prop = count/total) %>% arrange(desc(AT.level),count)
+
 msaIDFile <- read.csv(system.file("join2.csv", package = "ITHIM"), stringsAsFactors = FALSE)
 msaIDFile %>% select(msaName, msaNHTS) %>% filter(!is.na(msaNHTS)) %>% distinct(msaName, msaNHTS)
+
 bar <- msaIDFile %>% select(msaName, msaNHTS) %>% filter(!is.na(msaNHTS)) %>% group_by(msaNHTS) %>% summarise(msaName = first(msaName))
 bar <- within(bar, msaNHTS <- factor(msaNHTS))
+
 D.pAT <- full_join(D.pAT, bar, by = c("location" = "msaNHTS"))
 D.pAT <- subset(D.pAT, !is.na(AT.level))
-ggplot(D.pAT, aes(x = factor(msaName, levels = D.pAT$msaName), y = prop, fill = AT.level)) + geom_bar(stat = "identity") + theme_bw() + labs(x = "Metropolitan Statistical Area (MSA)", y = "Proportion", fill = "Weekly Walk/Cycle Trips") + coord_flip()
+
+msaOrder <- D.pAT %>% filter(AT.level == "0 trips") %>% arrange(desc(prop)) %>% select(location) %>% unlist()
+msaNameVec <- bar$msaName
+msaIDVec <- bar$msaNHTS
+names(msaNameVec) <- msaIDVec
+
+D.pAT <- within(D.pAT, {
+    msaName <- factor(msaName, levels = msaNameVec[msaOrder])
+    })
+
+ggplot(D.pAT, aes(x = msaName, y = prop, fill = AT.level)) + geom_bar(stat = "identity") + theme_bw() + labs(x = "Metropolitan Statistical Area (MSA)", y = "Proportion", fill = "Weekly Walk/Cycle Trips") + coord_flip()
 @
 \caption{Proportion of survey respondants with 0, 1-5 or
   greater than 5 walking or cycling trips across U.S. metropolitan
