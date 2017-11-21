@@ -59,9 +59,33 @@ OHAS.full %>% filter(TA > 0 & !is.na(TA)) %>% gather("mode", "totDur",4:5) %>% m
 \begin{figure}
 <<walkBikeAll, eval = TRUE, echo = FALSE, results = "hide", warning = FALSE, error = TRUE, message = TRUE, fig.height = 3>>=
 
-parameters.TA.All <- OHAS.full %>% group_by(GEND, AGECLASS) %>% mutate(walk = ifelse(is.na(walk),0,walk), cycle = ifelse(is.na(cycle),0,cycle) ) %>% summarise( meanWalk = mean(walk), meanCycle = mean(cycle))
+parameters.TA.All <- OHAS.full %>% group_by(GEND, AGECLASS) %>% mutate(walk = ifelse(is.na(walk),0,walk), cycle = ifelse(is.na(cycle),0,cycle) ) %>% summarise( meanWalk = 7*mean(walk), meanCycle = 7*mean(cycle)) %>% ungroup()
 
-OHAS.full %>% gather("mode", "totDur",4:5) %>% mutate(totDur = ifelse(is.na(totDur),0,totDur)) %>% ggplot(., aes(x=GEND, y = totDur, fill = AGECLASS) ) + geom_boxplot()  + facet_grid(. ~ mode) + theme_bw()  + labs(x = "Sex", y = "Reported One-Day Travel Time", fill = "Age") #+ scale_y_continuous(trans = "log", breaks = breaks <- exp(seq(0,8, by = 1)), labels = round(breaks,0))
+foo <- parameters.TA.All %>% gather("mode","value",3:4)
+
+foo <- within(foo, {
+    mode <- ifelse(mode=="meanWalk","walk",ifelse( mode == "meanCycle", "cycle",NA))
+    sex <- factor(GEND, levels = c("M","F"))
+    ageClass <- factor(AGECLASS, levels = c("00-04", "05-14", "15-29", "30-44", "45-59", "60-69", "70-79", "80+"))
+})
+
+foo <- complete(foo, ageClass,sex,mode) %>% select(ageClass, sex, mode, value)
+
+foo <- within(foo, {
+    ageClass <- ifelse( ageClass == "00-04", "ageClass1",
+                       ifelse( ageClass == "05-14", "ageClass2",
+                              ifelse( ageClass == "15-29", "ageClass3",
+                                     ifelse( ageClass == "30-44", "ageClass4",
+                                            ifelse( ageClass == "45-59", "ageClass5",
+                                                   ifelse( ageClass == "60-69", "ageClass6",
+                                                          ifelse( ageClass == "70-79", "ageClass7",
+                                                                 ifelse( ageClass == "80+", "ageClass8",
+                                                                        NA))))))))
+})
+
+write.csv(foo, file = "~/ITHIM/inst/activeTravelOHAS.csv", quote = FALSE, row.names = FALSE)
+
+#OHAS.full %>% gather("mode", "totDur",4:5) %>% mutate(totDur = ifelse(is.na(totDur),0,totDur)) %>% ggplot(., aes(x=GEND, y = totDur, fill = AGECLASS) ) + geom_boxplot()  + facet_grid(. ~ mode) + theme_bw()  + labs(x = "Sex", y = "Reported One-Day Travel Time", fill = "Age") #+ scale_y_continuous(trans = "log", breaks = breaks <- exp(seq(0,8, by = 1)), labels = round(breaks,0))
 @
 \caption{The reported one-day walking and cycling times in minutes in
   the Portland metroplitan are.  (Includes everyone.)}
