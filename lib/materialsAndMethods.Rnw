@@ -105,7 +105,7 @@ the Oklahoma City metropolitan to around 20\% in the Portland
 metropolitan area.
 
 \begin{figure}
-<<pATbyMSA, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 6>>=
+<<pATbyMSA, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, dev=c('pdf', 'png'), message = FALSE, fig.height = 6>>=
 D.pAT <- NHTS.df %>% filter(!(location %in% c("-1", NA))) %>% group_by(id, location) %>% summarise(AT = first(nwalktrp)+first(nbiketrp)) %>% ungroup() %>% filter(!is.na(AT)) %>% mutate( AT.level = ifelse(AT == 0, "0 trips", ifelse(AT < 5, "< 5 trips", "> 5 trips"))) %>% group_by(location, AT.level) %>% summarise( count = n()) %>% ungroup()
 
 D.pAT <- within(D.pAT, AT.level <- factor(AT.level, levels = rev(c("0 trips", "< 5 trips", "> 5 trips"))))

@@ -7,7 +7,7 @@ energy equilance from the Ainsworth Compendium of Physical Actvitites
 the years 2011-2015.
 
 \begin{figure}
-<<atus1, echo = FALSE, eval = FALSE, warning = FALSE, message = FALSE, fig.height = 3>>=
+<<atus1, echo = FALSE, eval = TRUE, warning = FALSE, message = FALSE, fig.height = 3, dev=c('pdf', 'png')>>=
 newMETsFile <-'https://raw.githubusercontent.com/vargovargo/ACS_ITHIM/master/ATUS_to_METS_key.csv'
 
 newMETs <- read.csv(file = newMETsFile, stringsAsFactors = FALSE, colClasses = c("character","character","character","character","numeric","character","character","character"))  %>%
@@ -147,6 +147,15 @@ parameters.LA <- fiveYear %>% mutate(logLA = ifelse(METs == 0, log(min(METs[METs
 
 parameters.LA <- with(parameters.LA, data.frame(GEND = ifelse(SEX == "female","F", ifelse(SEX == "male", "M", NA)), AGECLASS = AGECAT, meanLogLA, sdLogLA))
 
+parameters.LA.untransformed <- fiveYear %>%  group_by(SEX, AGECAT) %>% summarise( meanMETs = mean(METs,na.rm = TRUE), sdMETs = sd(METs, na.rm = TRUE))
+
+muNonTravelMatrix <- rbind(rep(0.1,2), rep(0.1,2), matrix(parameters.LA.untransformed$meanMETs/parameters.LA.untransformed$meanMETs[1], ncol = 2))
+dimnames(muNonTravelMatrix) <- list(paste0("ageClass",1:8),c("F","M"))
+muNonTravelMatrix <- muNonTravelMatrix[,2:1]
+
+parameters.LA.untransformed.ungrouped <- fiveYear %>%  summarise( meanMETs = mean(METs,na.rm = TRUE), sdMETs = sd(METs, na.rm = TRUE))
+
+saveRDS(muNonTravelMatrix, file = "~/younkin2017/data/muNonTravelMatrix.portland.rds")
 
 # Note the arbitrary numbers inserted here for bottom two age classes.
 #parameters.LA <- rbind(data.frame(GEND = c("F","F","M","M"), AGECLASS = rep(c("00-04", "05-14"),2),meanLogLA = 4, sdLogLA = 0.5), parameters.LA) %>% arrange(GEND, AGECLASS)
