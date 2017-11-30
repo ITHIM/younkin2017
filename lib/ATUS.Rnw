@@ -153,9 +153,11 @@ muNonTravelMatrix <- rbind(rep(0.1,2), rep(0.1,2), matrix(parameters.LA.untransf
 dimnames(muNonTravelMatrix) <- list(paste0("ageClass",1:8),c("F","M"))
 muNonTravelMatrix <- muNonTravelMatrix[,2:1]
 
+saveRDS(muNonTravelMatrix, file = "./../data/muNonTravelMatrix.portland.rds")
+
 parameters.LA.untransformed.ungrouped <- fiveYear %>%  summarise( meanMETs = mean(METs,na.rm = TRUE), sdMETs = sd(METs, na.rm = TRUE))
 
-saveRDS(muNonTravelMatrix, file = "~/younkin2017/data/muNonTravelMatrix.portland.rds")
+saveRDS(parameters.LA.untransformed.ungrouped, file = "./../data/parameters.LA.untransformed.ungrouped.rds")
 
 # Note the arbitrary numbers inserted here for bottom two age classes.
 #parameters.LA <- rbind(data.frame(GEND = c("F","F","M","M"), AGECLASS = rep(c("00-04", "05-14"),2),meanLogLA = 4, sdLogLA = 0.5), parameters.LA) %>% arrange(GEND, AGECLASS)
