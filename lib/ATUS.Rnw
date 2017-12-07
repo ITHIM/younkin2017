@@ -151,20 +151,20 @@ parameters.LA.untransformed <- fiveYear %>%  group_by(SEX, AGECAT) %>% summarise
 
 muNonTravelMatrix <- rbind(rep(0.1,2), rep(0.1,2), matrix(parameters.LA.untransformed$meanMETs/parameters.LA.untransformed$meanMETs[1], ncol = 2))
 dimnames(muNonTravelMatrix) <- list(paste0("ageClass",1:8),c("F","M"))
-muNonTravelMatrix <- muNonTravelMatrix[,2:1]
 
+muNonTravelMatrix <- muNonTravelMatrix[,2:1]
 saveRDS(muNonTravelMatrix, file = "./../data/muNonTravelMatrix.portland.rds")
+write.csv(muNonTravelMatrix, file = "./../data/muNonTravelMatrix.csv", quote = FALSE, row.names = FALSE)
 
 parameters.LA.untransformed.ungrouped <- fiveYear %>%  summarise( meanMETs = mean(METs,na.rm = TRUE), sdMETs = sd(METs, na.rm = TRUE))
-
 saveRDS(parameters.LA.untransformed.ungrouped, file = "./../data/parameters.LA.untransformed.ungrouped.rds")
-
+write.csv(parameters.LA.untransformed.ungrouped, file = "./../data/parameters.LA.untransformed.ungrouped.csv", quote = FALSE, row.names = FALSE)
 # Note the arbitrary numbers inserted here for bottom two age classes.
 #parameters.LA <- rbind(data.frame(GEND = c("F","F","M","M"), AGECLASS = rep(c("00-04", "05-14"),2),meanLogLA = 4, sdLogLA = 0.5), parameters.LA) %>% arrange(GEND, AGECLASS)
 
 parameters.LA <- within(parameters.LA, GEND <- factor(GEND, levels = c("M","F")))
-
 saveRDS(parameters.LA, "./../data/parameters.LA.rds")
+write.csv(parameters.LA, file = "./../data/parameters.LA.csv", quote = FALSE, row.names = FALSE)
 
 #ggplot(subset(D, TA > 0), aes(x = GEND, y = TA, fill = AGECLASS)) + geom_boxplot() + ylab("Travel Activity (MET-hrs./week)")
 
