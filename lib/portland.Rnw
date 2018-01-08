@@ -38,7 +38,7 @@ parameters.TA <- OHAS.full %>% filter(TA > 0 & !is.na(TA)) %>% mutate(logTA = lo
 
 \begin{figure}
 <<inactivePortland, eval = TRUE, echo = FALSE, results = "hide", warning = FALSE, error = TRUE, message = TRUE, fig.height = 3>>=
-pAT <- D %>% group_by(GEND, AGECLASS) %>% summarise( pAT = 1/fAT*sum(TA > 0, na.rm = TRUE)/length(TA))
+pAT <- OHAS.full %>% group_by(GEND, AGECLASS) %>% summarise( pAT = 1/fAT*sum(TA > 0, na.rm = TRUE)/length(TA))
 pAT <- within(pAT, AGECLASS <- factor(AGECLASS))
 pAT <- within(pAT, GEND <- factor(GEND))
 pAT %>% ggplot(aes(x = GEND, y = pAT, fill = AGECLASS)) + geom_bar(stat = "identity", position = "dodge") + theme_bw() + labs(x = "Sex", y = "Proportion of Active Travelers", fill = "Age")
