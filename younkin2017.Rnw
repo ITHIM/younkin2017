@@ -16,7 +16,6 @@ install_github("ITHIM/ITHIM", ref="ithimus")
 #install("~/ITHIM/")
 library("ITHIM")
 NHTS.df <- readRDS(file = "~/GHI/R/data/NHTS.df.rds")
-#example("ITHIM")
 @
 \begin{center}
 {\Large \textbf\newline{Estimating Health Outcomes from Active Travel
@@ -27,7 +26,7 @@ Samuel Younkin\textsuperscript{1},\
 Jason Vargo\textsuperscript{2},\
 Eric Main\textsuperscript{3},\
 Brendon Haggerty \textsuperscript{4},\
-%James Woodcock\textsuperscript{5},\
+James Woodcock\textsuperscript{5},\
 Jonathan Patz\textsuperscript{1, 6}
 \\
 \bigskip
@@ -38,9 +37,9 @@ Jonathan Patz\textsuperscript{1, 6}
 \textbf{3} Oregon Health Authority, Portland, OR, USA
 \\
 \textbf{4} Multnomah County Department of Public Health, Portland, OR, USA
-%\\
-%\textbf{5} Centre for Education of Diet and Activity Research,
-%Cambridge University, Cambridge, UK
+\\
+\textbf{5} Centre for Education of Diet and Activity Research,
+Cambridge University, Cambridge, UK
 \\
 \textbf{6} Nelson Institute for Environmental Studies Center for Sustainability and the Global Environment, University of Wisconsin{\textendash}Madison, Madison, WI, USA
 \\
