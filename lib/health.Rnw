@@ -10,7 +10,7 @@ achieve, while leaving the inactive travelers unchanged.  And, of
 course, we consider combinations of the two scenarios in which both
 participation and travel activity are increased.
 
-<<parameters, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
+<<parameters, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3, dev=c('pdf', 'png')>>=
 parameters.LA <- readRDS(file = "./../data/parameters.LA.rds")
 doseResponse <- read.csv(file = "./../data/dose-response.csv", header = TRUE)
 doseResponse <- filter(doseResponse, !(AGECLASS %in% c("00-04", "05-14")))
@@ -21,7 +21,7 @@ doseResponse <- within(doseResponse, {
 
 parameters <- inner_join(burden, inner_join(inner_join(pAT, inner_join(parameters.TA, parameters.LA)), doseResponse))
 @
-<<baseline, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
+<<baseline, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3, dev=c('pdf', 'png')>>=
 pSetList <- list()
 
 for( i in 1:nrow(parameters) ){
@@ -49,7 +49,7 @@ for( i in 1:nrow(parameters) ){
 
 portlandITHIM.baseline <- new("ITHIM", pSetList)
 @
-<<scenario, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
+<<scenario, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3, dev=c('pdf', 'png')>>=
 pAT.scenario <- 0.75
 
 pSetList <- list()
@@ -81,7 +81,7 @@ portlandITHIM.scenario <- new("ITHIM", pSetList)
 @
 
 \begin{figure}
-<<healthOutcomes, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
+<<healthOutcomes, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3, dev=c('pdf', 'png')>>=
 PAF <- mapply(computeAF, portlandITHIM.baseline, portlandITHIM.scenario)
 healthOutcomes <- parameters %>% mutate(deltaBurden = PAF*value) %>% group_by(disease, burdenType) %>% summarise(diseaseDeltaBurden = sum(deltaBurden))
 ggplot(healthOutcomes, aes(x = "", y = diseaseDeltaBurden, fill = burdenType)) + geom_bar(stat = "identity", position = "dodge")  + facet_grid(. ~ disease) + theme_bw()  + labs(x = "", y = "Disease Burden Averted", fill = "Burden Type")
@@ -95,7 +95,7 @@ ggplot(healthOutcomes, aes(x = "", y = diseaseDeltaBurden, fill = burdenType)) +
 
 
 \begin{figure}
-<<healthOutcomes2, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
+<<healthOutcomes2, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3, dev=c('pdf', 'png')>>=
 results <- c()
 for(pAT.scenario in seq(0.2, 1, length.out = 2)){
 
@@ -166,7 +166,7 @@ in approximately 1,500 DALYs averted in the Portland metropolitan
 area.
 
 \begin{figure}
-<<healthOutcomes3, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
+<<healthOutcomes3, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3, dev=c('pdf', 'png')>>=
 results <- c()
 for(gamma in seq(1, 10, length.out = 2)){
 

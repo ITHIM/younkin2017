@@ -19,7 +19,7 @@ cardiovascular disease (I10-I13, I20-I25, I30-I33, I38, I40, I42).
 We also include the disability impacts of depression, though it is not
 listed as a cause of death in the CDC data.
 
-<<burden, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = TRUE, fig.height = 6>>=
+<<burden, eval = TRUE, echo = FALSE, results = "hide", warning = TRUE, error = TRUE, message = TRUE, fig.height = 6, dev=c('pdf', 'png')>>=
 #burden <- read.csv(file = "./../data/gbd_20170925.csv")
 burden <- read.csv(file = "./../data/gbd_Manuscript_2011-2015.csv")
 ageBins <- c("00-04", "05-14", "15-29", "30-44", "45-59", "60-69", "70-79", "80+")

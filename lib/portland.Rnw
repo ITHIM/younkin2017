@@ -1,4 +1,4 @@
-<<ohas1, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3>>=
+<<ohas1, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, message = FALSE, fig.height = 3, dev=c('pdf', 'png')>>=
 OHAS.df <- readRDS(file = "~/Bullitt/data/OHAS/OHAS.df.rds")
 countyList <- c("Benton","Clackamas","Deschutes","Jackson","Josephine","Lane","Linn","Marion","Multnomah","Polk","Washington")
 OHAS.df <- OHAS.df %>% filter(COUNTYNAME %in% countyList)
@@ -21,7 +21,7 @@ Household Activity Survey (OHAS).
 \Sexpr{knit_child('./ohas.Rnw')}
 
 
-<<allCounties, eval = TRUE, echo = FALSE, results = "hide", warning = FALSE, error = TRUE, message = TRUE, fig.height = 3>>=
+<<allCounties, eval = TRUE, echo = FALSE, results = "hide", warning = FALSE, error = TRUE, message = TRUE, fig.height = 3, dev=c('pdf', 'png')>>=
 alpha_w <- 3; alpha_c <- 4.5; nAT <- 3; fAT <- 1/nAT;
 
 OHAS.df <- OHAS.df %>% mutate(ID = paste0(SAMPN, "-", PERNO)) %>% mutate(AGECLASS = ITHIM:::convertToAgeClass(AGE))
@@ -37,7 +37,7 @@ parameters.TA <- OHAS.full %>% filter(TA > 0 & !is.na(TA)) %>% mutate(logTA = lo
 @
 
 \begin{figure}
-<<inactivePortland, eval = TRUE, echo = FALSE, results = "hide", warning = FALSE, error = TRUE, message = TRUE, fig.height = 3>>=
+<<inactivePortland, eval = TRUE, echo = FALSE, results = "hide", warning = FALSE, error = TRUE, message = TRUE, fig.height = 3, dev=c('pdf', 'png')>>=
 pAT <- OHAS.full %>% group_by(GEND, AGECLASS) %>% summarise( pAT = 1/fAT*sum(TA > 0, na.rm = TRUE)/length(TA))
 pAT <- within(pAT, AGECLASS <- factor(AGECLASS))
 pAT <- within(pAT, GEND <- factor(GEND))
@@ -47,7 +47,7 @@ pAT %>% ggplot(aes(x = GEND, y = pAT, fill = AGECLASS)) + geom_bar(stat = "ident
 \label{inactivePortland}
 \end{figure}
 \begin{figure}
-<<walkBike, eval = TRUE, echo = FALSE, results = "hide", warning = FALSE, error = TRUE, message = TRUE, fig.height = 3>>=
+<<walkBike, eval = TRUE, echo = FALSE, results = "hide", warning = FALSE, error = TRUE, message = TRUE, fig.height = 3, dev=c('pdf', 'png')>>=
 OHAS.full %>% filter(TA > 0 & !is.na(TA)) %>% gather("mode", "totDur",4:5) %>% mutate(totDur = ifelse(is.na(totDur),0,totDur)) %>% ggplot(., aes(x=GEND, y = totDur, fill = AGECLASS) ) + geom_boxplot()  + facet_grid(. ~ mode) + theme_bw()  + labs(x = "Sex", y = "Reported One-Day Travel Time", fill = "Age") + scale_y_continuous(trans = "log", breaks = breaks <- exp(seq(0,8, by = 1)), labels = round(breaks,0))
 @
 \caption{The reported one-day walking and cycling times in minutes in
@@ -57,7 +57,7 @@ OHAS.full %>% filter(TA > 0 & !is.na(TA)) %>% gather("mode", "totDur",4:5) %>% m
 \end{figure}
 
 \begin{figure}
-<<walkBikeAll, eval = TRUE, echo = FALSE, results = "hide", warning = FALSE, error = TRUE, message = TRUE, fig.height = 3>>=
+<<walkBikeAll, eval = TRUE, echo = FALSE, results = "hide", warning = FALSE, error = TRUE, message = TRUE, fig.height = 3, dev=c('pdf', 'png')>>=
 
 parameters.TA.All <- OHAS.full %>% group_by(GEND, AGECLASS) %>% mutate(walk = ifelse(is.na(walk),0,walk), cycle = ifelse(is.na(cycle),0,cycle) ) %>% summarise( meanWalk = 7*mean(walk), meanCycle = 7*mean(cycle)) %>% ungroup()
 
@@ -94,7 +94,7 @@ write.csv(foo, file = "~/ITHIM/inst/activeTravelOHAS.csv", quote = FALSE, row.na
 
 
 \begin{figure}
-<<allCountiesPlot, eval = TRUE, echo = FALSE, results = "hide", warning = FALSE, error = TRUE, message = TRUE, fig.height = 3>>=
+<<allCountiesPlot, eval = TRUE, echo = FALSE, results = "hide", warning = FALSE, error = TRUE, message = TRUE, fig.height = 3, dev=c('pdf', 'png')>>=
 ggplot(subset(OHAS.full, TA > 0 & !is.na(TA)), aes(x = GEND, y = TA, fill = AGECLASS)) + geom_boxplot() + theme_bw() + labs(x = "Sex", y = "Travel Activity (natural log scale) (MET-hrs./week)", fill = "Age")  + scale_y_continuous(trans = "log", breaks = breaks <- exp(seq(0,8, by = 1)), labels = round(breaks,0))
 @
 \label{samuel}
