@@ -11,3 +11,5 @@
 *.gif
 log/
 data
+*.odt
+*.odt#
