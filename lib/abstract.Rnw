@@ -1,23 +1,32 @@
 % !Rnw root = ../ITHIM-manuscript.Rnw
 % !TeX root = ../ITHIM-manuscript.Rnw
 
-Comparative risk assessments to quantify the health potential
-of active transportation (e.g., walking and cycling) have been
-performed in the United States on a limited basis. Current
-methodologies, which rely on extensive data collection and user
-expertise, have estimated health benefits for select metropolitan
-areas under a few alternative scenarios. Such analyses have
-been conducted using the Integrated Transport Health Impacts Model
-(ITHIM), which was developed in the UK and has been adapted for use in
-the US, primarily California. Here we present an implementation of the
-active transportation component of ITHIM to model the health impacts
-of modified active transportation levels. Using the newly developed
-software package \package{} written in R, along with publicly
-available national datasets, we quantify the change in disability
-adjusted life years over a wide range of scenarios.  The R package
-implemention of ITHIM's physical activity component provides a robust
-environment for exploring the relationship between active
-transportation and positive health outcomes.  A web-based
-user-interface based on the package is being developed for users who want a first estimate for
-the impact active transportation has on their
-state/region.
+% Comparative risk assessments to quantify the health potential of
+% active transportation (e.g., walking and cycling) have been performed
+% in the United States on a limited basis. Current methodologies, which
+% rely on extensive data collection and user expertise, have estimated
+% health benefits for select metropolitan areas under a few alternative
+% scenarios. Such analyses have been conducted using the Integrated
+% Transport Health Impacts Model (ITHIM), which was developed in the UK
+% and has been adapted for use in the US, primarily California. Here we
+% present an implementation of the active transportation component of
+% ITHIM to model the health impacts of modified active transportation
+% levels. Using the newly developed software package \package{} written
+% in R, along with publicly available national datasets, we quantify the
+% change in disability adjusted life years over a wide range of
+% scenarios.  The R package implemention of ITHIM's physical activity
+% component provides a robust environment for exploring the relationship
+% between active transportation and positive health outcomes.  A
+% web-based user-interface based on the package is being developed for
+% users who want a first estimate for the impact active transportation
+% has on their state/region.
+
+
+We present a method and software to perform a comparative risk
+assessment (CRA) of changes in transportation behavior on multiple
+chronic disease outcomes.  The method described here is modeled after
+the physical activity component of the Integrated Transport and Health
+Impact Model (ITHIM) and will be implemented in the publicly available
+software package ITHIM 3.0.  We apply the method to data from the
+Oregon Household Activity Survey (OHAS) to quantify the change in
+disease burden across a wide range of transportation scenarios.
