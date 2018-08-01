@@ -1,37 +1,65 @@
 % !Rnw root = ../ITHIM-manuscript.Rnw
 % !TeX root = ../ITHIM-manuscript.Rnw
 
-To estimate the health benefits associated with an increase in active
-transportation we perform a comparitive risk assesment of physical
-activity before and after an increase in active transportation.  The
-health impacts of a change of exposure to some health factor in the
-population is quantified in terms of the population attributable
-fraction, $\af$.  In our case, the population attributable fraction
-represents the proportional change in disease burden that results from
-an alternative transportation behavior.  To address the dependency in
-transportation behavior on cohorts within the whole population, we
-stratify by sex and age using eight age classes (0-4 yrs.\ old, 5-14,
-15-29, 30-44, 45-59, 60-69, 70-79, 80+).  The population attributable
-fraction is computed for each age-sex-disease class.
+To estimate the health benefits associated with increases in active
+transportation, we performed a comparative risk assessment of the
+physical activity gained via alternative transportation scenarios. The
+health impacts due to a change in exposure to some health factor in
+the population may be quantified in terms of the population
+attributable fraction, $\rho$. In our case, the population
+attributable fraction represents the proportional change in disease
+burden that results from an alternative transportation scenario. To
+address the dependency of transportation behavior on age-sex cohorts
+within the population, we stratify by age and sex using the eight age
+classes defined in the original ITHIM model (0-4 yrs. old, 5-14,
+15-29, 30-44, 45-59, 60-69, 70-79, 80+). A disease specific population
+attributable fraction is computed for each age-sex cohort.
+
+% To estimate the health benefits associated with an increase in active
+% transportation we perform a comparitive risk assesment of physical
+% activity before and after an increase in active transportation.  The
+% health impacts of a change of exposure to some health factor in the
+% population is quantified in terms of the population attributable
+% fraction, $\af$.  In our case, the population attributable fraction
+% represents the proportional change in disease burden that results from
+% an alternative transportation behavior.  To address the dependency in
+% transportation behavior on cohorts within the whole population, we
+% stratify by sex and age using eight age classes (0-4 yrs.\ old, 5-14,
+% 15-29, 30-44, 45-59, 60-69, 70-79, 80+).  The population attributable
+% fraction is computed for each age-sex-disease class.
 
 \begin{equation}
 \af_{ijk} = \frac{\int \! R_{ijk}(x)P_{ij}(x) \, \mathrm{d}x - \int \! R_{ijk}(x)Q_{ij}(x)
   \, \mathrm{d}x}{\int \! R_{ijk}(x)P_{ij}(x) \, \mathrm{d}x}\label{paf1}\\
 \end{equation}
 
-We see in Equation \ref{paf1} an expression for the population
-attributable fraction.  In it the population attributable fraction is
-computed in terms of the distribution of physical activity in baseline
-and alternative scenarios, $P_{ij}(x)$ and $Q_{ij}(x)$, respectively,
-and the relative risks, $R_{ijk}(x)$, given physical activity $x$.  We
-use subscripts $i$, $j$ and $k$ to denote age class, sex and disease
-in Equations \ref{paf1} and \ref{paf2}, but for the sake of
+We see in Equation [paf1] an expression for the population
+attributable fraction, computed in terms of the distribution of
+physical activity in baseline and alternative scenarios, Pij(x)and
+,Qij(x) respectively, and the relative risks, ,Rijk(x) given physical
+activity .x We use subscripts ,i jand kto denote age class, sex and
+disease in Equations [paf1] and [paf2], but for the sake of
 readability we neglect the subscripts in much of rest of the paper,
 keeping in mind that the comparative risk assessment is performed
-independently for each of the 96 age-sex-disease classes.  Equation
-\ref{paf2} gives an estimate for $\af{}$ expressed in terms of the quantiles
-of the distribution of physical activity in baseline and alternative
-scenarios, $\mathbf{x}$ and $\mathbf{x}^\prime$, respectively.
+independently for each age-sex-disease classes. Equation [paf2] gives
+an estimate for $\rho$ expressed in terms of the quantiles of the
+distribution of non-occupational physical activity in baseline and
+alternative scenarios, x and x`, respectively.
+
+
+% We see in Equation \ref{paf1} an expression for the population
+% attributable fraction.  In it the population attributable fraction is
+% computed in terms of the distribution of physical activity in baseline
+% and alternative scenarios, $P_{ij}(x)$ and $Q_{ij}(x)$, respectively,
+% and the relative risks, $R_{ijk}(x)$, given physical activity $x$.  We
+% use subscripts $i$, $j$ and $k$ to denote age class, sex and disease
+% in Equations \ref{paf1} and \ref{paf2}, but for the sake of
+% readability we neglect the subscripts in much of rest of the paper,
+% keeping in mind that the comparative risk assessment is performed
+% independently for each of the 96 age-sex-disease classes.  Equation
+% \ref{paf2} gives an estimate for $\af{}$ expressed in terms of the quantiles
+% of the distribution of physical activity in baseline and alternative
+% scenarios, $\mathbf{x}$ and $\mathbf{x}^\prime$, respectively.
 
 \begin{equation}
 \hat{\af}_{ijk} = 1 -
@@ -41,68 +69,134 @@ scenarios, $\mathbf{x}$ and $\mathbf{x}^\prime$, respectively.
 \end{equation}
 
 \subsection{Physical Activity \& Health}\label{PAandHealth}
-Positive health benefits including decreased risk for disease are
-well-know to be associated with recreational physical activity.  We
-may include in a collection of recreational activities walking and
-biking for transportation, for there is not a physiological difference
-between walking for transport and for recreation.  Dose-response
-curves of the form $\R(x) = \mathrm{e}^{-\alpha \tilde{x}}$, where
-$\tilde{x} = \sqrt{x}$ and $x$ is the sum of travel and leisure
-activity, are used to estimate disease risk for six diseases; beast
-cancer, colon cancer, cardiovascular disease, depression, dementia and
-diabetes \cite{woodcock2009, monninkhof2007, harriss2009, hamer2009,
-  jeon2007, hamer2007}.  Values for $\alpha$ may be found in the
-appendix.  Travel activity and leisure activity are treated as two
-independent random variables.  An empirical distribution for physical
-activity is then computed for the comparative risk assessment.
-Throughout this paper the term ``physical activity" implies the sum of
-leisure and travel activity.  The population attributable fraction
-represents the proportional change in disease burden and so if we want
-to estimate the absolute change in burden we must first estimate the
-initial disease burden, $B_0$. Here, we consider four burden types and
-six diseases for each of the 16 age-sex classes.  A discussion on
-estimating $B_0$ can be found in section \ref{burden}.  To estimate
-the absolute change in disease burden we simply scale $B_0$ by
-$\delta=1-\af$, Equation \ref{paf2}.  The total disease-specific
-burden reduction, $\delta_B$, is computed by summing across age and
-sex, $\delta_B = \displaystyle \sum_{i,j} \delta_{ij}{B_0}_{ij}$.
+
+Health benefits, including decreased risk for chronic disease, are
+well-known to be associated with non-occupational physical
+activity. In the model presented here we define non-occupational
+physical activity as the total physical activity due to transportation
+or recreation. Dose-response curves of the form
+${\emph{R}}(x) = \mathrm{e}^{-\alpha \tilde{x}}$, where x̃=xand xis
+non-occupational physical activity, are used to estimate disease risk
+for six diseases; breast cancer, colon cancer, cardiovascular disease,
+depression, dementia and diabetes. Values for αmay be found in the
+appendix. Travel activity and recreational activity are treated as two
+independent random variables. We computed empirical quantiles for
+non-occupational physical activity as the sum of two independent
+log-normal random variables (travel activity and recreational
+activity) and used these quantiles along with the risk functions
+described in Section ? for the calculation of $\paf$ in equation
+?. Throughout this paper the term physical activity implies
+non-occupational physical activity and travel activity refers to
+physical activity due to transportation.
+
+The population attributable fraction represents the proportional
+change in disease burden and so if we want to estimate the absolute
+change in burden we must first estimate the initial disease burden,
+.B0 Here, we consider four burden types and six diseases for each of
+the 16 age-sex classes. A discussion on estimating B0can be found in
+section [burden]. To estimate the absolute change in disease burden we
+simply scale B0by ,δ=1−ρ Equation [paf2]. The total disease-specific
+burden reduction, ,δB is computed by summing across age and sex,
+
+% Positive health benefits including decreased risk for disease are
+% well-know to be associated with recreational physical activity.  We
+% may include in a collection of recreational activities walking and
+% biking for transportation, for there is not a physiological difference
+% between walking for transport and for recreation.  Dose-response
+% curves of the form $\R(x) = \mathrm{e}^{-\alpha \tilde{x}}$, where
+% $\tilde{x} = \sqrt{x}$ and $x$ is the sum of travel and leisure
+% activity, are used to estimate disease risk for six diseases; beast
+% cancer, colon cancer, cardiovascular disease, depression, dementia and
+% diabetes \cite{woodcock2009, monninkhof2007, harriss2009, hamer2009,
+%   jeon2007, hamer2007}.  Values for $\alpha$ may be found in the
+% appendix.  Travel activity and leisure activity are treated as two
+% independent random variables.  An empirical distribution for physical
+% activity is then computed for the comparative risk assessment.
+% Throughout this paper the term ``physical activity" implies the sum of
+% leisure and travel activity.  The population attributable fraction
+% represents the proportional change in disease burden and so if we want
+% to estimate the absolute change in burden we must first estimate the
+% initial disease burden, $B_0$. Here, we consider four burden types and
+% six diseases for each of the 16 age-sex classes.  A discussion on
+% estimating $B_0$ can be found in section \ref{burden}.  To estimate
+% the absolute change in disease burden we simply scale $B_0$ by
+% $\delta=1-\af$, Equation \ref{paf2}.  The total disease-specific
+% burden reduction, $\delta_B$, is computed by summing across age and
+% sex, $\delta_B = \displaystyle \sum_{i,j} \delta_{ij}{B_0}_{ij}$.
 
 \subsection{Travel-Related Physical Activity}
-We express travel-related physical activity, or travel activity, $T$,
-in terms of \METhrs{} and compute it by weighting the total active
-one-day walking and cycling times, $T_w$ and $T_c$ (hours), by
-$\alpha_w^\prime = 7\alpha_w$ and $\alpha_c^\prime = 7\alpha_c$,
-respectively. The average workload of walking and cycling in METs,
-$\alpha_w = 3$ and $\alpha_c = 4.5$ must be scaled up to represent a
-full week of travel.
+
+We express travel-related physical activity, or travel activity, ,T in
+terms of MET-hrs./week and compute it by weighting the total active
+one-day walking and cycling times, Twand Tc(hours), by αw′=7αwand
+,αc′=7αc respectively. The average workload of walking and cycling in
+METs, αw=3and αc=4.5 must be scaled up to represent a full week of
+travel.  T=αw′Tw+αc′Tc We assign a log-normal distribution to $T$ and,
+if available, use travel survey data to estimate the distribution
+parameters.  Metabolic Equivalent (MET) values are defined as the
+ratio of the work metabolic rate to a standard resting metabolic rate
+(RMR) of 1.0 kcal/kg/hr.  One MET is considered the RMR or the energy
+cost of a person at rest (Ainsworth, Howley).
+
+% We express travel-related physical activity, or travel activity, $T$,
+% in terms of \METhrs{} and compute it by weighting the total active
+% one-day walking and cycling times, $T_w$ and $T_c$ (hours), by
+% $\alpha_w^\prime = 7\alpha_w$ and $\alpha_c^\prime = 7\alpha_c$,
+% respectively. The average workload of walking and cycling in METs,
+% $\alpha_w = 3$ and $\alpha_c = 4.5$ must be scaled up to represent a
+% full week of travel.
 
 \begin{equation}
 T = \alpha_w^\prime T_w + \alpha_c^\prime T_c
 \end{equation}
 
 \paragraph{Inactive Travelers}
-The comparative risk assessmnent in the original ITHIM implementation
-assumed a \logNormal{} distribution for active travel time.  In our
+
+The comparative risk assessment in the original ITHIM implementation
+assumes a log-normal distribution for active travel time. In our
 investigation of the U.S. National Household Transportation Survey we
-discovered that the vast majority of respondants in metropolitan areas
-reported zero active travel time.  The spike in the data at zero made
-fitting a \logNormal{} distribution difficult.  Due to the large
-proportion of inactive travelers in U.S. metropolitan areas we model
-the distribution of travel activity as a mixture of two distributions;
-a point-mass at zero with probabilty $\pNAT = 1 - \pAT$ for inactive
-travelers, and a \logNormal{} distribution for active travelers.
-Estimating the proportion of inactive travelers with one-day survey
-data results in over-estimates, as active travelers are not active
-every day.  So we used questions L3 and L4 of Table 1 of the 2009
-National Household Transportation Survey which asked how many walking
-or cycling trips were made in the previous week to estimate the
-proportion.  The weekly data provide a less biased estimate than
+discovered that the vast majority of respondents in metropolitan areas
+reported zero active travel time. The spike at zero made fitting a
+log-normal distribution difficult. Due to the large proportion of
+inactive travelers in U.S. metropolitan areas we chose to model the
+distribution of travel activity as a mixture of two distributions; a
+point-mass at zero with probability p0=1−pactive for inactive
+travelers, and a log-normal distribution for active travelers, as
+discussed above. Estimating the proportion of inactive travelers with
+one-day survey data results in over-estimation, as active travelers
+are not active every day. So we used questions L3 and L4 of Table 1 of
+the 2009 National Household Transportation Survey which asked how many
+walking or cycling trips were made in the previous week to estimate
+the proportion. The weekly data provide a less biased estimate than
 one-day data, as active travelers are likely to travel actively at
-least once a week. It is not clear if this value includes recreational
-trips.  Figure \ref{inactiveMSA} shows the proportion of people who
-take zero walking or biking trips ranges from approximately 40\% in
-the Oklahoma City metropolitan to around 20\% in the Portland
-metropolitan area.
+least once a week.  Figure [inactiveMSA] shows that the proportion of
+people who take zero walking or biking trips in the US ranges from
+approximately 40\% in the Oklahoma City metropolitan to around
+20\% in the Portland metropolitan area.  Roughly 25\% of Americans living in a metropolitan area can be considered inactive travelers with a negligible amount of travel activity. The greatest public health gains can be made by decreasing the percentage of inactive travelers in the population.
+
+
+% The comparative risk assessmnent in the original ITHIM implementation
+% assumed a \logNormal{} distribution for active travel time.  In our
+% investigation of the U.S. National Household Transportation Survey we
+% discovered that the vast majority of respondants in metropolitan areas
+% reported zero active travel time.  The spike in the data at zero made
+% fitting a \logNormal{} distribution difficult.  Due to the large
+% proportion of inactive travelers in U.S. metropolitan areas we model
+% the distribution of travel activity as a mixture of two distributions;
+% a point-mass at zero with probabilty $\pNAT = 1 - \pAT$ for inactive
+% travelers, and a \logNormal{} distribution for active travelers.
+% Estimating the proportion of inactive travelers with one-day survey
+% data results in over-estimates, as active travelers are not active
+% every day.  So we used questions L3 and L4 of Table 1 of the 2009
+% National Household Transportation Survey which asked how many walking
+% or cycling trips were made in the previous week to estimate the
+% proportion.  The weekly data provide a less biased estimate than
+% one-day data, as active travelers are likely to travel actively at
+% least once a week. It is not clear if this value includes recreational
+% trips.  Figure \ref{inactiveMSA} shows the proportion of people who
+% take zero walking or biking trips ranges from approximately 40\% in
+% the Oklahoma City metropolitan to around 20\% in the Portland
+% metropolitan area.
 
 \begin{figure}
 <<pATbyMSA, echo = FALSE, eval = TRUE, results = "hide", warning = FALSE, dev=c('pdf', 'png'), message = FALSE, fig.height = 6>>=
