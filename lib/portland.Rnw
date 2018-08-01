@@ -126,11 +126,11 @@ sex.  Note that the natural logarithm of travel activity is
 displayed.
 
 
-\subsection{Leisure Activity (Vargo)}\label{LA}
-\Sexpr{knit_child('./ATUS.Rnw')}
+%\subsection{Leisure Activity (Vargo)}\label{LA}
+%\Sexpr{knit_child('./ATUS.Rnw')}
 
-\subsection{Disease Burden (Vargo \& Main)}\label{burden}
-\Sexpr{knit_child('./burden.Rnw')}
+%\subsection{Disease Burden (Vargo \& Main)}\label{burden}
+%\Sexpr{knit_child('./burden.Rnw')}
 
 \subsection{Health Outcomes}\label{health}
 \Sexpr{knit_child('./health.Rnw')}
