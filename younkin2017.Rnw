@@ -58,8 +58,7 @@ Jonathan Patz\textsuperscript{1, 6}
 \Sexpr{knit_child('lib/materialsAndMethods.Rnw')}
 
 \section{Portland, Oregon}
-\Sexpr{knit_child('lib/portland.Rnw')}
-
+%\Sexpr{knit_child('lib/portland.Rnw')}
 
 \section{Discussion}
 \Sexpr{knit_child('lib/discussion.Rnw')}
