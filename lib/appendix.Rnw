@@ -33,6 +33,12 @@ $\R(x) = \mathrm{e}^{-\alpha \tilde{x}}$, where $\tilde{x} = \sqrt{x}$
   hamer2007}.  See below for a table of $\alpha$ values.
 
 <<appendix, echo = FALSE, eval = TRUE, results = "asis", collapse = TRUE, warning = FALSE, message = FALSE, fig.height = 3>>=
+doseResponse <- read.csv(file = "./../data/dose-response.csv", header = TRUE)
+doseResponse <- filter(doseResponse, !(AGECLASS %in% c("00-04", "05-14")))
+doseResponse <- within(doseResponse, {
+    GEND <- factor(GEND, levels = c("M","F"))
+    AGECLASS <- factor(AGECLASS, levels = c("15-29", "30-44", "45-59", "60-69", "70-79", "80+"))
+})
 doseResponseTable <- doseResponse %>% mutate(alpha = round(-log(RR1MET),4)) %>% select(disease,GEND,AGECLASS,alpha) %>% distinct %>% arrange(disease, GEND, AGECLASS)
 doseResponseTable <- doseResponseTable %>% spread(AGECLASS, alpha)
 xtable(doseResponseTable, label = "alphaTable", caption = "A table of values for the dose-response shape parameter")
