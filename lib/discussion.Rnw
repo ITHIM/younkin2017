@@ -1,16 +1,77 @@
 % !Rnw root = ../ITHIM-manuscript.Rnw
 % !TeX root = ../ITHIM-manuscript.Rnw
-In this paper we present a straight forward implementation of the ITHIM model in R, 
-using similar datasets to those employed in previous US implementations. The work demonstrates the nature and magnitude of potential behavior changes to more active transportation. The accurate and timely quantification of these health impacts is important for decision makers as they weigh the tradeoffs of alternative approaches to meeting multiple regional transportation goals including congestion relief, air quality improvement, climate change mitiagtion, and enhancing quality of life. ITHIM is a health impacts add-on to existing transportation and regional planning exercises. The implementation demonstrated here provides an improved method for estimating relevant active transportation-related health benefits with improved transparenct, efficiency, stability, and flexibility. 
-
-We performed this analysis for the Portland, OR Metropolitan Area. Where it was possible, we use data that are available for several metropolitan regions across the US: the 2009 National Household Transportation Survey (NHTS), the 2011-2015 American Time Use Survey (ATUS), the 2011-2015 Oregon Public Health Assessment Tool (OPHAT), and published relationships between physical activity and Health (see Appendix, Table 2). Additionally, the work is performed in R and made available through [a GitHub repository](https://github.com/ITHIM/younkin2017) in an effort for this work to be communally reproducible and improved. Basing ITHIM within a R platform increases the flexibility of the model and facilitates its ability to be connected with underlying transportation and land use models of growing diversity and complexity. For example, the ITHIM package's use of an ITHIM object, which contains the parameters required for a model run, was pursued to make sharing of data and analsyses among users easier.  
-
-The ITHIM R package contains several changes to ITHIM's physical activity module - as previously implemented in the US - that improve the integrity of the model results for analyses of the health benefit of active transport.  First, we improve the estimation of attributable fraction by allowing users to discretize the underlying integral beyond quitiles. This allows for more details description of results, but was also found to improve the stability of results in the face of high uncertainty for some paramters, such as non-travel activity levels. Second, this implementation of the ITHIM package uses a mixed distribution of individuals with and without any recorded active travel activity. This better represents populations where large proportions of people have no active travel activity, as is the case for much of the United States (see Fig \ref{inactiveMSA}).The modification of the module makes the intrepretation of active travel inputs for baseline and scenarios more intuitive and easier to interpret (ie. 75% of population with no active travel and a mean of 10 min/week among the other 25% vs. a population mean of 3 min/week). This will reduce confusion when collecting input data from transportation modelers and improves clarity when discussing results with decision makers. 
-
-Many of these changes have already been pursued and examined in the UK by CEDAR but this is the first time they have been implemented for a US Metropolitan area. \cite{thiago2015, tainio2016, kwan2017}
 
 
-The work demonstrates the nature and magnitude of potential behavior changes to more active transportation via two pathways: participation among a greater proportion of the Portland population in active travel of any kind (giving new active travelers amounts of activity similar to current walkers and cyclists) and second by increasing the amount of activity that current active travelers get. 
+In this paper we present a straightforward implementation of the ITHIM
+model in R, using similar datasets to those employed in previous US
+implementations. The work demonstrates the nature and magnitude of
+potential behavior changes to more active transportation. The accurate
+and timely quantification of these health impacts is important for
+decision makers as they weigh the tradeoffs of alternative approaches
+to meeting multiple regional transportation goals including congestion
+relief, air quality improvement, climate change mitigation, and
+enhancing quality of life. ITHIM is a health impacts add-on to
+existing transportation and regional planning exercises. The
+implementation demonstrated here provides an improved method for
+estimating relevant active transportation-related health benefits with
+improved transparency, efficiency, stability, and flexibility.
+
+
+We performed this analysis for the Portland, OR Metropolitan
+Area. Where it was possible, we use data that are available for
+several metropolitan regions across the US: the 2009 National
+Household Transportation Survey (NHTS), the 2011-2015 American Time
+Use Survey (ATUS), the 2011-2015 Oregon Public Health Assessment Tool
+(OPHAT), and published relationships between physical activity and
+Health (see Appendix, Table 2). Additionally, the work is performed in
+R and made available through [a GitHub
+repository](https://github.com/ITHIM/younkin2017) in an effort for
+this work to be communally reproducible and improved. Basing ITHIM
+within a R platform increases the flexibility of the model and
+facilitates its ability to be connected with underlying transportation
+and land use models of growing diversity and complexity. For example,
+the ITHIM package’s use of an ITHIM object, which contains the
+parameters required for a model run, was pursued to make sharing of
+data and analyses among users easier.
+
+The ITHIM R package contains several changes to ITHIM’s physical
+activity module - as previously implemented in the US - that improve
+the integrity of the model results for analyses of the health benefit
+of active transport. First, we improve the estimation of attributable
+fraction by allowing users to discretize the underlying integral
+beyond quintiles. This allows for more details description of results,
+but was also found to improve the stability of results in the face of
+high uncertainty for some parameters, such as non-travel activity
+levels. Second, this implementation of the ITHIM package uses a mixed
+distribution of individuals with and without any recorded active
+travel activity. This better represents populations where large
+proportions of people have no active travel activity, as is the case
+for much of the United States (see Fig [inactiveMSA]).The modification
+of the module makes the interpretation of active travel inputs for
+baseline and scenarios more intuitive and easier to interpret (ie. 75
+Many of these changes have already been pursued and examined in the UK
+by CEDAR but this is the first time they have been implemented for a
+US Metropolitan area.
+
+The work demonstrates the nature and magnitude of potential behavior
+changes to more active transportation via two pathways: participation
+among a greater proportion of the Portland population in active travel
+of any kind (giving new active travelers amounts of activity similar
+to current walkers and cyclists) and second by increasing the amount
+of activity that current active travelers get.
+
+
+% In this paper we present a straight forward implementation of the ITHIM model in R,
+% using similar datasets to those employed in previous US implementations. The work demonstrates the nature and magnitude of potential behavior changes to more active transportation. The accurate and timely quantification of these health impacts is important for decision makers as they weigh the tradeoffs of alternative approaches to meeting multiple regional transportation goals including congestion relief, air quality improvement, climate change mitiagtion, and enhancing quality of life. ITHIM is a health impacts add-on to existing transportation and regional planning exercises. The implementation demonstrated here provides an improved method for estimating relevant active transportation-related health benefits with improved transparenct, efficiency, stability, and flexibility.
+
+% We performed this analysis for the Portland, OR Metropolitan Area. Where it was possible, we use data that are available for several metropolitan regions across the US: the 2009 National Household Transportation Survey (NHTS), the 2011-2015 American Time Use Survey (ATUS), the 2011-2015 Oregon Public Health Assessment Tool (OPHAT), and published relationships between physical activity and Health (see Appendix, Table 2). Additionally, the work is performed in R and made available through [a GitHub repository](https://github.com/ITHIM/younkin2017) in an effort for this work to be communally reproducible and improved. Basing ITHIM within a R platform increases the flexibility of the model and facilitates its ability to be connected with underlying transportation and land use models of growing diversity and complexity. For example, the ITHIM package's use of an ITHIM object, which contains the parameters required for a model run, was pursued to make sharing of data and analsyses among users easier.
+
+% The ITHIM R package contains several changes to ITHIM's physical activity module - as previously implemented in the US - that improve the integrity of the model results for analyses of the health benefit of active transport.  First, we improve the estimation of attributable fraction by allowing users to discretize the underlying integral beyond quitiles. This allows for more details description of results, but was also found to improve the stability of results in the face of high uncertainty for some paramters, such as non-travel activity levels. Second, this implementation of the ITHIM package uses a mixed distribution of individuals with and without any recorded active travel activity. This better represents populations where large proportions of people have no active travel activity, as is the case for much of the United States (see Fig \ref{inactiveMSA}).The modification of the module makes the intrepretation of active travel inputs for baseline and scenarios more intuitive and easier to interpret (ie. 75% of population with no active travel and a mean of 10 min/week among the other 25% vs. a population mean of 3 min/week). This will reduce confusion when collecting input data from transportation modelers and improves clarity when discussing results with decision makers.
+
+% Many of these changes have already been pursued and examined in the UK by CEDAR but this is the first time they have been implemented for a US Metropolitan area. \cite{thiago2015, tainio2016, kwan2017}
+
+
+% The work demonstrates the nature and magnitude of potential behavior changes to more active transportation via two pathways: participation among a greater proportion of the Portland population in active travel of any kind (giving new active travelers amounts of activity similar to current walkers and cyclists) and second by increasing the amount of activity that current active travelers get.
 
 
 
