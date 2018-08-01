@@ -1,4 +1,4 @@
-younkin2017.pdf: ./younkin2017.Rnw ./lib/ITHIM.bib ./lib/materialsAndMethods.Rnw ./lib/abstract.Rnw ./lib/introduction.Rnw ./lib/portland.Rnw ./lib/ATUS.Rnw ./lib/health.Rnw ./lib/burden.Rnw ./lib/ATUS.Rnw ./lib/appendix.Rnw ./lib/ITHIM.bib ./data/gbd_Manuscript_2011-2015.csv
+younkin2017.pdf: ./younkin2017.Rnw ./lib/ITHIM.bib ./lib/materialsAndMethods.Rnw ./lib/abstract.Rnw ./lib/introduction.Rnw ./lib/portland.Rnw ./lib/ATUS.Rnw ./lib/health.Rnw ./lib/burden.Rnw ./lib/ATUS.Rnw ./lib/appendix.Rnw ./lib/discussion.Rnw ./lib/ITHIM.bib ./data/gbd_Manuscript_2011-2015.csv
 	R -e 'library("knitr"); setwd("~/younkin2017"); knit("~/younkin2017/younkin2017.Rnw")'
 	pdflatex younkin2017.tex
 	bibtex younkin2017.aux
